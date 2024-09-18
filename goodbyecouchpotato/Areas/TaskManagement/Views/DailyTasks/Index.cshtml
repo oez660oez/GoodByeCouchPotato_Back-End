@@ -1,0 +1,113 @@
+﻿@model _SearchViewModel
+@* 因為要使用在viewmodel的設定，所以這張文件所參考的Model屬性是_SearchViewModel，而不是原始的Model，這樣才可以引用viewmodel的東西
+ *@
+ <h1>每日任務管理</h1>
+<div class="container">
+    <div class="row">
+        <hr />
+    <div class="searcharea col-12 col-md-3">
+        <h6>搜尋任務</h6>
+        <form asp-controller="DailyTasks" asp-action="TaskSearch" id="Searchform">
+            <div class="form-group">
+            <label class="control-label" name="Name">@Html.DisplayNameFor(Model=>Model.TaskName)</label>
+                <input type="text" asp-for="TaskName" class="form-control" autocomplete="off" placeholder="請填寫查詢內容"/>
+            </div>
+            <div class="form-group">
+            <label class="control-label" name="Reward">@Html.DisplayNameFor(Model=>Model.Reward)</label>
+                <input class="form-control" type="text" asp-for="Reward"   autocomplete="off" placeholder="請填寫完整數字"/>
+            </div>
+            <div class="form-group">
+              <label class="control-label" >@Html.DisplayNameFor(Model=>Model.TaskActive)</label>
+                <select id="Active" name="TaskActive" class="form-control">
+                    <option value="">---請選擇---</option>
+                    <option value="true">已啟用</option>
+                    <option value="false">未啟用</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">@Html.DisplayNameFor(Model=>Model.TReviewStatus)</label>
+                <select  class="form-control" id="reviewstatus" name="TReviewStatus">
+                    <option value="">---請選擇---</option>
+                    <option value="未通過">未通過</option>
+                    <option value="通過">通過</option>
+                    <option value="待複核">待複核</option>
+                </select>
+            </div>
+    <hr />
+            <p>
+        <a class="btn btn-info col-12" asp-action="Create">新增任務</a>
+    </p>
+        </form>
+    </div>
+    <div id="Tasklistarea" class=" col-12 col-md-9">
+        <table class="table">
+    <thead>
+                <tr>
+                    <td>@Html.DisplayNameFor(Model => Model.TaskName)</td>
+                    <td>@Html.DisplayNameFor(Model => Model.Reward)</td>
+                    <td>@Html.DisplayNameFor(Model => Model.TaskActive)</td>
+                    <td>@Html.DisplayNameFor(Model => Model.TReviewStatus)</td>
+                    <td>操作介面</td>
+                </tr>
+    </thead>
+    <tbody class="list">
+
+    </tbody>
+        </table>
+</div>
+</div>
+    </div>
+@section Scripts{
+        <script>
+            $(document).ready(function () {
+                $.ajax({
+                    url: "/TaskManagement/DailyTasks/IndexJson",  //取要請求的資料
+                    type: 'GET',
+                    dataType: 'json',
+                    success:
+                    function (data) {
+                        if (Array.isArray(data)) {
+                            $('table tbody').html(
+                                data.map(task => `
+                                            <tr>
+                                                <td>${task.taskName}</td>
+                                                <td>${task.reward}</td>
+                                                <td>${task.taskActive === null ? "未知狀態" : (task.taskActive== true?"已啟用":"未啟用")}</td>
+                                                <td>${task.tReviewStatus}</td>
+                                                <td><a class="btn btn-info" href="/TaskManagement/DailyTasks/Edit/${task.taskId}" asp-route-id=${task.taskId}>編輯</a></td>
+
+                                            </tr>
+                                        `).join('')
+                            );
+                        } else {
+                            console.error('Expected an array of tasks.');
+                        }
+                    },
+                });
+            });
+            $('input').on('keyup', function () {
+                $.ajax({
+                    type:'POST',
+                    url: "/TaskManagement/DailyTasks/TaskSearch",
+                    data: $('#Searchform').serialize(),
+                }).done(data => { $('.list').html(data); });
+            })
+            $('#Active').on('change', function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: "/TaskManagement/DailyTasks/TaskSearch",
+                        data: $('#Searchform').serialize(),
+                    }).done(data => { $('.list').html(data); });
+                
+            })
+            $('#reviewstatus').on('change', function () {
+                const reviewStatusValue = $('#reviewstatus').val();
+                    $.ajax({
+                        type: 'POST',
+                        url: "/TaskManagement/DailyTasks/TaskSearch",
+                        data: $('#Searchform').serialize(),
+                    }).done(data => { $('.list').html(data); });
+                
+            })
+        </script>
+}

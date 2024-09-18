@@ -1,0 +1,38 @@
+﻿@model IEnumerable<_SearchViewModel>
+@* 因為要使用在viewmodel的設定，所以這張文件所參考的屬性是_SearchViewModel，而不是原始的Model，這樣才可以引用viewmodel的東西
+ *@
+
+<table class="table ">
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                @Html.DisplayFor(modelItem => item.TaskName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reward)
+            </td>
+            <td>
+
+               @Html.DisplayFor(modelItem => item.TaskActiveDisplay)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TReviewStatus)
+            </td>
+            <td>
+            <a class="btn btn-info" asp-action="Edit" asp-route-id=@item.TaskId>編輯</a>
+            </td>
+        </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="5">No tasks found.</td></tr>
+        }
+    </tbody>
+</table>
+
+

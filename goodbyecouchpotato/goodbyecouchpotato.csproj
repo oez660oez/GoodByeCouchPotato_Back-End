@@ -200,6 +200,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
@@ -224,7 +225,6 @@
     <Folder Include="Areas\ReviewManagement\Controllers\" />
     <Folder Include="Areas\ReviewManagement\Data\" />
     <Folder Include="Areas\ReviewManagement\Models\" />
-    <Folder Include="Areas\TaskManagement\Controllers\" />
     <Folder Include="Areas\TaskManagement\Data\" />
     <Folder Include="Areas\TaskManagement\Models\" />
   </ItemGroup>

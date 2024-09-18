@@ -7,6 +7,10 @@
       "destination": "wwwroot/lib/font-awesome/"
     },
     {
+      "library": "datatables@1.10.21",
+      "destination": "wwwroot/lib/datatables/"
+    },
+    {
       "library": "jquery@3.7.1",
       "destination": "wwwroot/lib/jquery/"
     }

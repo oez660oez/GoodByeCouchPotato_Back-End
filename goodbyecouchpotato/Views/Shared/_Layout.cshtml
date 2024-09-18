@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - goodbyecouchpotato</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@* 	<link rel="stylesheet" href="~/lib/gentelella-master/vendors/bootstrap/dist/css/bootstrap.min.css" /> *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/goodbyecouchpotato.styles.css" asp-append-version="true" />
    <!-- Font Awesome -->
@@ -14,8 +15,8 @@
 	<link href="~/lib/gentelella-master/vendors/nprogress/nprogress.css" rel="stylesheet">
 	<!-- iCheck -->
 	<link href="~/lib/gentelella-master/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-	<!-- bootstrap-wysiwyg，用來設置可供留言版面的地方，因為不是每一個view都要用，所以先註解起來不使用 -->
-@* 	<link href="~/lib/gentelella-master/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet"> *@ 
+	<!-- bootstrap-wysiwyg -->
+	<link href="~/lib/gentelella-master/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet"> 
 	<!-- Select2 -->
 	<link href="~/lib/gentelella-master/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
 	<!-- Switchery -->
@@ -27,6 +28,7 @@
 
 	<!-- Custom Theme Style -->
 	<link href="~/lib/gentelella-master/build/css/custom.min.css" rel="stylesheet">
+	@await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="nav-md">
 	<div class="container body">
@@ -69,9 +71,9 @@
 									</ul>
 								</li>
 								<li>
-									<a><i class="fa fa-solid fa-list-check"></i>每日任務管理 <span class="fa fa-chevron-down"></span></a>
+									<a ><i class="fa fa-solid fa-list-check"></i>每日任務管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a asp-area="TaskManagement" asp-controller="" asp-action="">任務列表</a></li>
+										<li><a asp-area="TaskManagement" asp-controller="DailyTasks" asp-action="Index">任務列表</a></li>
 									</ul>
 								</li>
 								<li>
@@ -177,11 +179,11 @@
 	</div>
 	@* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>  *@
 	<script src="~/js/site.js" asp-append-version="true"></script>
-		<!-- jQuery -->
-	@* 這是2.2.3版*@
-	<script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script>
+	<!-- jQuery -->
+	@* 換成新版本，這是2.2.3版<script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script>  *@
 	@* 	這是3.6版，程式預設的<script src="~/lib/jquery/dist/jquery.min.js"></script> *@
-@* 	@*這是最新的3.7.1版 *@ @*  <script src="~/jquery/jquery.min.js"></script> *@
+    @*這是最新的3.7.1版 *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
  <!-- Bootstrap -->
 	<script src="~/lib/gentelella-master/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<!-- FastClick -->
@@ -195,10 +197,10 @@
 	<!-- bootstrap-daterangepicker -->
 	<script src="~/lib/gentelella-master/vendors/moment/min/moment.min.js"></script>
 	<script src="~/lib/gentelella-master/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-	<!-- bootstrap-wysiwyg，用來設置可供留言版面的地方，因為不是每一個view都要用，所以先註解起來不使用 -->
-@* 	<script src="~/lib/gentelella-master/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
+	<!-- bootstrap-wysiwyg -->
+	<script src="~/lib/gentelella-master/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
 	<script src="~/lib/gentelella-master/vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
-	<script src="~/lib/gentelella-master/vendors/google-code-prettify/src/prettify.js"></script> *@
+	<script src="~/lib/gentelella-master/vendors/google-code-prettify/src/prettify.js"></script>
 	<!-- jQuery Tags Input -->
 	<script src="~/lib/gentelella-master/vendors/jquery.tagsinput/src/jquery.tagsinput.js"></script>
 	<!-- Switchery -->
