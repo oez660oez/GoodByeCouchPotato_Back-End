@@ -4,8 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>尚未處理之意見</h1>
-
+<h1>客服管理</h1>
+<h5>已回覆</h5>
+<form asp-controller="Option" asp-action="Index2" method="get" style="text-align: center">
+    <input type="search" id="search" name="search" placeholder="請輸入欲搜尋之信箱或日期(MM-dd)" style="height:35px;width:250px" value="@ViewData["inputword"]" autocomplete="off" />
+    <button type="submit" class="btn btn-info">搜尋</button>
+</form>
+<hr />
 <table class="table" style="width:600px ;margin-left: auto; margin-right: auto;">
     <thead style="font-size:20px ; text-align: center;">
         <tr>
@@ -23,10 +28,10 @@
             </th>
             @*  <th>
             @Html.DisplayNameFor(model => model.ProActive)
-            </th>
+            </th> *@
             <th>
             @Html.DisplayNameFor(model => model.ProDate)
-            </th> *@
+            </th> 
             <th>
                 處理
             </th>
@@ -43,27 +48,16 @@
                 <td class="ml-2" style=" vertical-align: middle;">
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
-                @* <td>
-            @Html.DisplayFor(modelItem => item.Content)
-            </td> *@
                 <td style="text-align: center; vertical-align: middle;">
                     @Html.DisplayFor(modelItem => item.Submitted)
                 </td>
-                @* <td>
-            @Html.DisplayFor(modelItem => item.ProActive)
-            </td>
-            <td>
-            @Html.DisplayFor(modelItem => item.ProDate)
-            </td> *@
+                <td style="text-align: center; vertical-align: middle;">
+                    @Html.DisplayFor(modelItem => item.ProDate)
+                </td>
+                
+                
                 <td>
-
                     <button style="display: block; margin: 0 auto;" class="btn btn-info"> <a asp-action="Details" asp-route-id="@item.FeedbackNo" style="color:black;font:bold "> 回覆</a>  </button>
-
-
-
-
-                    @* <a asp-action="Details" asp-route-id="@item.FeedbackNo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FeedbackNo">Delete</a> *@
                 </td>
             </tr>
         }
