@@ -218,7 +218,6 @@
     <Folder Include="Areas\OpinionManagement\Controllers\" />
     <Folder Include="Areas\OpinionManagement\Data\" />
     <Folder Include="Areas\OpinionManagement\Models\" />
-    <Folder Include="Areas\ProductManagement\Controllers\" />
     <Folder Include="Areas\ProductManagement\Data\" />
     <Folder Include="Areas\ProductManagement\Models\" />
     <Folder Include="Areas\ReviewManagement\Controllers\" />

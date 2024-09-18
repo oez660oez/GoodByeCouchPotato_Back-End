@@ -27,6 +27,10 @@
 
 	<!-- Custom Theme Style -->
 	<link href="~/lib/gentelella-master/build/css/custom.min.css" rel="stylesheet">
+
+	<!-- ProductManagment Style -->
+	@await RenderSectionAsync("AccessoriesListsStyles", required: false)
+
 </head>
 <body class="nav-md">
 	<div class="container body">
@@ -77,8 +81,8 @@
 								<li>
 									<a><i class="fa fa-solid fa-cart-shopping"></i>商品管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a asp-area="ProductManagement" asp-controller="" asp-action="">商品列表</a></li>
-										<li><a asp-area="ProductManagement" asp-controller="" asp-action="">新增商品</a></li>
+										<li><a asp-area="ProductManagement" asp-controller="AccessoriesLists" asp-action="Index">商品列表</a></li>
+										<li><a asp-area="ProductManagement" asp-controller="AccessoriesLists" asp-action="Create">新增商品</a></li>
 									</ul>
 								</li>
 								<li>
@@ -178,10 +182,11 @@
 	@* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>  *@
 	<script src="~/js/site.js" asp-append-version="true"></script>
 		<!-- jQuery -->
-	@* 這是2.2.3版*@
-	<script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script>
+	@* 這是2.2.3版	<script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script>
+*@
 	@* 	這是3.6版，程式預設的<script src="~/lib/jquery/dist/jquery.min.js"></script> *@
 @* 	@*這是最新的3.7.1版 *@ @*  <script src="~/jquery/jquery.min.js"></script> *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
  <!-- Bootstrap -->
 	<script src="~/lib/gentelella-master/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<!-- FastClick -->

@@ -1,0 +1,83 @@
+﻿@model goodbyecouchpotato.Models.AccessoriesList
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>AccessoriesList</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-area="ProductManagement" asp-controller="AccessoriesLists" asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PCode" class="control-label"></label>
+                <input asp-for="PCode" class="form-control" />
+                <span asp-validation-for="PCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PClass" class="control-label"></label>
+                <select asp-for="PClass" class="form-control form-select" aria-label="Default select example">
+                    <option selected>請選擇商品類別</option>
+                    <option value="1">頭髮</option>
+                    <option value="2">眼睛</option>
+                    <option value="3">衣服</option>
+                    <option value="4">家具</option>
+                </select>
+                <span asp-validation-for="PClass" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PName" class="control-label"></label>
+                <input asp-for="PName" class="form-control" />
+                <span asp-validation-for="PName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PPrice" class="control-label"></label>
+                <input asp-for="PPrice" class="form-control" />
+                <span asp-validation-for="PPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PImageShop" class="control-label"></label>
+                <img id="imgpreview1"
+                     src="@Url.Content("~/images/NoImage.png")"
+                     style="width:320px;height:240px" title="none" />
+                <input  asp-for="PImageShop" type="file" accept="image/*" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="PImageAll" class="control-label"></label>
+                <img id="imgpreview2"
+                     src="@Url.Content("~/images/NoImage.png")"
+                     style="width:320px;height:240px" title="none" />
+                <input asp-for="PImageAll" type="file" accept="image/*" class="form-control" />
+            </div>
+            <input asp-for="PActive" type="hidden" class="form-control" />
+            <input asp-for="PLevel" type="hidden" class="form-control" />
+            <input asp-for="PReviewStatus" type="hidden" class="form-control" />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // 圖片預覽
+        $("#PImageShop").on("change", function () {
+            previewImage(this, $("#imgpreview1"));
+        });
+
+        // 圖片預覽
+        $("#PImageAll").on("change", function () {
+            previewImage(this, $("#imgpreview2"));
+        });
+    </script>
+}

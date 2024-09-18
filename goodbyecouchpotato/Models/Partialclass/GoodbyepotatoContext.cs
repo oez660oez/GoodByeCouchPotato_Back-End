@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace 再見_沙發Potato.Models;
+namespace goodbyecouchpotato.Models;
 
 public partial class GoodbyepotatoContext : DbContext
 {

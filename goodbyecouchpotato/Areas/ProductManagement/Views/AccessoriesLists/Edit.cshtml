@@ -1,0 +1,109 @@
+﻿@model goodbyecouchpotato.Models.AccessoriesList
+
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>AccessoriesList</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-area="ProductManagement" asp-controller="AccessoriesLists" asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PCode" class="control-label"></label>
+                <input asp-for="PCode" class="form-control" />
+                <span asp-validation-for="PCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PClass" class="control-label"></label>
+                <input asp-for="PClass" class="form-control" />
+                <span asp-validation-for="PClass" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PName" class="control-label"></label>
+                <input asp-for="PName" class="form-control" />
+                <span asp-validation-for="PName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PPrice" class="control-label"></label>
+                <input asp-for="PPrice" class="form-control" />
+                <span asp-validation-for="PPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PImageShop" class="control-label"></label>
+                <partial name="_ShowPhotoPartial" />
+                <input asp-for="PImageShop" id="PImageShop" type="file" accept="image/*" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="PImageAll" class="control-label"></label>
+                <partial name="_ShowAllPhotoPartial" />
+                <input asp-for="PImageAll" type="file" accept="image/*" class="form-control" />
+            </div>
+                <input asp-for="PActive" type="hidden" class="form-control" />
+                <input asp-for="PLevel" type="hidden" class="form-control" />
+                <input asp-for="PReviewStatus" type="hidden" class="form-control" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                @if (!Model.PActive)
+                {
+                    <button type="button" class="btn btn-warning disabled" id="deactivateBtn">下架商品</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-warning" id="deactivateBtn" as">下架商品</button>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--顯示圖片的區域 -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img id="modalImage" src="" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        //點擊後顯示圖片
+        function viewImage(imageElement) {
+            var imageSrc = $(imageElement).attr('src');
+            $('#modalImage').attr('src', imageSrc);
+            $('#imageModal').modal('show');
+        }
+
+        // 圖片預覽
+        $("#PImageShop").on("change", function () {
+            previewImage(this, $("#PImageShop").prev());
+        });
+
+        // 圖片預覽
+        $("#PImageAll").on("change", function () {
+            previewImage(this, $("#PImageAll").prev());
+        });
+
+        //下架
+        $("#deactivateBtn").on("click", function () {
+            if (confirm("確定要下架該商品嗎？")) {
+                // 設置 PActive 為 false
+                $("input[name='PActive']").val(false);
+
+                // 提交表單
+                $("form").submit();
+            }
+        });</script>
+}

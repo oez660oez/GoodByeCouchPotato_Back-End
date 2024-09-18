@@ -1,0 +1,77 @@
+﻿@model IEnumerable<goodbyecouchpotato.Models.AccessoriesList>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PClass)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PImageShop)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PImageAll)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PReviewStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PClass)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PImageShop)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PImageAll)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PReviewStatus)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PCode">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PCode">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PCode">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
