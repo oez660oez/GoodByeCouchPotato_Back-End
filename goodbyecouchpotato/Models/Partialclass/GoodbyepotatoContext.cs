@@ -12,7 +12,7 @@ public partial class GoodbyepotatoContext : DbContext
 				.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
 				.AddJsonFile("appsettings.json").Build();
 
-			optionsBuilder.UseSqlServer(Config.GetConnectionString("goodbyepotato"));
+			optionsBuilder.UseLazyLoadingProxies().UseSqlServer(Config.GetConnectionString("goodbyepotato"));
 		}
 	}
 }
