@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - goodbyecouchpotato</title>
+	@* 嘗試解決未渲染的問題 *@
+	@await RenderSectionAsync("Styles", required: false)
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/goodbyecouchpotato.styles.css" asp-append-version="true" />
@@ -84,7 +86,7 @@
 								<li>
 									<a><i class="fa fas fa-user-alt"></i>會員管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a asp-area="MemberManagement" asp-controller="" asp-action="">Chart JS</a></li>
+										<li><a asp-area="MemberManagement" asp-controller="Member" asp-action="Index">會員搜尋</a></li>
 
 									</ul>
 								</li>
@@ -179,8 +181,9 @@
 	<script src="~/js/site.js" asp-append-version="true"></script>
 		<!-- jQuery -->
 	@* 這是2.2.3版*@
-	<script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script>
-	@* 	這是3.6版，程式預設的<script src="~/lib/jquery/dist/jquery.min.js"></script> *@
+	@* <script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script> *@
+	@* 	這是3.6版，程式預設的*@
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 @* 	@*這是最新的3.7.1版 *@ @*  <script src="~/jquery/jquery.min.js"></script> *@
  <!-- Bootstrap -->
 	<script src="~/lib/gentelella-master/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
