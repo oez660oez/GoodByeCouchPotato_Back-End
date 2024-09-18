@@ -1,0 +1,48 @@
+﻿@model goodbyecouchpotato.Areas.OpinionManagement.viewmodel.Optionviewmodel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>詳情</h1>
+
+
+<hr />
+
+<div class="row" style="display:flex;justify-content: center; ">
+    <div class="col-md-6">
+        <div>
+            <button class="btn btn-info"> <a asp-action="Index" style="color:black;font:bold "> 返回列表</a>  </button>
+
+        </div>
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FeedbackNo" readonly />
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control " style="background-color:aliceblue" disabled readonly />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea asp-for="Content" rows="6" cols="20" class="form-control" style="background-color:aliceblue;resize:none;" disabled readonly></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Submitted" class="control-label"></label>
+                <input value="@Html.DisplayFor(model => model.Submitted)" class="form-control" style="background-color:aliceblue;resize:none;" disabled readonly />
+                <span asp-validation-for="Submitted" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="Pro_Content" class="control-label"></label>
+                <textarea asp-for="Pro_Content" rows="6" cols="20" class="form-control" style="background-color:aliceblue;resize:none;" disabled readonly></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="text-align: right">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

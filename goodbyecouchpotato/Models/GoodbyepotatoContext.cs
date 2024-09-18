@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using goodbyecouchpotato.Areas.ReviewManagement.viewmodel;
+using goodbyecouchpotato.Areas.OpinionManagement.viewmodel;
 
 namespace goodbyecouchpotato.Models;
 
@@ -258,4 +260,10 @@ public partial class GoodbyepotatoContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+public DbSet<goodbyecouchpotato.Areas.ReviewManagement.viewmodel.TASKReviewviewmodel> TASKReviewviewmodel { get; set; } = default!;
+
+public DbSet<goodbyecouchpotato.Areas.ReviewManagement.viewmodel.ProductReviewviewmodel> ProductReviewviewmodel { get; set; } = default!;
+
+public DbSet<goodbyecouchpotato.Areas.OpinionManagement.viewmodel.Optionviewmodel> Optionviewmodel { get; set; } = default!;
 }

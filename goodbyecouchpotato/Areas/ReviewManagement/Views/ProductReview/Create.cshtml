@@ -1,0 +1,60 @@
+﻿@model goodbyecouchpotato.Areas.ReviewManagement.viewmodel.ProductReviewviewmodel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ProductReviewviewmodel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PClass" class="control-label"></label>
+                <input asp-for="PClass" class="form-control" />
+                <span asp-validation-for="PClass" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PName" class="control-label"></label>
+                <input asp-for="PName" class="form-control" />
+                <span asp-validation-for="PName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PPrice" class="control-label"></label>
+                <input asp-for="PPrice" class="form-control" />
+                <span asp-validation-for="PPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PLevel" class="control-label"></label>
+                <input asp-for="PLevel" class="form-control" />
+                <span asp-validation-for="PLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PImageShop" class="control-label"></label>
+                <input asp-for="PImageShop" class="form-control" />
+                <span asp-validation-for="PImageShop" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PImageAll" class="control-label"></label>
+                <input asp-for="PImageAll" class="form-control" />
+                <span asp-validation-for="PImageAll" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PActive" /> @Html.DisplayNameFor(model => model.PActive)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
