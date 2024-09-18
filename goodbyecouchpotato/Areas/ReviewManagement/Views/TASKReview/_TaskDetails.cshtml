@@ -1,0 +1,19 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model goodbyecouchpotato.Areas.ReviewManagement.viewmodel.TASKReviewviewmodel
+<dl class="row">
+    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TaskID)</dt>
+    <dd class="col-sm-8">@Html.DisplayFor(model => model.TaskID)</dd>
+
+    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.TaskName)</dt>
+    <dd class="col-sm-8">@Html.DisplayFor(model => model.TaskName)</dd>
+
+    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Reward)</dt>
+    <dd class="col-sm-8">@Html.DisplayFor(model => model.Reward)</dd>
+
+    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ActiveStatus)</dt>
+    <dd class="col-sm-8">@Html.DisplayFor(model => model.ActiveStatus)</dd>
+</dl>

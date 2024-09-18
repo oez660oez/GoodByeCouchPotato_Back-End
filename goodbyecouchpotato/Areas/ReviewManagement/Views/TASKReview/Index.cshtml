@@ -1,0 +1,166 @@
+﻿@model IEnumerable<goodbyecouchpotato.Areas.ReviewManagement.viewmodel.TASKReviewviewmodel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>任務覆核</h1>
+@if (!Model.Any())
+{
+        <p>目前無待覆核項目</p>
+}
+else{
+
+<table class="table" style="width:600px ;margin-left: auto; margin-right: auto;">
+    <thead style="font-size:20px ; text-align: center;">
+        <tr>
+            <th >
+                @Html.DisplayNameFor(model => model.TaskID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskName)
+            </th>
+            <th>
+                處理
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Reward)
+            </th> *@
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody style="font-size:16px">
+@foreach (var item in Model) {
+        <tr>
+           <td style="text-align: center; vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.TaskID)
+            </td>
+            <td style=" vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.TaskName)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Reward)
+            </td> *@
+            
+            <td>
+              <!-- Button trigger modal -->
+                        <button type="button" style="display: block; margin: 0 auto;" class="btn btn-info review-btn" data-task-id="@item.TaskID">
+                            覆核
+                        </button>
+                
+            </td>
+        </tr> }
+          
+    </tbody>     
+    </table>
+    <!-- Modal -->
+    <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top: 200px ;font-size:20px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskModalLabel">任務詳細</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Task details will be loaded here -->
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-success" id="approveBtn">通過</button>
+                    <button type="button" class="btn btn-danger" id="rejectBtn">拒絕</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top: 200px ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">通知</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="successMessage">
+                    <!-- 動態訊息將會顯示在這裡 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="confirmSuccessBtn" class="btn btn-primary">確認</button> <!-- 確認按鈕 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $('.review-btn').click(function () {
+                var taskId = $(this).data('task-id');
+                $.get('@Url.Action("GetTaskDetails", "TASKReview")', { id: taskId })
+                    .done(function (data) {
+                        $('#taskModal .modal-body').html(data);
+                        $('#taskModal').modal('show');
+                        // Store the taskId for later use
+                        $('#taskModal').data('task-id', taskId);
+                    })
+                    .fail(function (xhr, status, error) {
+                        console.error("Error fetching task details:", error);
+                        alert("無法獲取任務詳情，請稍後再試。");
+                    });
+            });
+
+
+            $('#approveBtn').click(function () {
+                var taskId = $('#taskModal').data('task-id');
+                $.post('@Url.Action("ApproveTask", "TASKReview")', { id: taskId })
+                    .done(function (response) {
+                        if (response.success) {
+                            $('#successMessage').text(response.message);  // 顯示成功訊息
+                            $('#successModal').modal('show');  // 顯示成功模態框
+                        } else {
+                            $('#successMessage').text("拒絕任務失敗: " + response.message);
+                            $('#successModal').modal('show');
+                        }
+                    })
+                    .fail(function (xhr, status, error) {
+                        console.error("Error rejecting task:", error);
+                        $('#successMessage').text("拒絕任務失敗，請稍後再試。");
+                        $('#successModal').modal('show');
+                    });
+            });
+
+            $('#rejectBtn').click(function () {
+                var taskId = $('#taskModal').data('task-id');
+                $.post('@Url.Action("RejectTask", "TASKReview")', { id: taskId })
+                    .done(function (response) {
+                        if (response.success) {
+                            $('#successMessage').text(response.message);  // 顯示成功訊息
+                            $('#successModal').modal('show');  // 顯示成功模態框
+                        } else {
+                            $('#successMessage').text("拒絕任務失敗: " + response.message);
+                            $('#successModal').modal('show');
+                        }
+                    })
+                    .fail(function (xhr, status, error) {
+                        console.error("Error rejecting task:", error);
+                        $('#successMessage').text("拒絕任務失敗，請稍後再試。");
+                        $('#successModal').modal('show');
+                    });
+            });
+
+            $('#confirmSuccessBtn').click(function () {
+                $('#successModal').modal('hide');  // 關閉成功模態框
+                $('#taskModal').modal('hide');  // 關閉任務詳細模態框
+                location.reload();  // 刷新頁面
+            })
+
+            
+           
+
+        });
+    </script>
+    }}

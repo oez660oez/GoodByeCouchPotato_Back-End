@@ -1,0 +1,60 @@
+﻿@model goodbyecouchpotato.Areas.ReviewManagement.viewmodel.ProductReviewviewmodel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ProductReviewviewmodel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PClass)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PClass)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PPrice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PPrice)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PLevel)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PLevel)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PImageShop)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PImageShop)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PImageAll)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PImageAll)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PActive)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PActive)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.PCode">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

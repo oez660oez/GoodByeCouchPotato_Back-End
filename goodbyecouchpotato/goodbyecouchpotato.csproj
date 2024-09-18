@@ -216,12 +216,10 @@
     <Folder Include="Areas\MemberManagement\Controllers\" />
     <Folder Include="Areas\MemberManagement\Data\" />
     <Folder Include="Areas\MemberManagement\Models\" />
-    <Folder Include="Areas\OpinionManagement\Controllers\" />
     <Folder Include="Areas\OpinionManagement\Data\" />
     <Folder Include="Areas\OpinionManagement\Models\" />
     <Folder Include="Areas\ProductManagement\Data\" />
     <Folder Include="Areas\ProductManagement\Models\" />
-    <Folder Include="Areas\ReviewManagement\Controllers\" />
     <Folder Include="Areas\ReviewManagement\Data\" />
     <Folder Include="Areas\ReviewManagement\Models\" />
     <Folder Include="Areas\TaskManagement\Data\" />

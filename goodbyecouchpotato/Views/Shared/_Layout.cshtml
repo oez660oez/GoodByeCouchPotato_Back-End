@@ -93,15 +93,15 @@
 								<li>
 									<a><i class="fa fa-comment"></i>客服管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a asp-area="OpinionManagement" asp-controller="" asp-action="">預留空間</a></li>
-										<li><a asp-area="OpinionManagement" asp-controller="" asp-action="">預留空間</a></li>
+										<li><a asp-area="OpinionManagement" asp-controller="Option" asp-action="Index">未處理</a></li>
+										<li><a asp-area="OpinionManagement" asp-controller="Option" asp-action="Index2">處理完成</a></li>
 									</ul>
 								</li>
 								<li>
 									<a><i class="fa fa-edit"></i>覆核管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a asp-area="ReviewManagement" asp-controller="" asp-action="">預留空間</a></li>
-										<li><a asp-area="ReviewManagement" asp-controller="" asp-action="">預留空間</a></li>
+										<li><a asp-area="ReviewManagement" asp-controller="TASKReview" asp-action="Index">任務覆核</a></li>
+										<li><a asp-area="ReviewManagement" asp-controller="ProductReview" asp-action="Index">商品覆核</a></li>
 									</ul>
 								</li>
 								<li>
@@ -179,11 +179,11 @@
 	</div>
 	@* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>  *@
 	<script src="~/js/site.js" asp-append-version="true"></script>
-		<!-- jQuery -->
-	@* 這是2.2.3版*@
-	<script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script>
-	@* 	這是3.6版，程式預設的<script src="~/lib/jquery/dist/jquery.min.js"></script> *@
-@* 	@*這是最新的3.7.1版 *@ @*  <script src="~/jquery/jquery.min.js"></script> *@
+	<!-- jQuery -->
+	@* 換成新版本，這是2.2.3版<script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script>  *@
+	@*  這是3.6版，程式預設的<script src="~/lib/jquery/dist/jquery.min.js"></script> *@
+	@*這是最新的3.7.1版 *@
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
  <!-- Bootstrap -->
 	<script src="~/lib/gentelella-master/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<!-- FastClick -->
