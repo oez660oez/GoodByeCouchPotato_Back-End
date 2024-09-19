@@ -60,31 +60,32 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
                           }}";
 
             // 設置折線圖數據
+            // areaStyle開啟面積填充與自訂顏色
+            // itemStyle自訂折線顏色
             var characterOptions = $@"{{
-    xAxis: {{
-        type: 'category',
-        boundaryGap: false,
-        data: {JsonSerializer.Serialize(characterData.Select(c => c.Date.HasValue ? c.Date.Value.ToShortDateString() : "Unknown"))}
-    }},
-    yAxis: {{
-        type: 'value'
-    }},
-    series: [{{
-        data: {JsonSerializer.Serialize(characterData.Select(c => c.Count))},
-        type: 'line',
-        areaStyle: {{}}, // 开启面积填充效果
-        itemStyle: {{
-            color: '#ff7f50' // 自定义折线颜色
-        }},
-        lineStyle: {{
-            color: '#ff7f50' // 自定义折线颜色
-        }},
-        areaStyle: {{
-            color: 'rgba(255,127,80, 0.5)' // 自定义面积填充的颜色 (橙色，透明度0.5)
-        }}
-    }}]
-}}";
-
+                                    xAxis: {{
+                                        type: 'category',
+                                        boundaryGap: false,
+                                        data: {JsonSerializer.Serialize(characterData.Select(c => c.Date.HasValue ? c.Date.Value.ToShortDateString() : "Unknown"))}
+                                    }},
+                                    yAxis: {{
+                                        type: 'value'
+                                    }},
+                                    series: [{{
+                                        data: {JsonSerializer.Serialize(characterData.Select(c => c.Count))},
+                                        type: 'line',
+                                        areaStyle: {{}},
+                                        itemStyle: {{
+                                            color: '#ff7f50'
+                                        }},
+                                        lineStyle: {{
+                                            color: '#ff7f50'
+                                        }},
+                                        areaStyle: {{
+                                            color: 'rgba(255,127,80, 0.5)'
+                                        }}
+                                    }}]
+                                }}";
 
             ViewBag.PlayerOptions = playerOptions;
             ViewBag.CharacterOptions = characterOptions;
