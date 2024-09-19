@@ -8,7 +8,7 @@ namespace goodbyecouchpotato.Models
         public string account { get; set; } = null!;
         public string email { get; set; } = null!;
         public string? password { get; set; }
-        public string? playerstatus { get; set; }
-        public string? coin { get; set; }
+        public bool? playerstatus { get; set; }
+        public int? coins { get; set; }
     }
 }
