@@ -194,6 +194,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("FeedbackNo,Email,Content,Submitted,ProActive,ProDate,Pro_Content")] Optionviewmodel optionviewmodel)
         {
+            
             if (id != optionviewmodel.FeedbackNo)
             {
                 return NotFound();
@@ -227,7 +228,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
 
                     // 發送回覆郵件給反饋者
                     string subject = "回覆您的意見回饋";
-                    string message = $"親愛的用戶，\n\n謝謝您的意見回饋。我們的回覆如下：\n\n{optionviewmodel.Pro_Content}\n\n敬祝順利，\nbyepotato團隊";
+                    string message = $"<p>親愛的用戶：</p><p>謝謝您的意見回饋：</p><p>{optionviewmodel.Content}。</p><p>我們的回覆如下：</p><p>{optionviewmodel.Pro_Content}</p><p>敬祝順利</p><p>byepotato團隊</p>";
 
                     await _mailService.SendEmailAsync(optionviewmodel.Email, subject, message);
 

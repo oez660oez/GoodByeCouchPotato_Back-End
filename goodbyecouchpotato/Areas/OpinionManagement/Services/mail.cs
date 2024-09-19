@@ -1,11 +1,11 @@
-﻿using System.Net;
-using System.Net.Mail;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 public class MailService
 {
     private readonly IConfiguration _configuration;
+    
 
     public MailService(IConfiguration configuration)
     {
@@ -14,27 +14,24 @@ public class MailService
 
     public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
-
-        var smtpClient = new SmtpClient(_configuration["EmailSettings:SmtpServer"])
+        try
         {
-            Port = int.Parse(_configuration["EmailSettings:SmtpPort"]),
-            Credentials = new NetworkCredential(_configuration["EmailSettings:Username"], _configuration["EmailSettings:Password"]),
-            EnableSsl = true,
-            DeliveryMethod = SmtpDeliveryMethod.Network,
-            UseDefaultCredentials = false
-        };
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse(_configuration["EmailSettings:SenderEmail"]));
+            email.To.Add(MailboxAddress.Parse(toEmail));
+            email.Subject = subject;
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
 
-        var mailMessage = new MailMessage
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(_configuration["EmailSettings:SmtpServer"],
+                int.Parse(_configuration["EmailSettings:SmtpPort"]), SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_configuration["EmailSettings:Username"], _configuration["EmailSettings:Password"]);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
+        }
+        catch (Exception ex)
         {
-            From = new MailAddress(_configuration["EmailSettings:SenderEmail"], _configuration["EmailSettings:SenderName"]),
-            Subject = subject,
-            Body = body,
-            IsBodyHtml = true,  // 可以發送 HTML 格式的郵件
-        };
-
-        mailMessage.To.Add(toEmail);
-
-        await smtpClient.SendMailAsync(mailMessage);
+            throw;
+        }
     }
 }
-
