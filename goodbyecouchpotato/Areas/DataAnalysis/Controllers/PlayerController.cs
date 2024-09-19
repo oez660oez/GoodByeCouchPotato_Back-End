@@ -19,7 +19,7 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 
         public async Task<IActionResult> ECharts()
         {
-            // 获取玩家 coins 的区间分布，比如 <1000, 1000-5000, >5000
+            // 獲取玩家 coins 的區間，比如 <50, 50-100, >100
             var coinGroups = await _context.Players
                 .GroupBy(p => new
                 {
@@ -33,8 +33,18 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
                 })
                 .ToListAsync();
 
-            // 设置 ECharts 配置
-            var options = $@"{{
+            // 獲取 Character 的 MoveInDate 和總人數數據
+            var characterData = await _context.Characters
+                .GroupBy(c => c.MoveInDate)
+                .Select(g => new
+                {
+                    Date = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            // 設置折線圖配置
+            var playerOptions = $@"{{
                                 xAxis: {{
                                     type: 'category',
                                     data: {JsonSerializer.Serialize(coinGroups.Select(g => g.Range))}
@@ -44,10 +54,40 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
                                 }},
                                 series: [{{
                                     data: {JsonSerializer.Serialize(coinGroups.Select(g => g.Count))},
-                                    type: 'bar'
+                                    type: 'bar',
+                                    name: 'Coin Distribution'
                                 }}]
                           }}";
-            ViewBag.Options = options;
+
+            // 設置折線圖數據
+            var characterOptions = $@"{{
+    xAxis: {{
+        type: 'category',
+        boundaryGap: false,
+        data: {JsonSerializer.Serialize(characterData.Select(c => c.Date.HasValue ? c.Date.Value.ToShortDateString() : "Unknown"))}
+    }},
+    yAxis: {{
+        type: 'value'
+    }},
+    series: [{{
+        data: {JsonSerializer.Serialize(characterData.Select(c => c.Count))},
+        type: 'line',
+        areaStyle: {{}}, // 开启面积填充效果
+        itemStyle: {{
+            color: '#ff7f50' // 自定义折线颜色
+        }},
+        lineStyle: {{
+            color: '#ff7f50' // 自定义折线颜色
+        }},
+        areaStyle: {{
+            color: 'rgba(255,127,80, 0.5)' // 自定义面积填充的颜色 (橙色，透明度0.5)
+        }}
+    }}]
+}}";
+
+
+            ViewBag.PlayerOptions = playerOptions;
+            ViewBag.CharacterOptions = characterOptions;
             return View();
         }
     }
