@@ -1,0 +1,93 @@
+﻿@section Styles
+{
+    <link href="~/lib/datatables/css/jquery.datatables.min.css" rel="stylesheet" />
+    <style></style>
+}
+
+
+<!--Html main-->
+<table class="table table-striped table-hover">
+    <thead class="table-primary">
+        <tr>
+            <th>名稱</th>
+            <th>類別</th>
+            <th>等級</th>
+            <!--<th>代號</th>-->
+            <!--<th>商品圖片</th>-->
+            <!--<th>其他視角圖片</th>-->
+            <th>編輯</th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts
+{
+    <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
+    <script src="//cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('table').dataTable({
+                ajax: {
+                    type: "GET",
+                    url: "/ProductManagement/AccessoriesLists/IndexJson",
+                    dataSrc: function (json) {
+                        return json;
+                    },
+                },
+                columns: [
+                    {
+                        "data": null,
+                        "render": function (data) {
+                            return `<a href="/ProductManagement/AccessoriesLists/Details/${data.pCode}" >${data.pName}</a>`;
+                        },
+                        "width": "10%"
+                    },
+                    { "data": "pClass", "width": "10%" },
+                    { "data": "pLevel", "width": "10%" },
+                    //商品名稱
+                    // 商品類別
+                    // { "data": "pPrice", "width": "10%" },商品價格
+                    // { "data": "pCode", "width": "10%" },商品代號
+                    // 先在wwwroot放圖片測試顯示功能正常--start
+                    // { "data": "pImageShop",商品圖片
+                    //     "render": function (data) {
+                    //         return `<img src="/images/${data}" style="width:300px;height:200px;" />`;
+                    //     },
+                    //     "width": "10%"
+                    // },
+                    // {
+                    //     "data": "pImageAll",其他視角圖片
+                    //     "render": function (data) {
+                    //         return `<img src="/images/${data}" style="width:300px;height:200px;" />`;
+                    //     },
+                    //     "width": "10%"
+                    // },
+                    //--end
+                    {
+                        "data": "pCode",//Edit
+                        "render": function (data) {
+                            return `<a href="/ProductManagement/AccessoriesLists/Edit/${data}" class="btn btn-sm btn-primary">Edit</a>`;
+                        },
+
+                        "width": "5%"
+                    },
+                    {
+                        "data": "pCode",//Create
+                        "render": function (data) {
+                            return `<a href="/ProductManagement/AccessoriesLists/Create" class="btn btn-sm btn-primary">Create</a>`;
+                        },
+
+                        "width": "5%"
+                    },
+
+                ],
+                fixedHeader: {},
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/2.1.6/i18n/zh-HANT.json'
+                },
+            });
+        });
+    </script>
+}

@@ -4,22 +4,20 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>新增商品</h1>
 
-<h4>AccessoriesList</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-area="ProductManagement" asp-controller="AccessoriesLists" asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="PCode" class="control-label"></label>
-                <input asp-for="PCode" class="form-control" />
+                <label asp-for="PCode" class="control-label">商品編號</label>
+                <input asp-for="PCode" class="form-control" readonly />
                 <span asp-validation-for="PCode" class="text-danger"></span>
             </div>
-
             <div class="form-group">
-                <label asp-for="PClass" class="control-label"></label>
+                <label asp-for="PClass" class="control-label">商品類別</label>
                 <select asp-for="PClass" class="form-control form-select" aria-label="Default select example">
                     <option selected>請選擇商品類別</option>
                     <option value="1">頭髮</option>
@@ -30,46 +28,78 @@
                 <span asp-validation-for="PClass" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PName" class="control-label"></label>
+                <label asp-for="PName" class="control-label">商品名稱</label>
                 <input asp-for="PName" class="form-control" />
                 <span asp-validation-for="PName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PPrice" class="control-label"></label>
-                <input asp-for="PPrice" class="form-control" />
+                <label asp-for="PPrice" class="control-label">商品價格</label>
+                <input asp-for="PPrice" class="form-control" min="0" />
                 <span asp-validation-for="PPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PImageShop" class="control-label"></label>
-                <img id="imgpreview1"
-                     src="@Url.Content("~/images/NoImage.png")"
-                     style="width:320px;height:240px" title="none" />
-                <input  asp-for="PImageShop" type="file" accept="image/*" class="form-control" />
+                <label asp-for="PLevel" class="control-label">等級</label>
+                <input asp-for="PLevel" class="form-control" min="0" />
+                <span asp-validation-for="PLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PImageAll" class="control-label"></label>
+                <div>
+                    <label asp-for="PImageShop" class="control-label">商品圖片</label>
+                </div>
+                <img id="imgpreview1"
+                     src="@Url.Content("~/images/NoImage.png")"
+                     style="width:320px;height:240px" title="none"
+                     onclick="viewImage(this)"/>
+                <input asp-for="PImageShop" type="file" accept="image/*" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div>
+                    <label asp-for="PImageAll" class="control-label">圖片清單</label>
+                </div>
                 <img id="imgpreview2"
                      src="@Url.Content("~/images/NoImage.png")"
-                     style="width:320px;height:240px" title="none" />
+                     style="width:320px;height:240px" title="none"
+                     onclick="viewImage(this)"/>
                 <input asp-for="PImageAll" type="file" accept="image/*" class="form-control" />
             </div>
             <input asp-for="PActive" type="hidden" class="form-control" />
-            <input asp-for="PLevel" type="hidden" class="form-control" />
             <input asp-for="PReviewStatus" type="hidden" class="form-control" />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="新增" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
+<!--https://bootstrap5.hexschool.com/docs/5.1/components/modal/#live-demo-->
+<!--顯示圖片的區域 --> 
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img id="modalImage" src="" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">返回商品列表</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
+
+                function viewImage(imageElement) {
+            var imageSrc = $(imageElement).attr('src');
+            $('#modalImage').attr('src', imageSrc);
+            $('#imageModal').modal('show');
+        }
+
         // 圖片預覽
         $("#PImageShop").on("change", function () {
             previewImage(this, $("#imgpreview1"));

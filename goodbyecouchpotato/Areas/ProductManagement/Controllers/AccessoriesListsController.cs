@@ -20,10 +20,10 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         }
 
         // GET: ProductManagement/AccessoriesLists
-        //public async Task<IActionResult> Index()
-        //{
-        //    return View(await _context.AccessoriesLists.ToListAsync());
-        //}
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.AccessoriesLists.ToListAsync());
+        }
 
         //Upload Image 
         private async Task ReadUploadImage(string Image, AccessoriesList accessoriesList)
@@ -60,10 +60,10 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         }
 
         //GET: AccessoriesLists/Index
-        public IActionResult Index()
-		{
-			return View();
-		}
+  //      public IActionResult Index()
+		//{
+		//	return View();
+		//}
 
 		//GET:AccessoriesLists/Json
 		public JsonResult IndexJson()
@@ -105,9 +105,6 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
             string ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "/images", c.PImageAll);
             return File(ImagePath, "image/png");
         }
-
-
-
 
         // GET: ProductManagement/AccessoriesLists/Details/5
         public async Task<IActionResult> Details(int? id)
