@@ -1,14 +1,14 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - goodbyecouchpotato</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-@* 	<link rel="stylesheet" href="~/lib/gentelella-master/vendors/bootstrap/dist/css/bootstrap.min.css" /> *@
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/goodbyecouchpotato.styles.css" asp-append-version="true" />
-   <!-- Font Awesome -->
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - goodbyecouchpotato</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	@* 	<link rel="stylesheet" href="~/lib/gentelella-master/vendors/bootstrap/dist/css/bootstrap.min.css" /> *@
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/goodbyecouchpotato.styles.css" asp-append-version="true" />
+	<!-- Font Awesome -->
 	@* 換成新版本，這是4.5.0<link href="~/lib/gentelella-master/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"> *@
 	<link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet">
 	<!-- NProgress -->
@@ -16,7 +16,7 @@
 	<!-- iCheck -->
 	<link href="~/lib/gentelella-master/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
 	<!-- bootstrap-wysiwyg -->
-	<link href="~/lib/gentelella-master/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet"> 
+	<link href="~/lib/gentelella-master/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet">
 	<!-- Select2 -->
 	<link href="~/lib/gentelella-master/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
 	<!-- Switchery -->
@@ -36,22 +36,16 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentelella Alela!</span></a>
+						<a href="index.html" class="site_title">
+							<img src="~/images/logo.png" class="img-fluid" alt="logo"
+								 width="50"
+								 height="auto" />
+							<span class="fs-5">再見！沙發Potato</span>
+						</a>
 					</div>
 
 					<div class="clearfix"></div>
 
-					<!-- menu profile quick info -->
-					<div class="profile clearfix">
-						<div class="profile_pic">
-							<img src="#" alt="..." class="img-circle profile_img">
-						</div>
-						<div class="profile_info">
-							<span>Welcome,</span>
-							<h2>John Doe</h2>
-						</div>
-					</div>
-					<!-- /menu profile quick info -->
 
 					<br />
 
@@ -71,7 +65,7 @@
 									</ul>
 								</li>
 								<li>
-									<a ><i class="fa fa-solid fa-list-check"></i>每日任務管理 <span class="fa fa-chevron-down"></span></a>
+									<a><i class="fa fa-solid fa-list-check"></i>每日任務管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li><a asp-area="TaskManagement" asp-controller="DailyTasks" asp-action="Index">任務列表</a></li>
 									</ul>
@@ -107,8 +101,8 @@
 								<li>
 									<a><i class="fa fa-solid fa-screwdriver-wrench"></i>權限管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a asp-area="AdministratorManagement" asp-controller="" asp-action="">預留空間</a></li>
-										<li><a asp-area="AdministratorManagement" asp-controller="" asp-action="">預留空間</a></li>
+										<li><a asp-area="Identity" asp-controller="Account" asp-action="Register">預留空間</a></li>
+										<li><a asp-area="" asp-controller="Admin" asp-action="Index">預留空間</a></li>
 									</ul>
 								</li>
 							</ul>
@@ -140,25 +134,19 @@
 						<a id="menu_toggle"><i class="fa fa-bars"></i></a>
 					</div>
 					<nav class="nav navbar-nav">
-						<ul class=" navbar-right">
+						<ul class="navbar-right">
 							<li class="nav-item dropdown open" style="padding-left: 15px;">
 								<a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-									<img src="#" alt="">Bear
+									<span>@User.Identity.Name</span>
 								</a>
 								<div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
-									<a class="dropdown-item" href="javascript:;"> Profile</a>
-									<a class="dropdown-item" href="javascript:;">
-										<span class="badge bg-red pull-right">50%</span>
-										<span>Settings</span>
-									</a>
-									<a class="dropdown-item" href="javascript:;">Help</a>
-									<a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login">
+									<a class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout">
 										<i class="fa fa-sign-out pull-right"></i> Log Out
 									</a>
 								</div>
 							</li>
-
 						</ul>
+
 					</nav>
 				</div>
 			</div>
@@ -181,13 +169,13 @@
 	</div>
 	@* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>  *@
 	<script src="~/js/site.js" asp-append-version="true"></script>
-		<!-- jQuery -->
+	<!-- jQuery -->
 	@* 這是2.2.3版*@
 	@* <script src="~/lib/gentelella-master/vendors/jquery/dist/jquery.min.js"></script> *@
 	@* 	這是3.6版，程式預設的*@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-@* 	@*這是最新的3.7.1版 *@ @*  <script src="~/jquery/jquery.min.js"></script> *@
- <!-- Bootstrap -->
+	@* 	@*這是最新的3.7.1版 *@ @*  <script src="~/jquery/jquery.min.js"></script> *@
+	<!-- Bootstrap -->
 	<script src="~/lib/gentelella-master/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<!-- FastClick -->
 	<script src="~/lib/gentelella-master/vendors/fastclick/lib/fastclick.js"></script>
