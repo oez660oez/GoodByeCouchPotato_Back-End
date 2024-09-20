@@ -16,4 +16,6 @@ public partial class Feedback
     public bool ProActive { get; set; }
 
     public DateTime? ProDate { get; set; }
+
+    public string? Pro_Content { get; set; }
 }

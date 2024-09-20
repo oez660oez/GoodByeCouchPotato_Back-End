@@ -19,7 +19,7 @@ namespace goodbyecouchpotato.Areas.ReviewManagement.viewmodel
         {
             get
             {
-                return TaskActive ? "已啟用" : "已停用";
+                return TaskActive ? "已啟用" : "未啟用";
             }
         }
 

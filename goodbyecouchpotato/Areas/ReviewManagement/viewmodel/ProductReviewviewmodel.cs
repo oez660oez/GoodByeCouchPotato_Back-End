@@ -27,7 +27,7 @@ namespace goodbyecouchpotato.Areas.ReviewManagement.viewmodel
         {
             get
             {
-                return PActive ? "已啟用" : "已停用";
+                return PActive ? "已啟用" : "未啟用";
             }
         }
 
