@@ -28,6 +28,7 @@
 
 	<!-- Custom Theme Style -->
 	<link href="~/lib/gentelella-master/build/css/custom.min.css" rel="stylesheet">
+    <link href="~/css/stylesheet.css" rel="stylesheet" />
 	@await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="nav-md">
@@ -36,7 +37,7 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="index.html" class="site_title">
+						<a asp-area="" asp-controller="" asp-action="" class="site_title">
 							<img src="~/images/logo.png" class="img-fluid" alt="logo"
 								 width="50"
 								 height="auto" />

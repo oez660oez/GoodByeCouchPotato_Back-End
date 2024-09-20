@@ -13,9 +13,9 @@
 }
 else{
 
-<table class="table" style="width:600px ;margin-left: auto; margin-right: auto;">
-    <thead style="font-size:20px ; text-align: center;">
-        <tr>
+    <table class="table table-striped jambo_table bulk_action" style="width:600px ;margin-left: auto; margin-right: auto;">
+        <thead class="even pointer" style="font-size:20px ; text-align: center;">
+            <tr class="odd pointer">
             <th >
                 @Html.DisplayNameFor(model => model.PCode)
             </th>
@@ -30,7 +30,7 @@ else{
     </thead>
     <tbody style="font-size:16px">
 @foreach (var item in Model) {
-        <tr>
+                <tr class="odd pointer">
            <td style="text-align: center; vertical-align: middle;">
                 @Html.DisplayFor(modelItem => item.PCode)
             </td>

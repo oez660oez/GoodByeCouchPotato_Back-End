@@ -43,9 +43,9 @@
         </div>
 
         <div class="col-12 col-md-9">
-            <table class="table" id="productsTable">
-                <thead>
-                    <tr>
+            <table class="table table-striped jambo_table bulk_action" id="productsTable">
+                <thead class="even pointer">
+                    <tr class="odd pointer">
                         <th>商品名稱</th>
                         <th>商品類別</th>
                         <th>等級</th>
@@ -55,7 +55,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr class="odd pointer">
                             <td>
                                 <a asp-action="Details" asp-route-id="@item.PCode">@item.PName</a>
                             </td>

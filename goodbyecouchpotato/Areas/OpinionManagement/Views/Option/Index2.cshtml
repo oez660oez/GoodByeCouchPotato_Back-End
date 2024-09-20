@@ -11,9 +11,9 @@
     <button type="submit" class="btn btn-info">搜尋</button>
 </form>
 <hr />
-<table class="table" style="width:600px ;margin-left: auto; margin-right: auto;">
-    <thead style="font-size:20px ; text-align: center;">
-        <tr>
+<table class ="table table-striped jambo_table bulk_action" style="width:600px ;margin-left: auto; margin-right: auto;">
+    <thead class="even pointer" style="font-size:20px ; text-align: center;">
+        <tr class="odd pointer">
             <th>
                 @Html.DisplayNameFor(model => model.FeedbackNo)
             </th>
@@ -41,7 +41,7 @@
     <tbody style="font-size:16px">
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="odd pointer">
                 <td style="text-align: center; vertical-align: middle;">
                     @Html.DisplayFor(modelItem => item.FeedbackNo)
                 </td>
@@ -54,10 +54,10 @@
                 <td style="text-align: center; vertical-align: middle;">
                     @Html.DisplayFor(modelItem => item.ProDate)
                 </td>
+
                 
-                
-                <td>
-                    <button style="display: block; margin: 0 auto;" class="btn btn-info"> <a asp-action="Details" asp-route-id="@item.FeedbackNo" style="color:black;font:bold "> 檢視</a>  </button>
+                <td style="text-align: center; vertical-align: middle;">
+<a class="btn btn-info col-12" asp-action="Details" asp-route-id="@item.FeedbackNo" > 檢視</a>
                 </td>
             </tr>
         }
