@@ -23,7 +23,14 @@ namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
 
         public JsonResult IndexJson()
         {
-            return Json(_context.Players);
+            var players = _context.Players.Select(p => new {
+                account = p.account,
+                email = p.email,
+                playerstatus = p.playerstatus,
+                coins = p.coins
+            }).ToList();
+
+            return Json(players);
         }
     }
 }
