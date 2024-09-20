@@ -31,12 +31,12 @@
 	<link href="~/lib/gentelella-master/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 	<!--===============================================================================================-->
     <link href="~/css/login/util.css" rel="stylesheet" />
-    <link href="~/css/login/main.css" rel="stylesheet" />
+	<link href="~/css/login/main.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
 	<!--===============================================================================================-->
 </head>
 <body>
 	<div class="limiter">
-		<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
+		<div class="container-login100" style="background-image: url('@Url.Content("~/images/bg-01.jpg")');">
 			<div class="wrap-login100 p-t-30 p-b-50">
 				<span class="login100-form-title p-b-41">
 					登入介面
@@ -72,6 +72,7 @@
 			</div>
 		</div>
 	</div>
+
 	<!--===============================================================================================-->
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<!--===============================================================================================-->
