@@ -18,11 +18,11 @@
             <h5>搜尋商品</h5>
             <form>
                 <div class="form-group">
-                    <label id="nameSearch" class="control-label">商品名稱</label>
+                    <label for="nameSearch" class="control-label">商品名稱</label>
                     <input type="text" id="nameSearch" class="form-control" placeholder="搜尋商品名稱">
                 </div>
                 <div class="form-group">
-                    <label id="classSearch" class="control-label">商品名稱</label>
+                    <label for="classSearch" class="control-label">商品類別</label>
                     <select id="classSearch" class="form-control form-select">
                         <option value="">請選擇商品類別</option>
                         <option value="頭髮">頭髮</option>
@@ -32,7 +32,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label id="levelSearch" class="control-label">商品名稱</label>
+                    <label for="levelSearch" class="control-label">商品等級</label>
                     <input type="number" id="levelSearch" class="form-control" placeholder="搜尋等級" min="0">
                 </div>
             </form>
@@ -92,7 +92,7 @@
             });
 
             // 等級搜尋
-            $('#levelSearch').on('keyup', function () {
+            $('#levelSearch').on('input', function () {
                 var value = $(this).val();
                 $('#productsTable tbody tr').filter(function () {
                     // 獲取等級單元格的值，並進行精確比較
