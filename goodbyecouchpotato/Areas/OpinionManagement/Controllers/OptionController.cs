@@ -125,6 +125,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                     Submitted = f.Submitted,
                     ProActive = f.ProActive,
                     ProDate = f.ProDate,
+                    Pro_Content = f.Pro_Content,
                 })
                 .FirstOrDefaultAsync();
 

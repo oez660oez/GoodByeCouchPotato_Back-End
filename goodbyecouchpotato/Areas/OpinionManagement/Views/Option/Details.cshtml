@@ -37,7 +37,7 @@
 
             <div class="form-group">
                 <label asp-for="Pro_Content" class="control-label"></label>
-                <textarea asp-for="Pro_Content" rows="6" cols="20" class="form-control" style="background-color:aliceblue;resize:none;" disabled readonly></textarea>
+                <textarea value="@Html.DisplayFor(model => model.Pro_Content)" asp-for="Pro_Content" rows="6" cols="20" class="form-control" style="background-color:aliceblue;resize:none;" disabled readonly></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             
