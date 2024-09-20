@@ -1,0 +1,54 @@
+﻿@model goodbyecouchpotato.Models.DailyTaskRecord
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>DailyTaskRecord</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.T1name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.T1name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.T1completed)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.T1completed)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.T2name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.T2name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.T2completed)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.T2completed)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.T3name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.T3name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.T3completed)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.T3completed)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>

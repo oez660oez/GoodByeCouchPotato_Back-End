@@ -1,0 +1,52 @@
+﻿@model _TaskRecordsViewModel
+
+<h1>任務數據分析</h1>
+<form asp-controller="DailyTaskRecords" asp-action="TimeTotalRecord" id="searchform">
+<div class="col-12 col-md-4">
+    <h6>開始日期</h6>
+    <input value="@ViewBag.starttime" type="date" name="starttime" id="starttime" class="form-control" />
+    </div>
+<div class="col-12 col-md-4">
+    <h6>結束日期</h6>
+    <input value="@ViewBag.startend" type="date" name="endtime" id="endtime" class="form-control" />
+    </div>
+</form>
+<hr />
+<div id="totalRecords">
+</div>
+
+
+ 
+
+@section Scripts{
+    <script>
+    $(document).ready(function(){
+
+
+
+            function performDataUpdate() {
+                var startDate = new Date($('#starttime').val());
+                var endDate = new Date($('#endtime').val());
+                if (startDate <= endDate) {
+                    // 发送 AJAX 请求以获取总记录数
+                    $.ajax({
+                        type: 'POST',
+                        url: '/DataAnalysis/DailyTaskRecords/TimeTotalRecord',
+                        data: $('#searchform').serialize(),
+                    }).done(function (data) {
+                        $('#totalRecords').html(data);
+                    });
+                } else {
+                    alert("開始日期大於結束日期，將不會產生有效資料");
+                }
+            }
+
+            $('input').on('change', function (event) {
+                performDataUpdate();
+
+        })
+              performDataUpdate();
+    })
+
+    </script>
+}

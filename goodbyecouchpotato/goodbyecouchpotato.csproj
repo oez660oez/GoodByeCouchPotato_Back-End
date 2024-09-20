@@ -210,7 +210,6 @@
     <Folder Include="Areas\AdministratorManagement\Controllers\" />
     <Folder Include="Areas\AdministratorManagement\Data\" />
     <Folder Include="Areas\AdministratorManagement\Models\" />
-    <Folder Include="Areas\DataAnalysis\Controllers\" />
     <Folder Include="Areas\DataAnalysis\Data\" />
     <Folder Include="Areas\DataAnalysis\Models\" />
     <Folder Include="Areas\MemberManagement\Data\" />

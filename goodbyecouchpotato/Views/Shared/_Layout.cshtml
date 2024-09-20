@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - goodbyecouchpotato</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-@* 	<link rel="stylesheet" href="~/lib/gentelella-master/vendors/bootstrap/dist/css/bootstrap.min.css" /> *@
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@* 	<link rel="stylesheet" href="~/lib/gentelella-master/vendors/bootstrap/dist/css/bootstrap.min.css" /> *@ 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/goodbyecouchpotato.styles.css" asp-append-version="true" />
    <!-- Font Awesome -->
@@ -40,25 +40,11 @@
 					</div>
 
 					<div class="clearfix"></div>
-
-					<!-- menu profile quick info -->
-					<div class="profile clearfix">
-						<div class="profile_pic">
-							<img src="#" alt="..." class="img-circle profile_img">
-						</div>
-						<div class="profile_info">
-							<span>Welcome,</span>
-							<h2>John Doe</h2>
-						</div>
-					</div>
-					<!-- /menu profile quick info -->
-
 					<br />
 
 					<!-- sidebar menu -->
 					<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 						<div class="menu_section">
-							<h3>General</h3>
 							<ul class="nav side-menu">
 								<li>
 									<a asp-area="" asp-controller="" asp-action=""><i class="fa fa-home"></i>首頁</a>
@@ -66,7 +52,7 @@
 								<li>
 									<a><i class="fa fa-signal"></i>數據分析 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a asp-area="DataAnalysis" asp-controller="" asp-action="">任務區</a></li>
+										<li><a asp-area="DataAnalysis" asp-controller="DailyTaskRecords" asp-action="Index">任務區</a></li>
 										<li><a asp-area="DataAnalysis" asp-controller="" asp-action="">玩家區</a></li>
 									</ul>
 								</li>

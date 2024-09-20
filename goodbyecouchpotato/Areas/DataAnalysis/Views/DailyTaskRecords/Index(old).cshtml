@@ -1,0 +1,65 @@
+﻿@model IEnumerable<goodbyecouchpotato.Models.DailyTaskRecord>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.T1name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.T1completed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.T2name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.T2completed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.T3name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.T3completed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.T1name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.T1completed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.T2name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.T2completed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.T3name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.T3completed)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

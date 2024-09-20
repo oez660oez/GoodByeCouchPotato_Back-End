@@ -1,0 +1,78 @@
+﻿@model IEnumerable<_TaskRecordsViewModel>
+
+
+<div class="row">
+    <div class="animated flipInY col-lg-3 col-md-6 col-sm-6  ">
+        <div class="tile-stats">
+            <div class="icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="count">@ViewBag.completedpercent%</div>
+
+            <h3>任務完成度</h3>
+        </div>
+    </div>
+    <div class="animated flipInY col-lg-3 col-md-3 col-sm-6  ">
+        <div class="tile-stats">
+            <div class="icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="count">@ViewBag.completedcount</div>
+
+            <h3>任務完成總數</h3>
+
+        </div>
+    </div>
+
+    <div class="animated flipInY col-lg-3 col-md-3 col-sm-6  ">
+        <div class="tile-stats">
+            <div class="icon">
+                <i class="fas fa-scroll"></i>
+            </div>
+            <div class="count">@ViewBag.count</div>
+
+            <h3>任務發放總數</h3>
+        </div>
+    </div>
+    <div class="animated flipInY col-lg-3 col-md-3 col-sm-6  ">
+        <div class="tile-stats">
+            <div class="icon">
+                <i class="fas fa-user-alt"></i>
+            </div>
+            <div class="count">@ViewBag.personcount</div>
+            <h3>參與人數</h3>
+        </div>
+    </div>
+</div>
+
+    <h4>任務完成狀況</h4>
+<table class="table table-striped jambo_table bulk_action">
+        <thead>
+        <tr class="even pointer">
+                <th>
+                    任務名稱
+                </th>
+                <th>
+                    任務發放次數
+                </th>
+                <th>
+                    任務完成次數
+                </th>
+                <th>
+                    任務完成率
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+       
+@foreach (var item in @ViewBag.Tasktotal)
+            {
+            <tr class="odd pointer">
+                    <td>@item.Content</td>
+                    <td>@item.Count</td>
+                    <td>@item.TrueCount</td>
+                <td>@item.Percentage%</td>
+                </tr>
+            }
+        </tbody>
+    </table>
