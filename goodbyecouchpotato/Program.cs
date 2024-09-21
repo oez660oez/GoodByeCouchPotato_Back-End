@@ -78,7 +78,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=DataAnalysis}/{controller=DailyTaskRecords}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
