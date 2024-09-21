@@ -10,6 +10,7 @@ using goodbyecouchpotato.Areas.TaskManagement.Views;
 using Microsoft.Build.Framework;
 using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
 {
@@ -36,6 +37,8 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
         //      {
         //          return Json(_context.DailyTasks);
         //      }
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Index()  //顯示畫面
         {
             return View();

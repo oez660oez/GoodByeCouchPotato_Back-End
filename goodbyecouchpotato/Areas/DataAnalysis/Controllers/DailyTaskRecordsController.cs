@@ -9,6 +9,7 @@ using goodbyecouchpotato.Models;
 using goodbyecouchpotato.Areas.DataAnalysis.ViewModel;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 {
@@ -23,6 +24,8 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
         }
 
         // GET: DataAnalysis/DailyTaskRecords
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Index()
         {
             //----------取搜尋時間------------------

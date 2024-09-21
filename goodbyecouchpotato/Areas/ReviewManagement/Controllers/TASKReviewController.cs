@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Areas.ReviewManagement.viewmodel;
 using goodbyecouchpotato.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace goodbyecouchpotato.Areas.ReviewManagement.Controllers
 {
@@ -21,6 +22,8 @@ namespace goodbyecouchpotato.Areas.ReviewManagement.Controllers
         }
 
         // GET: ReviewManagement/TASKReview
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Index()
         {
             var TASK = await _context.DailyTasks

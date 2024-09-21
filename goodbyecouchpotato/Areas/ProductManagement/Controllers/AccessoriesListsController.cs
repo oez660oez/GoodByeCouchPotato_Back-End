@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 {
@@ -20,6 +21,7 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         }
 
         // GET: ProductManagement/AccessoriesLists
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.AccessoriesLists.ToListAsync());

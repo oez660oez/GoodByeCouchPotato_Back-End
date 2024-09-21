@@ -1,14 +1,22 @@
 ﻿@model LoginViewModel
 
-<h2>登入</h2>
 <form asp-action="Login" method="post">
-    <div>
-        <label for="Email">Email</label>
-        <input type="email" id="Email" name="Email" required />
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    <div>
-        <label for="Password">Password</label>
-        <input type="password" id="Password" name="Password" required />
+
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" class="form-control" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
-    <button type="submit">登入</button>
+
+    <div class="form-group">
+        <label asp-for="RememberMe"></label>
+        <input asp-for="RememberMe" type="checkbox" /> 記住我
+    </div>
+
+    <button type="submit" class="btn btn-primary">登入</button>
 </form>
