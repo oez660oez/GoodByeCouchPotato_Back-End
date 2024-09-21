@@ -8,6 +8,7 @@ namespace goodbyecouchpotato.Models
         public decimal Weight { get; set; }
         public decimal Height { get; set; }
         public string? LivingStatus { get; set; }
-        public DateTime MoveInDate { get; set; } // 新增這一行
+        public DateTime MoveInDate { get; set; }
+        public int? Environment { get; set; }
     }
 }

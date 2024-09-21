@@ -38,6 +38,39 @@
             border: none; /* 去掉边框 */
         }
 
+        #chart_plot_01 {
+            width: 100%; /* 自适应宽度 */
+            height: 400px; /* 图表高度 */
+            position: relative; /* 为容器提供绝对定位支持 */
+            min-width: 300px; /* 设置最小宽度，以防止过小 */
+        }
+
+
+        td.col-8 {
+            padding: 0; /* 去掉默认内边距，以确保图表能够正确居中 */
+            text-align: center; /* 水平居中内容 */
+        }
+
+        #productPieChart {
+            display: inline-block; /* 使 canvas 作为内联块元素，便于水平居中 */
+            max-width: 100%; /* 确保图表在容器内不超出 */
+            height: 320px; /* 设置固定高度 */
+        }
+
+        .x_panel {
+            background-color: transparent;
+        }
+
+        #gaugeChart {
+            width: 100%; /* 自適應寬度 */
+            height: 325px; /* 設置高度 */
+        }
+
+        .gauge-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
     </style>
 }
 
@@ -87,21 +120,74 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <div id="chart_plot_01" class="demo-placeholder" style="height: 400px;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-7">
+                <div class="x_panel tile overflow_hidden">
+                    <div class="x_title">
+                        <h2>Top 5 熱銷商品</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <table class="table" style="width:100%">
+                            <tr>
+                                <td class="col-8">
+                                    <canvas id="productPieChart" height="320" width="420"></canvas>
+                                </td>
+                                <td class="col-4">
+                                    <table class="tile_info" id="productDetails">
+                                        <!-- 產品詳細資訊將在這裡動態添加 -->
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-5">
+                <div class="x_panel tile overflow_hidden">
+                    <div class="x_title">
+                        <h2>未搬離玩家平均環境值</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <table class="table" style="width:100%">
+                            <div id="gaugeChart"></div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 @section Scripts
 {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.zh-TW.min.js"></script>
+    <script src="~/lib/echarts.min.js"></script>
+    <script src="~/lib/chart.js/chart.min.js"></script>
     <script>
         $(document).ready(function () {
+            var originalStartDate;
+            var originalEndDate;
+
             function setDefaultDates() {
                 var today = new Date();
                 var lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
                 $('#startDate').datepicker('setDate', lastMonth);
                 $('#endDate').datepicker('setDate', today);
+
+                // 存储初始日期
+                originalStartDate = lastMonth;
+                originalEndDate = today;
+                updateStats();
             }
 
             $('.datepicker').datepicker({
@@ -134,12 +220,19 @@
                     type: 'GET',
                     data: { startDate: startDate, endDate: endDate },
                     success: function (data) {
+                        console.log('從伺服器接收到的資料:', data);
                         animateNumber($('#totalCharacters')[0], data.totalCharacters);
                         animateNumber($('#averageLevel')[0], data.averageLevel.toFixed(2));
                         animateNumber($('#averageWeight')[0], data.averageWeight.toFixed(1));
                         animateNumber($('#averageHeight')[0], data.averageHeight.toFixed(1));
                         animateNumber($('#livingCount')[0], data.livingCount);
                         animateNumber($('#movedCount')[0], data.movedCount);
+
+                        if (data.chartData) {
+                            renderChart(data.chartData);
+                        } else {
+                            console.error('chartData 不存在於伺服器回應中');
+                        }
                     },
                     error: function () {
                         alert('更新統計資訊時發生錯誤');
@@ -147,13 +240,350 @@
                 });
             }
 
-            // 監聽日期變化事件
+            function renderChart(chartData) {
+                console.log('renderChart 函數被調用');
+                console.log('chartData:', chartData);
+
+                var chartContainer = document.getElementById('chart_plot_01');
+                console.log('圖表容器:', chartContainer);
+
+                if (!chartContainer) {
+                    console.error('找不到圖表容器元素');
+                    return;
+                }
+                var chart = echarts.init(chartContainer);
+                console.log('ECharts 實例已創建');
+
+                var option = {
+                    animationDuration: 10000,
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['角色總數', '平均等級', '尚在居住人數', '搬離人數']
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {
+                                title: '下載',
+                                name: 'Potato數據分析折線圖'
+                            }
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: chartData.dates,
+                        axisLabel: {
+                            formatter: function (value) {
+                                return new Date(value).toLocaleDateString('zh-TW', {
+                                    month: 'short', day: 'numeric'
+                                });
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    series: [
+                        {
+                            name: '角色總數',
+                            type: 'line',
+                            showSymbol: false,
+                            emphasis: {
+                                focus: 'series'
+                            },
+                            endLabel: {
+                                show: true,
+                                formatter: function (params) {
+                                    return params.seriesName + ': ' + params.value;
+                                }
+                            },
+                            labelLayout: {
+                                moveOverlap: 'shiftY'
+                            },
+                            data: chartData.totalCharacters
+                        },
+                        {
+                            name: '平均等級',
+                            type: 'line',
+                            showSymbol: false,
+                            emphasis: {
+                                focus: 'series'
+                            },
+                            endLabel: {
+                                show: true,
+                                formatter: function (params) {
+                                    return params.seriesName + ': ' + params.value.toFixed(2);
+                                }
+                            },
+                            labelLayout: {
+                                moveOverlap: 'shiftY'
+                            },
+                            data: chartData.averageLevels
+                        },
+                        {
+                            name: '尚在居住人數',
+                            type: 'line',
+                            showSymbol: false,
+                            emphasis: {
+                                focus: 'series'
+                            },
+                            endLabel: {
+                                show: true,
+                                formatter: function (params) {
+                                    return params.seriesName + ': ' + params.value;
+                                }
+                            },
+                            labelLayout: {
+                                moveOverlap: 'shiftY'
+                            },
+                            data: chartData.livingCounts
+                        },
+                        {
+                            name: '搬離人數',
+                            type: 'line',
+                            showSymbol: false,
+                            emphasis: {
+                                focus: 'series'
+                            },
+                            endLabel: {
+                                show: true,
+                                formatter: function (params) {
+                                    return params.seriesName + ': ' + params.value;
+                                }
+                            },
+                            labelLayout: {
+                                moveOverlap: 'shiftY'
+                            },
+                            data: chartData.movedCount
+                        }
+                    ]
+                };
+                // 添加 resize 事件监听器
+                window.addEventListener('resize', function () {
+                    chart.resize();
+                });
+                try {
+                    chart.setOption(option);
+                    console.log('圖表選項已設置');
+                } catch (error) {
+                    console.error('設置圖表選項時發生錯誤:', error);
+                }
+            }
+
+            function loadProductData() {
+                $.ajax({
+                    url: '/DataAnalysis/Player/GetProductData',
+                    type: 'GET',
+                    success: function (data) {
+                        console.log('從伺服器接收到的產品資料:', data);
+
+                        // 渲染圓餅圖
+                        renderPieChart(data.pieChartData);
+
+                        // 更新產品詳細資訊
+                        var detailsHtml = '';
+                        data.pieChartData.forEach(function (item) {
+                            detailsHtml += '<tr><td><p><i class="fa fa-square" style="color:' + item.color + '"></i>' + item.name + '</p></td><td>' + item.percentage + '%</td></tr>';
+                        });
+                        $('#productDetails').html(detailsHtml);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('載入產品資料時發生錯誤:', error);
+                        alert('載入產品資料時發生錯誤');
+                    }
+                });
+            }
+
+            function renderPieChart(chartData) {
+                var chartDom = document.getElementById('productPieChart');
+                var myChart = echarts.init(chartDom);
+                var option = {
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 0,
+                        data: chartData.map(item => item.name)
+                    },
+                    series: [
+                        {
+                            name: '產品使用情況',
+                            type: 'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                show: false,
+                                position: 'center'
+                            },
+                            color: ['#D1DDDB', '#85B8C8', '#1D6A96', '#034B61', '#283B42'],
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: '18',
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            data: chartData
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+            }
+
+            // 初始加載產品數據
+            loadProductData();
+            updateStats();
+
+            // 監控日期變化事件
             $('.datepicker').on('changeDate', function () {
+                var startDate = $('#startDate').datepicker('getDate');
+                var endDate = $('#endDate').datepicker('getDate');
+
+                if (endDate < startDate) {
+                    alert('結束日期不能早於開始日期。');
+                    $('#endDate').datepicker('setDate', originalEndDate); // 恢復為原始結束日期
+                } else {
+                    updateStats();
+                }
+            });
+
+            // 監控搜尋按鈕點擊事件
+            $('#searchBtn').on('click', function () {
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+
+                if (!startDate || !endDate) {
+                    alert('請選擇開始日期和結束日期。');
+                    return;
+                }
+
                 updateStats();
             });
 
-            // 初始加載統計資訊
-            updateStats();
+
+            var averageEnvironment = @Html.Raw(ViewBag.AverageEnvironment);
+
+            function renderGaugeChart(averageEnvironment) {
+                var chartDom = document.getElementById('gaugeChart');
+                var myChart = echarts.init(chartDom);
+                var option = {
+                    series: [
+                        {
+                            type: 'gauge',
+                            startAngle: 180,
+                            endAngle: 0,
+                            center: ['50%', '95%'],
+                            radius: '150%',
+                            min: 0,
+                            max: 1,
+                            splitNumber: 8,
+                            axisLine: {
+                                lineStyle: {
+                                    width: 6,
+                                    color: [
+                                        [0.25, '#FF6E76'],
+                                        [0.5, '#FDDD60'],
+                                        [0.75, '#58D9F9'],
+                                        [1, '#7CFFB2']
+                                    ]
+                                }
+                            },
+                            pointer: {
+                                icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+                                length: '50%',
+                                width: 5,
+                                offsetCenter: [0, '-80%'],
+                                itemStyle: {
+                                    color: 'auto'
+                                }
+                            },
+                            axisTick: {
+                                length: 12,
+                                lineStyle: {
+                                    color: 'auto',
+                                    width: 2
+                                }
+                            },
+                            splitLine: {
+                                length: 20,
+                                lineStyle: {
+                                    color: 'auto',
+                                    width: 5
+                                }
+                            },
+                            axisLabel: {
+                                color: '#464646',
+                                fontSize: 20,
+                                distance: -75,
+                                rotate: 'tangential',
+                                formatter: function (value) {
+                                    if (value === 0.875) {
+                                        return '超棒';
+                                    } else if (value === 0.625) {
+                                        return '棒';
+                                    } else if (value === 0.375) {
+                                        return '不好';
+                                    } else if (value === 0.125) {
+                                        return '危險';
+                                    }
+                                    return '';
+                                }
+                            },
+                            title: {
+                                offsetCenter: [0, '-10%'],
+                                fontSize: 20
+                            },
+                            detail: {
+                                fontSize: 30,  // 調整字體大小
+                                offsetCenter: [0, '-60%'],  // 調整顯示位置
+                                valueAnimation: true,
+                                formatter: function (value) {
+                                    return (value * 100).toFixed(0) + '%';  // 顯示百分比
+                                },
+                                color: '#FDDD60'  // 設置顯示顏色，確保字體可見
+                            },
+                            data: [
+                                {
+                                    value: averageEnvironment
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                option && myChart.setOption(option);
+                window.addEventListener('resize', function () {
+                    myChart.resize();
+                });
+            }
+
+            // 初始加載等級儀表盤
+            renderGaugeChart(averageEnvironment);
         });
+
+
     </script>
 }

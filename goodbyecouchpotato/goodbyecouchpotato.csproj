@@ -212,7 +212,6 @@
     <Folder Include="Areas\AdministratorManagement\Data\" />
     <Folder Include="Areas\AdministratorManagement\Models\" />
     <Folder Include="Areas\DataAnalysis\Data\" />
-    <Folder Include="Areas\DataAnalysis\Models\" />
     <Folder Include="Areas\MemberManagement\Data\" />
     <Folder Include="Areas\MemberManagement\Models\" />
     <Folder Include="Areas\OpinionManagement\Data\" />
