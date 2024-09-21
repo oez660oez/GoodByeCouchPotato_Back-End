@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 {
@@ -19,36 +18,46 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-
         public IActionResult Index()
         {
-            // 角色總數
-            var totalCharacters = _context.Characters.Count();
+            // 設置預設的日期範圍
+            var endDate = DateTime.Now;
+            var startDate = new DateTime(endDate.Year, endDate.Month, 1).AddMonths(-1);
 
-            // 平均等級
-            var averageLevel = _context.Characters.Average(c => c.Level);
-
-            // 平均體重
-            var averageWeight = _context.Characters.Average(c => c.Weight);
-
-            // 平均身高
-            var averageHeight = _context.Characters.Average(c => c.Height);
-
-            // 尚在居住人數
-            var livingCount = _context.Characters.Count(c => c.LivingStatus == "居住");
-
-            // 搬離人數
-            var movedCount = _context.Characters.Count(c => c.LivingStatus == "搬離");
+            // 獲取初始統計數據
+            var initialStats = GetStatsData(startDate, endDate);
 
             // 傳送數據到 View
-            ViewBag.TotalCharacters = totalCharacters;
-            ViewBag.AverageLevel = averageLevel;
-            ViewBag.AverageWeight = averageWeight;
-            ViewBag.AverageHeight = averageHeight;
-            ViewBag.LivingCount = livingCount;
-            ViewBag.MovedCount = movedCount;
+            ViewBag.TotalCharacters = initialStats.TotalCharacters;
+            ViewBag.AverageLevel = initialStats.AverageLevel;
+            ViewBag.AverageWeight = initialStats.AverageWeight;
+            ViewBag.AverageHeight = initialStats.AverageHeight;
+            ViewBag.LivingCount = initialStats.LivingCount;
+            ViewBag.MovedCount = initialStats.MovedCount;
 
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetStats(DateTime startDate, DateTime endDate)
+        {
+            var stats = GetStatsData(startDate, endDate);
+            return Json(stats);
+        }
+
+        private dynamic GetStatsData(DateTime startDate, DateTime endDate)
+        {
+            var characters = _context.Characters.Where(c => c.MoveInDate >= startDate && c.MoveInDate <= endDate);
+
+            return new
+            {
+                TotalCharacters = characters.Count(),
+                AverageLevel = characters.Average(c => c.Level),
+                AverageWeight = Math.Round((decimal)characters.Average(c => c.Weight), 1),
+                AverageHeight = Math.Round((decimal)characters.Average(c => c.Height), 1),
+                LivingCount = characters.Count(c => c.LivingStatus == "居住"),
+                MovedCount = characters.Count(c => c.LivingStatus == "搬離")
+            };
         }
     }
 }

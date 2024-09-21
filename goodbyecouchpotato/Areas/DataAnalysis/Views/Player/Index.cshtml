@@ -1,6 +1,42 @@
 ﻿@section Styles
 {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <style>
+        .tile_count {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tile_stats_count {
+            min-width: 150px;
+            flex: 1;
+            margin: 10px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .card {
+            background: transparent;
+            border: none;
+        }
+
+        .card-body {
+            background: transparent;
+            border: none;
+        }
+
+        .form-control.datepicker {
+            background-color: #fff; /* 设置背景色为白色 */
+            border: 1px solid #ccc; /* 设置边框颜色（如果需要的话） */
+            border-radius: 0.25rem; /* 可选：调整边框圆角 */
+        }
+
+        /* 去掉“到”文本的背景色和边框 */
+        .input-group-text {
+            background-color: transparent; /* 背景色透明 */
+            border: none; /* 去掉边框 */
+        }
 
     </style>
 }
@@ -8,42 +44,116 @@
 <h1>數據分析</h1>
 <hr />
 <div class="container">
-    <div class="right_col" role="main">
-        <div class="row" style="display: inline-block;">
-            <div class="tile_count">
+    <div class="center_col" role="main">
+        <div class="row mt-4">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa-regular fa-calendar"></i> 選擇日期範圍</h5>
+                        <div class="input-group mb-3">
+                            <input type="text" id="startDate" class="form-control datepicker" placeholder="開始日期" readonly>
+                            <span class="input-group-text">到</span>
+                            <input type="text" id="endDate" class="form-control datepicker" placeholder="結束日期" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="tile_count" id="statsContainer">
                 <div class="col-md-2 col-sm-4 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-user"></i> 角色總數</span>
-                    <div class="count">@ViewBag.TotalCharacters</div>
+                    <span class="count_top fs-5"><i class="fa fa-user"></i> 角色總數</span>
+                    <div class="count" id="totalCharacters">@ViewBag.TotalCharacters</div>
                 </div>
                 <div class="col-md-2 col-sm-4 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-clock-o"></i> 平均等級</span>
-                    <div class="count">@ViewBag.AverageLevel</div>
+                    <span class="count_top fs-5"><i class="fa-solid fa-angles-up"></i> 平均等級</span>
+                    <div class="count" id="averageLevel">@ViewBag.AverageLevel</div>
                 </div>
                 <div class="col-md-2 col-sm-4 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-user"></i> 平均體重</span>
-                    <div class="count">@ViewBag.AverageWeight</div>
+                    <span class="count_top fs-5"><i class="fa-solid fa-weight-scale"></i> 平均體重</span>
+                    <div class="count" id="averageWeight">@ViewBag.AverageWeight</div>
                 </div>
                 <div class="col-md-2 col-sm-4 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-user"></i> 平均身高</span>
-                    <div class="count">@ViewBag.AverageHeight</div>
+                    <span class="count_top fs-5"><i class="fa-solid fa-ruler-horizontal"></i> 平均身高</span>
+                    <div class="count" id="averageHeight">@ViewBag.AverageHeight</div>
                 </div>
                 <div class="col-md-2 col-sm-4 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-user"></i> 尚在居住人數</span>
-                    <div class="count">@ViewBag.LivingCount</div>
+                    <span class="count_top fs-5"><i class="fa fa-user"></i> 尚在居住人數</span>
+                    <div class="count" id="livingCount">@ViewBag.LivingCount</div>
                 </div>
                 <div class="col-md-2 col-sm-4 tile_stats_count">
-                    <span class="count_top"><i class="fa fa-user"></i> 搬離人數</span>
-                    <div class="count">@ViewBag.MovedCount</div>
+                    <span class="count_top fs-5"><i class="fa fa-user"></i> 搬離人數</span>
+                    <div class="count" id="movedCount">@ViewBag.MovedCount</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
 @section Scripts
-    {
-    <script src="~/lib/echarts.min.js"></script>
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.zh-TW.min.js"></script>
     <script>
+        $(document).ready(function () {
+            function setDefaultDates() {
+                var today = new Date();
+                var lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                $('#startDate').datepicker('setDate', lastMonth);
+                $('#endDate').datepicker('setDate', today);
+            }
+
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                language: 'zh-TW',
+                autoclose: true
+            });
+
+            setDefaultDates();
+
+            function animateNumber(element, endValue) {
+                anime({
+                    targets: element,
+                    innerHTML: [0, endValue],
+                    easing: 'easeInOutQuad',
+                    duration: 1500,
+                    round: 1,
+                    update: function (anim) {
+                        element.innerHTML = Math.round(anim.animations[0].currentValue);
+                    }
+                });
+            }
+
+            function updateStats() {
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+
+                $.ajax({
+                    url: '/DataAnalysis/Player/GetStats',
+                    type: 'GET',
+                    data: { startDate: startDate, endDate: endDate },
+                    success: function (data) {
+                        animateNumber($('#totalCharacters')[0], data.totalCharacters);
+                        animateNumber($('#averageLevel')[0], data.averageLevel.toFixed(2));
+                        animateNumber($('#averageWeight')[0], data.averageWeight.toFixed(1));
+                        animateNumber($('#averageHeight')[0], data.averageHeight.toFixed(1));
+                        animateNumber($('#livingCount')[0], data.livingCount);
+                        animateNumber($('#movedCount')[0], data.movedCount);
+                    },
+                    error: function () {
+                        alert('更新統計資訊時發生錯誤');
+                    }
+                });
+            }
+
+            // 監聽日期變化事件
+            $('.datepicker').on('changeDate', function () {
+                updateStats();
+            });
+
+            // 初始加載統計資訊
+            updateStats();
+        });
     </script>
 }
