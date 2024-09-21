@@ -25,8 +25,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
         }
 
         // GET: OpinionManagement/Option
-        [Authorize(Roles = "Admin")]
-
+        
         public async Task<IActionResult> Index(string search)
         {
             var feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == false);

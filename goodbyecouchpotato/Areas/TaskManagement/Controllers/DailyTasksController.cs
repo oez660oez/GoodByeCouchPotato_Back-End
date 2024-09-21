@@ -37,7 +37,7 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
         //      {
         //          return Json(_context.DailyTasks);
         //      }
-        [Authorize(Roles = "Admin")]
+        
 
         public async Task<IActionResult> Index()  //顯示畫面
         {

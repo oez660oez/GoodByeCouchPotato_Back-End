@@ -21,10 +21,26 @@
     <dd class="col-sm-8">@Html.DisplayFor(model => model.PLevel)</dd>
 
     <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PImageShop)</dt>
-    <dd class="col-sm-8">@Html.DisplayFor(model => model.PImageShop)</dd>
+    @* <dd class="col-sm-8">@Html.DisplayFor(model => model.PImageShop)</dd> *@
+    <dd>
+        <img src="~/images/@(Model.PImageShop)" alt="找不到照片" class="img-fluid" style="width:320px;height:240px" />
+    </dd>
+    @* <dd>
+        <img src="@Url.Action("GetPicture", "AccessoriesLists", new { id = Model.PCode })"
+             style="width:320px;height:240px"
+             title="@Model.PName"
+             onclick="viewImage(this)" />
+    </dd>
+ *@
+   
 
     <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PImageAll)</dt>
-    <dd class="col-sm-8">@Html.DisplayFor(model => model.PImageAll)</dd>
+    @* <@* dd class="col-sm-8">@Html.DisplayFor(model => model.PImageAll)</dd> *@ 
+    <dd>
+        <img src="~/images/@(Model.PImageAll)" alt="找不到照片" class="img-fluid" style="width:400px;height:320px" />
+    </dd>
+    
+
 
     <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ActiveStatus)</dt>
     <dd class="col-sm-8">@Html.DisplayFor(model => model.ActiveStatus)</dd>
