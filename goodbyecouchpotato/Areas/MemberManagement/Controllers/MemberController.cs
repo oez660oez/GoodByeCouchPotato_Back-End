@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Models;
-using Microsoft.AspNetCore.Authorization;
+using goodbyecouchpotato.Areas.MemberManagement.ViewModels;
 
 namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
 {
@@ -17,8 +17,6 @@ namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
         }
 
         // GET: Member/Index
-        
-
         public IActionResult Index()
         {
             return View();
@@ -27,10 +25,10 @@ namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
         public JsonResult IndexJson()
         {
             var players = _context.Players.Select(p => new {
-                account = p.account,
-                email = p.email,
-                playerstatus = p.playerstatus,
-                coins = p.coins
+                Account = p.Account,
+                Email = p.Email,
+                Playerstatus = p.Playerstatus ? "已開通" : p.Playerstatus == false ? "未開通" : "未知",
+                Coins = p.Coins
             }).ToList();
 
             return Json(players);

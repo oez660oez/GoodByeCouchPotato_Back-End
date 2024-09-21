@@ -1,4 +1,5 @@
-﻿@model _MemberViewModel
+﻿@model IEnumerable<goodbyecouchpotato.Areas.MemberManagement.ViewModels.MemberViewModel>
+
 @section Styles
 {
     <link href="~/lib/datatables/css/jquery.datatables.min.css" rel="stylesheet" />
@@ -11,45 +12,52 @@
     </style>
 }
 
-
 <h1>會員管理</h1>
 <hr>
 <!-- 搜尋框和下拉選單 -->
 <div class="container">
     <div class="row">
-<div class="col-12 col-md-2">
-    <h5>會員搜尋</h5>
-    <div class="mt-3 fs-6">
-    <input type="text" id="searchAccount" placeholder="請填寫用戶名稱">
-    </div>
-            <div class="mt-3 fs-6">
-    <input type="text" id="searchEmail" placeholder="請填寫信箱">
-    </div>
-            <div class="mt-3 fs-6">
-    <input type="text" id="searchCoins" placeholder="請填寫貨幣數量">
-    </div>
-            <div class="mt-3 fs-6">
-    <select id="searchPlayerstatus">
-        <option value="">玩家狀態</option>
-        <option value="true">true</option>
-        <option value="false">false</option>
-    </select>
-    </div>
-</div>
-<div class="col-12 col-md-10">
-            <table class="table table-striped jambo_table bulk_action"  id="memberTable">
+        <div class="searcharea col-12 col-lg-3">
+            <h5><i class="fa-solid fa-magnifying-glass fa-bounce"></i>會員搜尋</h5>
+            <form asp-controller="Member" asp-action="Search" id="MemberSearchForm">
+                <div class="form-group mt-3">
+                    <label class="control-label" for="searchAccount">帳號</label>
+                    <input type="text" id="searchAccount" class="form-control" autocomplete="off" placeholder="請填寫玩家帳號" />
+                </div>
+                <div class="form-group mt-3">
+                    <label class="control-label" for="searchEmail">信箱</label>
+                    <input type="text" id="searchEmail" class="form-control" autocomplete="off" placeholder="請填寫信箱" />
+                </div>
+                <div class="form-group mt-3">
+                    <label class="control-label" for="searchCoins">貨幣</label>
+                    <input type="text" id="searchCoins" class="form-control" autocomplete="off" placeholder="請填寫貨幣數量" />
+                </div>
+                <div class="form-group mt-3">
+                    <label class="control-label" for="searchPlayerstatus">開通狀態</label>
+                    <select id="searchPlayerstatus" class="form-control">
+                        <option value="">－－請選擇－－</option>
+                        <option value="已開通">已開通</option>
+                        <option value="未開通">未開通</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-12 col-lg-9">
+            <table class="table table-striped jambo_table bulk_action" id="memberTable">
                 <thead class="even pointer">
                     <tr class="odd pointer">
-            <th>@Html.DisplayNameFor(model => model.Account)</th>
-            <th>@Html.DisplayNameFor(model => model.Email)</th>
-            <th>@Html.DisplayNameFor(model => model.Playerstatus)</th>
-            <th>@Html.DisplayNameFor(model => model.Coins)</th>
-        </tr>
-    </thead>
-</table>
+                        <th><i class="fa-regular fa-user"></i> 帳號</th>
+                        <th><i class="fa-regular fa-envelope"></i> 信箱</th>
+                        <th><i class="fa-regular fa-circle-check"></i> 開通狀態</th>
+                        <th><i class="fa-regular fa-dollar-sign"></i> 貨幣</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
 </div>
-</div>
-</div>
+
 @section Scripts
 {
     <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>

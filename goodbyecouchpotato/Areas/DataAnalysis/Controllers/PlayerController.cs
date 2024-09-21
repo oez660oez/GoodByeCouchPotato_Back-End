@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 {
@@ -18,80 +17,47 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
             _context = context;
         }
 
-        
-        public async Task<IActionResult> ECharts()
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index()
         {
-            // 獲取玩家 coins 的區間，比如 <50, 50-100, >100
-            var coinGroups = await _context.Players
-                .GroupBy(p => new
-                {
-                    CoinRange = p.Coins < 50 ? "<50" :
-                                p.Coins > 100 ? "50-100" : ">100"
-                })
-                .Select(g => new
-                {
-                    Range = g.Key.CoinRange,
-                    Count = g.Count()
-                })
-                .ToListAsync();
+            // 設置預設的日期範圍
+            var endDate = DateTime.Now;
+            var startDate = new DateTime(endDate.Year, endDate.Month, 1).AddMonths(-1);
 
-            // 獲取 Character 的 MoveInDate 和總人數數據
-            var characterData = await _context.Characters
-                .GroupBy(c => c.MoveInDate)
-                .Select(g => new
-                {
-                    Date = g.Key,
-                    Count = g.Count()
-                })
-                .ToListAsync();
+            // 獲取初始統計數據
+            var initialStats = GetStatsData(startDate, endDate);
 
-            // 設置折線圖配置
-            var playerOptions = $@"{{
-                                xAxis: {{
-                                    type: 'category',
-                                    data: {JsonSerializer.Serialize(coinGroups.Select(g => g.Range))}
-                                }},
-                                yAxis: {{
-                                    type: 'value'
-                                }},
-                                series: [{{
-                                    data: {JsonSerializer.Serialize(coinGroups.Select(g => g.Count))},
-                                    type: 'bar',
-                                    name: 'Coin Distribution'
-                                }}]
-                          }}";
+            // 傳送數據到 View
+            ViewBag.TotalCharacters = initialStats.TotalCharacters;
+            ViewBag.AverageLevel = initialStats.AverageLevel;
+            ViewBag.AverageWeight = initialStats.AverageWeight;
+            ViewBag.AverageHeight = initialStats.AverageHeight;
+            ViewBag.LivingCount = initialStats.LivingCount;
+            ViewBag.MovedCount = initialStats.MovedCount;
 
-            // 設置折線圖數據
-            // areaStyle開啟面積填充與自訂顏色
-            // itemStyle自訂折線顏色
-            var characterOptions = $@"{{
-                                    xAxis: {{
-                                        type: 'category',
-                                        boundaryGap: false,
-                                        data: {JsonSerializer.Serialize(characterData.Select(c => c.Date.HasValue ? c.Date.Value.ToShortDateString() : "Unknown"))}
-                                    }},
-                                    yAxis: {{
-                                        type: 'value'
-                                    }},
-                                    series: [{{
-                                        data: {JsonSerializer.Serialize(characterData.Select(c => c.Count))},
-                                        type: 'line',
-                                        areaStyle: {{}},
-                                        itemStyle: {{
-                                            color: '#ff7f50'
-                                        }},
-                                        lineStyle: {{
-                                            color: '#ff7f50'
-                                        }},
-                                        areaStyle: {{
-                                            color: 'rgba(255,127,80, 0.5)'
-                                        }}
-                                    }}]
-                                }}";
-
-            ViewBag.PlayerOptions = playerOptions;
-            ViewBag.CharacterOptions = characterOptions;
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetStats(DateTime startDate, DateTime endDate)
+        {
+            var stats = GetStatsData(startDate, endDate);
+            return Json(stats);
+        }
+
+        private dynamic GetStatsData(DateTime startDate, DateTime endDate)
+        {
+            var characters = _context.Characters.Where(c => c.MoveInDate >= startDate && c.MoveInDate <= endDate);
+
+            return new
+            {
+                TotalCharacters = characters.Count(),
+                AverageLevel = characters.Average(c => c.Level),
+                AverageWeight = Math.Round((decimal)characters.Average(c => c.Weight), 1),
+                AverageHeight = Math.Round((decimal)characters.Average(c => c.Height), 1),
+                LivingCount = characters.Count(c => c.LivingStatus == "居住"),
+                MovedCount = characters.Count(c => c.LivingStatus == "搬離")
+            };
         }
     }
 }
