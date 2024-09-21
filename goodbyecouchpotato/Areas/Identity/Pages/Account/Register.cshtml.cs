@@ -83,7 +83,7 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "信箱必須填寫")]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "請填寫正確的電子信箱")]
             [Display(Name = "電子信箱")]
             public string Email { get; set; }
 
@@ -168,8 +168,7 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                 }
                 foreach (var error in result.Errors)
