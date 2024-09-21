@@ -1,10 +1,10 @@
 ﻿@page
 @model AccessDeniedModel
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = " 無法進入！";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+<div style="text-align:center">
+    <h1 class="text-danger" ><i class="fas fa-times-circle" style="color: #ff0000;"></i>@ViewData["Title"]</h1>
+    <p  class="text-danger">您沒有足夠的權限可以進入</p>
+</div>
