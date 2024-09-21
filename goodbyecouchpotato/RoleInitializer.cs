@@ -23,25 +23,25 @@ namespace goodbyecouchpotato.Utilities
             }
 
             // 創建預設的管理員用戶（如需要）
-            var adminEmail = "leo555555@gmail.com";
-            var adminPassword = "@aA1234567890";
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            //var adminEmail = "leo555555@gmail.com";
+            //var adminPassword = "@aA1234567890";
+            //var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
-            if (adminUser == null)
-            {
-                var newAdmin = new IdentityUser
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    EmailConfirmed = true
-                };
+            //if (adminUser == null)
+            //{
+            //    var newAdmin = new IdentityUser
+            //    {
+            //        UserName = adminEmail,
+            //        Email = adminEmail,
+            //        EmailConfirmed = true
+            //    };
 
-                var createAdmin = await userManager.CreateAsync(newAdmin, adminPassword);
-                if (createAdmin.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(newAdmin, "Admin");
-                }
-            }
+            //    var createAdmin = await userManager.CreateAsync(newAdmin, adminPassword);
+            //    if (createAdmin.Succeeded)
+            //    {
+            //        await userManager.AddToRoleAsync(newAdmin, "Admin");
+            //    }
+            //}
         }
     }
 }
