@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
 {
@@ -16,6 +17,8 @@ namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
         }
 
         // GET: Member/Index
+        [Authorize(Roles = "Admin")]
+
         public IActionResult Index()
         {
             return View();

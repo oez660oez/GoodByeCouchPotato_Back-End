@@ -2,8 +2,10 @@ using goodbyecouchpotato.Data;
 using goodbyecouchpotato.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using goodbyecouchpotato.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -14,6 +16,7 @@ builder.Services.AddDbContext<GoodbyepotatoContext>(options => options.UseLazyLo
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<MailService>();
@@ -69,6 +72,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// 必須要有 Authentication 在 Authorization 之前
+app.UseAuthentication();
 app.UseAuthorization();
 //area�n��bdefault�e���~�|�QŪ����
 app.MapControllerRoute(
@@ -80,5 +85,12 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{area=DataAnalysis}/{controller=DailyTaskRecords}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+
+// 調用角色初始化方法
+await RoleInitializer.InitializeRoles(services);
+
 
 app.Run();

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Areas.OpinionManagement.viewmodel;
 using goodbyecouchpotato.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
@@ -24,6 +25,8 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
         }
 
         // GET: OpinionManagement/Option
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Index(string search)
         {
             var feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == false);
