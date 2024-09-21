@@ -1,0 +1,49 @@
+﻿@section Styles
+{
+    <style>
+
+    </style>
+}
+
+<h1>數據分析</h1>
+<hr />
+<div class="container">
+    <div class="right_col" role="main">
+        <div class="row" style="display: inline-block;">
+            <div class="tile_count">
+                <div class="col-md-2 col-sm-4 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i> 角色總數</span>
+                    <div class="count">@ViewBag.TotalCharacters</div>
+                </div>
+                <div class="col-md-2 col-sm-4 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-clock-o"></i> 平均等級</span>
+                    <div class="count">@ViewBag.AverageLevel</div>
+                </div>
+                <div class="col-md-2 col-sm-4 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i> 平均體重</span>
+                    <div class="count">@ViewBag.AverageWeight</div>
+                </div>
+                <div class="col-md-2 col-sm-4 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i> 平均身高</span>
+                    <div class="count">@ViewBag.AverageHeight</div>
+                </div>
+                <div class="col-md-2 col-sm-4 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i> 尚在居住人數</span>
+                    <div class="count">@ViewBag.LivingCount</div>
+                </div>
+                <div class="col-md-2 col-sm-4 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i> 搬離人數</span>
+                    <div class="count">@ViewBag.MovedCount</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script src="~/lib/echarts.min.js"></script>
+    <script>
+    </script>
+}

@@ -19,78 +19,35 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ECharts()
+
+        public IActionResult Index()
         {
-            // 獲取玩家 coins 的區間，比如 <50, 50-100, >100
-            var coinGroups = await _context.Players
-                .GroupBy(p => new
-                {
-                    CoinRange = p.Coins < 50 ? "<50" :
-                                p.Coins > 100 ? "50-100" : ">100"
-                })
-                .Select(g => new
-                {
-                    Range = g.Key.CoinRange,
-                    Count = g.Count()
-                })
-                .ToListAsync();
+            // 角色總數
+            var totalCharacters = _context.Characters.Count();
 
-            // 獲取 Character 的 MoveInDate 和總人數數據
-            var characterData = await _context.Characters
-                .GroupBy(c => c.MoveInDate)
-                .Select(g => new
-                {
-                    Date = g.Key,
-                    Count = g.Count()
-                })
-                .ToListAsync();
+            // 平均等級
+            var averageLevel = _context.Characters.Average(c => c.Level);
 
-            // 設置折線圖配置
-            var playerOptions = $@"{{
-                                xAxis: {{
-                                    type: 'category',
-                                    data: {JsonSerializer.Serialize(coinGroups.Select(g => g.Range))}
-                                }},
-                                yAxis: {{
-                                    type: 'value'
-                                }},
-                                series: [{{
-                                    data: {JsonSerializer.Serialize(coinGroups.Select(g => g.Count))},
-                                    type: 'bar',
-                                    name: 'Coin Distribution'
-                                }}]
-                          }}";
+            // 平均體重
+            var averageWeight = _context.Characters.Average(c => c.Weight);
 
-            // 設置折線圖數據
-            // areaStyle開啟面積填充與自訂顏色
-            // itemStyle自訂折線顏色
-            var characterOptions = $@"{{
-                                    xAxis: {{
-                                        type: 'category',
-                                        boundaryGap: false,
-                                        data: {JsonSerializer.Serialize(characterData.Select(c => c.Date.HasValue ? c.Date.Value.ToShortDateString() : "Unknown"))}
-                                    }},
-                                    yAxis: {{
-                                        type: 'value'
-                                    }},
-                                    series: [{{
-                                        data: {JsonSerializer.Serialize(characterData.Select(c => c.Count))},
-                                        type: 'line',
-                                        areaStyle: {{}},
-                                        itemStyle: {{
-                                            color: '#ff7f50'
-                                        }},
-                                        lineStyle: {{
-                                            color: '#ff7f50'
-                                        }},
-                                        areaStyle: {{
-                                            color: 'rgba(255,127,80, 0.5)'
-                                        }}
-                                    }}]
-                                }}";
+            // 平均身高
+            var averageHeight = _context.Characters.Average(c => c.Height);
 
-            ViewBag.PlayerOptions = playerOptions;
-            ViewBag.CharacterOptions = characterOptions;
+            // 尚在居住人數
+            var livingCount = _context.Characters.Count(c => c.LivingStatus == "居住");
+
+            // 搬離人數
+            var movedCount = _context.Characters.Count(c => c.LivingStatus == "搬離");
+
+            // 傳送數據到 View
+            ViewBag.TotalCharacters = totalCharacters;
+            ViewBag.AverageLevel = averageLevel;
+            ViewBag.AverageWeight = averageWeight;
+            ViewBag.AverageHeight = averageHeight;
+            ViewBag.LivingCount = livingCount;
+            ViewBag.MovedCount = movedCount;
+
             return View();
         }
     }
