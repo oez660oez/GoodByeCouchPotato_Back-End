@@ -17,7 +17,7 @@ public class MailService
         try
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_configuration["EmailSettings:SenderEmail"]));
+            email.From.Add(new MailboxAddress("ByePotato官方團隊", _configuration["EmailSettings:SenderEmail"]));
             email.To.Add(MailboxAddress.Parse(toEmail));
             email.Subject = subject;
             email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };

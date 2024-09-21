@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace goodbyecouchpotato.Areas.ReviewManagement.Controllers
 {
     [Area("ReviewManagement")]
+    
     public class TASKReviewController : Controller
     {
         private readonly GoodbyepotatoContext _context;
@@ -22,7 +23,7 @@ namespace goodbyecouchpotato.Areas.ReviewManagement.Controllers
         }
 
         // GET: ReviewManagement/TASKReview
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,PermiGuard")]
 
         public async Task<IActionResult> Index()
         {

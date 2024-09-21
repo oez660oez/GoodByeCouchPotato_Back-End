@@ -24,7 +24,7 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
         }
 
         // GET: DataAnalysis/DailyTaskRecords
-        [Authorize(Roles = "Admin")]
+        
 
         public async Task<IActionResult> Index()
         {

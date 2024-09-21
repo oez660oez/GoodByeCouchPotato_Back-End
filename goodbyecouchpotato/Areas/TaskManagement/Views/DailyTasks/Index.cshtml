@@ -34,9 +34,7 @@
                 </select>
             </div>
     <hr />
-            <p>
-        <a class="btn btn-info col-12" asp-action="Create">新增任務</a>
-    </p>
+        <p> <a class="btn btn-info col-12" asp-action="Create">新增任務</a></p>
         </form>
     </div>
     <div id="Tasklistarea" class=" col-12 col-md-9">
@@ -47,7 +45,11 @@
                     <td>@Html.DisplayNameFor(Model => Model.Reward)</td>
                     <td>@Html.DisplayNameFor(Model => Model.TaskActive)</td>
                     <td>@Html.DisplayNameFor(Model => Model.TReviewStatus)</td>
-                    <td>操作介面</td>
+                     @if (User.IsInRole("Admin"))
+                      {
+                         <td>操作介面</td>
+                      }
+                    
                 </tr>
     </thead>
     <tbody class="list">
@@ -74,7 +76,10 @@
                                                 <td>${task.reward}</td>
                                                 <td>${task.taskActive === null ? "未知狀態" : (task.taskActive== true?"已啟用":"未啟用")}</td>
                                                 <td>${task.tReviewStatus}</td>
-                                                <td><a class="btn btn-info" href="/TaskManagement/DailyTasks/Edit/${task.taskId}" asp-route-id=${task.taskId}>編輯</a></td>
+                                                @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
+                                                 {
+                                                    <td><a class="btn btn-info" href="/TaskManagement/DailyTasks/Edit/${task.taskId}">編輯</a></td>
+                                                  }
 
                                             </tr>
                                         `).join('')

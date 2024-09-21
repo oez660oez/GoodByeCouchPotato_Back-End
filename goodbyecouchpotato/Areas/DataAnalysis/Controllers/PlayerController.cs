@@ -18,7 +18,7 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Admin")]
+        
         public async Task<IActionResult> ECharts()
         {
             // 獲取玩家 coins 的區間，比如 <50, 50-100, >100

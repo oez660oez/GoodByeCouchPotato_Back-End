@@ -17,7 +17,7 @@ namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
         }
 
         // GET: Member/Index
-        [Authorize(Roles = "Admin")]
+        
 
         public IActionResult Index()
         {
