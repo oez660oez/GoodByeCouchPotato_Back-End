@@ -83,7 +83,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{area=DataAnalysis}/{controller=DailyTaskRecords}/{action=Index}/{id?}");
+    pattern: "{area=DataAnalysis}/{controller=Player}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 var scope = app.Services.CreateScope();
