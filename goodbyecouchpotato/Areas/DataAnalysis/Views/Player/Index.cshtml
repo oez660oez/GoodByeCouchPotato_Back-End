@@ -221,21 +221,42 @@
                     data: { startDate: startDate, endDate: endDate },
                     success: function (data) {
                         console.log('從伺服器接收到的資料:', data);
-                        animateNumber($('#totalCharacters')[0], data.totalCharacters);
-                        animateNumber($('#averageLevel')[0], data.averageLevel.toFixed(2));
-                        animateNumber($('#averageWeight')[0], data.averageWeight.toFixed(1));
-                        animateNumber($('#averageHeight')[0], data.averageHeight.toFixed(1));
-                        animateNumber($('#livingCount')[0], data.livingCount);
-                        animateNumber($('#movedCount')[0], data.movedCount);
+                        // 檢查是否有資料，如果沒有則顯示零值
+                        if (data && Object.keys(data).length > 0) {
+                            animateNumber($('#totalCharacters')[0], data.totalCharacters || 0);
+                            animateNumber($('#averageLevel')[0], (data.averageLevel || 0).toFixed(2));
+                            animateNumber($('#averageWeight')[0], (data.averageWeight || 0).toFixed(1));
+                            animateNumber($('#averageHeight')[0], (data.averageHeight || 0).toFixed(1));
+                            animateNumber($('#livingCount')[0], data.livingCount || 0);
+                            animateNumber($('#movedCount')[0], data.movedCount || 0);
 
-                        if (data.chartData) {
-                            renderChart(data.chartData);
+                            if (data.chartData) {
+                                renderChart(data.chartData);
+                            } else {
+                                console.log('chartData 不存在於伺服器回應中，顯示空圖表');
+                                renderChart({ dates: [], totalCharacters: [], averageLevels: [], livingCounts: [], movedCount: [] });
+                            }
                         } else {
-                            console.error('chartData 不存在於伺服器回應中');
+                            // 如果沒有資料，顯示所有項目為零
+                            animateNumber($('#totalCharacters')[0], 0);
+                            animateNumber($('#averageLevel')[0], 0);
+                            animateNumber($('#averageWeight')[0], 0);
+                            animateNumber($('#averageHeight')[0], 0);
+                            animateNumber($('#livingCount')[0], 0);
+                            animateNumber($('#movedCount')[0], 0);
+                            renderChart({ dates: [], totalCharacters: [], averageLevels: [], livingCounts: [], movedCount: [] });
                         }
                     },
-                    error: function () {
-                        alert('更新統計資訊時發生錯誤');
+                    error: function (xhr, status, error) {
+                        console.error('更新統計資訊時發生錯誤:', error);
+                        // 錯誤時也顯示所有項目為零
+                        animateNumber($('#totalCharacters')[0], 0);
+                        animateNumber($('#averageLevel')[0], 0);
+                        animateNumber($('#averageWeight')[0], 0);
+                        animateNumber($('#averageHeight')[0], 0);
+                        animateNumber($('#livingCount')[0], 0);
+                        animateNumber($('#movedCount')[0], 0);
+                        renderChart({ dates: [], totalCharacters: [], averageLevels: [], livingCounts: [], movedCount: [] });
                     }
                 });
             }
@@ -255,6 +276,7 @@
                 console.log('ECharts 實例已創建');
 
                 var option = {
+                    animation: true,  // 確保動畫啟用
                     animationDuration: 10000,
                     tooltip: {
                         trigger: 'axis',
@@ -285,10 +307,10 @@
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: chartData.dates,
+                        data: chartData.dates.length > 0 ? chartData.dates : ['無資料'],
                         axisLabel: {
                             formatter: function (value) {
-                                return new Date(value).toLocaleDateString('zh-TW', {
+                                return value === '無資料' ? value : new Date(value).toLocaleDateString('zh-TW', {
                                     month: 'short', day: 'numeric'
                                 });
                             }
@@ -305,80 +327,46 @@
                             name: '角色總數',
                             type: 'line',
                             showSymbol: false,
-                            emphasis: {
-                                focus: 'series'
-                            },
-                            endLabel: {
-                                show: true,
-                                formatter: function (params) {
-                                    return params.seriesName + ': ' + params.value;
-                                }
-                            },
-                            labelLayout: {
-                                moveOverlap: 'shiftY'
-                            },
-                            data: chartData.totalCharacters
+                            data: chartData.totalCharacters.length > 0 ? chartData.totalCharacters : [0],
+                            animationDelay: function (idx) {
+                                return idx * 10;
+                            }
                         },
                         {
                             name: '平均等級',
                             type: 'line',
                             showSymbol: false,
-                            emphasis: {
-                                focus: 'series'
-                            },
-                            endLabel: {
-                                show: true,
-                                formatter: function (params) {
-                                    return params.seriesName + ': ' + params.value.toFixed(2);
-                                }
-                            },
-                            labelLayout: {
-                                moveOverlap: 'shiftY'
-                            },
-                            data: chartData.averageLevels
+                            data: chartData.averageLevels.length > 0 ? chartData.averageLevels : [0],
+                            animationDelay: function (idx) {
+                                return idx * 10;
+                            }
                         },
                         {
                             name: '尚在居住人數',
                             type: 'line',
                             showSymbol: false,
-                            emphasis: {
-                                focus: 'series'
-                            },
-                            endLabel: {
-                                show: true,
-                                formatter: function (params) {
-                                    return params.seriesName + ': ' + params.value;
-                                }
-                            },
-                            labelLayout: {
-                                moveOverlap: 'shiftY'
-                            },
-                            data: chartData.livingCounts
+                            data: chartData.livingCounts.length > 0 ? chartData.livingCounts : [0],
+                            animationDelay: function (idx) {
+                                return idx * 10;
+                            }
                         },
                         {
                             name: '搬離人數',
                             type: 'line',
                             showSymbol: false,
-                            emphasis: {
-                                focus: 'series'
-                            },
-                            endLabel: {
-                                show: true,
-                                formatter: function (params) {
-                                    return params.seriesName + ': ' + params.value;
-                                }
-                            },
-                            labelLayout: {
-                                moveOverlap: 'shiftY'
-                            },
-                            data: chartData.movedCount
+                            data: chartData.movedCount.length > 0 ? chartData.movedCount : [0],
+                            animationDelay: function (idx) {
+                                return idx * 10;
+                            }
                         }
                     ]
                 };
+
                 // 添加 resize 事件监听器
                 window.addEventListener('resize', function () {
                     chart.resize();
                 });
+
                 try {
                     chart.setOption(option);
                     console.log('圖表選項已設置');
@@ -386,6 +374,7 @@
                     console.error('設置圖表選項時發生錯誤:', error);
                 }
             }
+
 
             function loadProductData() {
                 $.ajax({
@@ -458,17 +447,24 @@
             updateStats();
 
             // 監控日期變化事件
-            $('.datepicker').on('changeDate', function () {
-                var startDate = $('#startDate').datepicker('getDate');
-                var endDate = $('#endDate').datepicker('getDate');
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                language: 'zh-TW',
+                autoclose: true,
+                todayHighlight: true
+            }).on('changeDate', function (e) {
+                var selectedDate = $(this).datepicker('getDate');
 
-                if (endDate < startDate) {
-                    alert('結束日期不能早於開始日期。');
-                    $('#endDate').datepicker('setDate', originalEndDate); // 恢復為原始結束日期
-                } else {
-                    updateStats();
+                if (this.id === 'startDate') {
+                    $('#endDate').datepicker('setStartDate', selectedDate);  // 设定结束日期不能早于开始日期
+                } else if (this.id === 'endDate') {
+                    $('#startDate').datepicker('setEndDate', selectedDate);  // 设定开始日期不能晚于结束日期
                 }
+
+                updateStats();  // 更新统计数据
             });
+
+
 
             // 監控搜尋按鈕點擊事件
             $('#searchBtn').on('click', function () {
