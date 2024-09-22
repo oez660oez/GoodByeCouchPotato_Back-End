@@ -95,7 +95,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 Content = F.Content,
                 Submitted = F.Submitted,
                 //ProActive = F.ProActive,
-                //ProDate = F.ProDate,
+                ProDate = F.ProDate,
             }).ToListAsync();
 
             var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
@@ -311,7 +311,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                     await _context.SaveChangesAsync();
 
                     // 發送回覆郵件給反饋者
-                    string subject = "回覆您的意見回饋";
+                    string subject = "答覆您的意見";
                     string message = $"<p>親愛的用戶：</p><p>謝謝您的意見回饋：</p><p>{optionviewmodel.Content}。</p><p>我們的回覆如下：</p><p>{optionviewmodel.Pro_Content}</p><p>敬祝順利</p><p>byepotato團隊</p>";
 
                     await _mailService.SendEmailAsync(optionviewmodel.Email, subject, message);
