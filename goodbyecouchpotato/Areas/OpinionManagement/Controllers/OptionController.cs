@@ -95,7 +95,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 Content = F.Content,
                 Submitted = F.Submitted,
                 //ProActive = F.ProActive,
-                //ProDate = F.ProDate,
+                ProDate = F.ProDate,
             }).ToListAsync();
 
             var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
