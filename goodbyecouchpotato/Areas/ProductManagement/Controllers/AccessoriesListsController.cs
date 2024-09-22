@@ -67,11 +67,9 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         {
             var file = Request.Form.Files[Image];
 
-            // 生成唯一的檔案名稱以避免名稱衝突
-            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 
             // 定義圖片保存的路徑
-            var savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", uniqueFileName);
+            var savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", file.FileName);
 
             // 確保目錄存在
             if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images")))
@@ -88,11 +86,11 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
             // 將圖片的相對路徑保存到資料庫
             if (Image == "PImageShop")
             {
-                accessoriesList.PImageShop = "/images/" + uniqueFileName;
+                accessoriesList.PImageShop = file.FileName;
             }
             else if (Image == "PImageAll")
             {
-                accessoriesList.PImageAll = "/images/" + uniqueFileName;
+                accessoriesList.PImageAll = file.FileName;
             }
         }
 

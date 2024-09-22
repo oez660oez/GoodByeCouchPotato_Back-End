@@ -1,36 +1,98 @@
 ﻿@model List<AdminViewModel>
-@{
-    ViewData["Title"] = "Index";
-}
-@section Styles
-{
-    <style>
-    </style>
-}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>User Name</th>
-            <th>Email</th>
-            <th>Roles</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.UserName</td>
-                <td>@user.Email</td>
-                <td>
-                    @foreach (var role in user.Roles)
+<h1>用戶權限管理</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <h5>搜尋用戶</h5>
+            <hr />
+            <form>
+                <div class="form-group">
+                    <label for="nameSearch" class="control-label">用戶名稱</label>
+                    <input type="text" id="nameSearch" class="form-control" placeholder="搜尋用戶名稱">
+                </div>
+                <div class="form-group">
+                    <label for="roleSearch" class="control-label">當前角色</label>
+                    <select id="roleSearch" class="form-control form-select" >
+                        <option value="">請選擇角色</option>
+                        <option value="PermiGuard">PermiGuard</option>
+                        <option value="User">User</option>
+                    </select>
+                </div>
+            </form>
+            <hr />
+            <div class="d-grid">
+                <a asp-area="Identity" asp-controller="Account" asp-action="Register" class="btn btn-info">新增管理員</a>
+            </div>
+         </div>
+
+        <div class="col-12 col-md-9">
+            <table class="table table-striped jambo_table bulk_action" id="adminTable">
+                <thead class="even pointer">
+                    <tr class="odd pointer">
+                        <th>用戶名稱</th>
+                        <th>當前角色</th>
+                        <th class="col-3">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
                     {
-                        <span>@role.RoleName</span>
+                        // 獲取當前登入用戶ID
+                        var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-                        <br />
+                        // 檢查是否是自己帳號，如果是則不顯示操作按鈕
+                        if (user.UserId != currentUserId)
+                        {
+                            <tr>
+                                <td>@user.UserName</td>
+                                <td>@string.Join(", ", user.Roles.Select(r => r.RoleName))</td>
+                                <td>
+                                    <form id="roleChangeForm" method="post" asp-action="ChangeUserRole" class="d-flex align-items-center">
+                                        <input type="hidden" name="userId" value="@user.UserId" />
+                                        <input type="hidden" name="oldRoleName" value="@user.Roles.FirstOrDefault()?.RoleName" />
+                                        <select id="newRoleSelect" name="newRoleName" class="form-control form-select me-2" style="width: 150px;" required>
+                                            <option value="" disabled selected>---請選擇---</option>
+                                            <option value="PermiGuard">PermiGuard</option>
+                                            <option value="User">User</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-info">更改角色</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
                     }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // 用戶名稱搜尋
+            $('#nameSearch').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#adminTable tbody tr').filter(function () {
+                    $(this).toggle($(this).find('td:first').text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+            // 當前角色搜尋
+            $('#roleSearch').on('change', function () {
+                var value = $(this).val().toLowerCase();
+                $('#adminTable tbody tr').filter(function () {
+                    $(this).toggle($(this).find('td:nth-child(2)').text().toLowerCase().indexOf(value) > -1 || value === "");
+                });
+            });
+        });
+    </script>
+}
+
+
+
+
+
+

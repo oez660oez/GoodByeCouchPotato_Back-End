@@ -10,7 +10,7 @@ namespace goodbyecouchpotato.Utilities
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
             // 檢查並創建 Admin 角色
-            string[] roleNames = { "Admin", "User" };
+            string[] roleNames = { "Admin", "PermiGuard", "User" };
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
