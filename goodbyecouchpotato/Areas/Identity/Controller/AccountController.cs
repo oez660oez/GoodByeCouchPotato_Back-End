@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ namespace goodbyecouchpotato.Areas.Identity.Controllers
     [Area("Identity")]
     public class AccountController : Controller
     {
+
+
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
 
@@ -102,13 +105,21 @@ namespace goodbyecouchpotato.Areas.Identity.Controllers
             return View(model);
         }
 
-        // POST: /Account/Logout
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
-        }
-    }
+		// POST: /Account/Logout
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Logout()
+		{
+			// 使用 SignInManager 進行登出操作
+			await _signInManager.SignOutAsync();
+
+			// 可選：禁止快取以確保登出後無法使用返回按鈕回到已登入狀態的頁面
+			HttpContext.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+			HttpContext.Response.Headers["Pragma"] = "no-cache";
+			HttpContext.Response.Headers["Expires"] = "-1";
+
+			// 導向到登入頁面
+			return RedirectToAction("Login", "Account");
+		}
+	}
 }
