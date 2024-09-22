@@ -39,15 +39,15 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
                 PImageAll = c.PImageAll
             };
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var accessoriesList = _context.AccessoriesLists.ToList();
-            if (accessoriesList == null)
-            {
-                return NotFound();
-            }
+            var totalItems = await _context.AccessoriesLists.CountAsync(); // 計算總數
+            var accessoriesList = await _context.AccessoriesLists
+                .OrderBy(c => c.PName) // 按名稱排序
+                .Skip((page - 1) * pageSize) // 跳過前面的頁數
+                .Take(pageSize) // 取該頁資料
+                .ToListAsync();
 
-            // 將 AccessoriesList 轉換成 ViewModel
             var viewModelList = accessoriesList.Select(c => new _AccessoriesViewModel
             {
                 PName = c.PName,
@@ -60,7 +60,42 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
                 PImageShop = c.PImageShop,
                 PImageAll = c.PImageAll
             }).ToList();
+
+            // 計算總頁數
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.CurrentPage = page;
+
             return View(viewModelList);
+        }
+
+
+        //局部檢視
+        public IActionResult GetPagedItems(int page = 1, int pageSize = 10, string returnUrl = null)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect(returnUrl ?? "/Identity/Account/Login");
+            }
+            var pagedItems = _context.AccessoriesLists
+                .OrderBy(a => a.PName)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var viewModelList = pagedItems.Select(c => new _AccessoriesViewModel
+            {
+                PName = c.PName,
+                PClass = c.PClass,
+                PPrice = c.PPrice,
+                PCode = c.PCode,
+                PLevel = c.PLevel,
+                PReviewStatus = c.PReviewStatus,
+                PActive = c.PActive,
+                PImageShop = c.PImageShop,
+                PImageAll = c.PImageAll
+            }).ToList();
+
+            return PartialView("_AccessoriesListPartial", viewModelList);
         }
 
         //Upload Image 

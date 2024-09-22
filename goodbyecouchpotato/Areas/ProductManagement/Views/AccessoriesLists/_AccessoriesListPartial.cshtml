@@ -1,0 +1,37 @@
+﻿@model IEnumerable<_AccessoriesViewModel>
+
+<table class="table table-striped jambo_table bulk_action" id="productsTable">
+    <thead>
+        <tr>
+            <th>商品名稱</th>
+            <th>商品類別</th>
+            <th>商品等級</th>
+            <th>商品有效性</th>
+            <th>複核狀態</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>操作介面</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="odd pointer">
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.PCode">@item.PName</a>
+                </td>
+                <td>@item.PClass</td>
+                <td>@item.PLevel</td>
+                <td>@item.PActiveDisplay</td>
+                <td>@item.PReviewStatus</td>
+                @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.PCode" class="btn btn-info">編輯</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<goodbyecouchpotato.Areas.AdministratorManagement.Views.AdminViewModel>
+
+<table class="table table-striped jambo_table bulk_action" id="adminTable">
+    <thead class="even pointer">
+        <tr class="odd pointer">
+            <th>用戶名稱</th>
+            <th>當前角色</th>
+            <th class="col-3">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            // 獲取當前登入用戶ID
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            // 檢查是否是自己帳號，如果是則不顯示操作按鈕
+            if (user.UserId != currentUserId)
+            {
+                <tr>
+                    <td width="30%">@user.UserName</td>
+                    <td width="20%">@string.Join(", ", user.Roles.Select(r => r.RoleName))</td>
+                    <td width="30%">
+                        <form id="roleChangeForm" method="post" asp-action="ChangeUserRole" class="d-flex align-items-center">
+                            <input type="hidden" name="userId" value="@user.UserId" />
+                            <input type="hidden" name="oldRoleName" value="@user.Roles.FirstOrDefault()?.RoleName" />
+                            <select width="80%" id="newRoleSelect" name="newRoleName" class="form-control me-2" style="width: 150px;" required>
+                                <option value="" disabled selected>---請選擇---</option>
+                                <option value="PermiGuard">PermiGuard</option>
+                                <option value="User">User</option>
+                            </select>
+                            <button width="20%" type="submit" class="btn btn-info">更改角色</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

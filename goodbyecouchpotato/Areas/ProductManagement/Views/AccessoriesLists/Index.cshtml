@@ -1,15 +1,5 @@
 ﻿@model IEnumerable<_AccessoriesViewModel>
 
-@{
-    ViewData["Title"] = "Index";
-}
-@section Styles
-{
-    <style>
-    </style>
-}
-
-
 <h1>商品管理</h1>
 
 <div class="container">
@@ -38,53 +28,53 @@
             </form>
             <hr />
             
-                <div class="d-grid">
-                    <a asp-action="Create" class="btn btn-info" type="button">新增商品</a>
+            <div class="d-grid">
+                <a asp-action="Create" class="btn btn-info" type="button">新增商品</a>
             </div>
         </div>
 
         <div class="col-12 col-md-9">
-            <table class="table table-striped jambo_table bulk_action" id="productsTable">
-                <thead class="even pointer">
-                    <tr class="odd pointer">
-                        <th>商品名稱</th>
-                        <th>商品類別</th>
-                        <th>商品等級</th>
-                        <th>商品有效性</th>
-                        <th>複核狀態</th>
-                        @if (User.IsInRole("Admin"))
+            <div  id="AccessoriesListContainer">            
+                <!-- 這裡會顯示局部視圖內容 -->
+            @Html.Partial("_AccessoriesListPartial", Model)
+            </div>        
+            <div>
+                <nav>
+                    <ul class="pagination">
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
                         {
-                            <th>操作介面</th>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);" onclick="loadPage(@i)">@i</a>
+                                </li>
                         }
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr class="odd pointer">
-                            <td>
-                                <a asp-action="Details" asp-route-id="@item.PCode">@item.PName</a>
-                            </td>
-                            <td>@item.PClass</td>
-                            <td>@item.PLevel</td>
-                            <td>@item.PActiveDisplay</td>
-                            <td>@item.PReviewStatus</td>
-                            @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
-                            {
-                                <td>
-                                    <a asp-action="Edit" asp-route-id="@item.PCode" class="btn btn-info">編輯</a>
-                            </td>}
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </ul>
+                </nav>            
+           </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
+function loadPage(pageNumber) {
+    $.ajax({
+        url: '@Url.Action("GetPagedItems", "AccessoriesLists")',
+        type: 'GET',
+        data: { page: pageNumber },
+        success: function (result) {
+            $('#AccessoriesListContainer').html(result);
+        },
+        error: function (xhr) {
+            if (xhr.status === 401) {
+                // 如果收到未授權（401），重定向到登入頁面
+                window.location.href = '@Url.Page("/Login", new { area = "Identity" })';
+            } else {
+                alert('Error loading data!');
+            }
+        }
+    });
+}
+
         $(document).ready(function () {
             // 商品名稱搜尋
             $('#nameSearch').on('keyup', function () {
@@ -106,7 +96,6 @@
             $('#levelSearch').on('input', function () {
                 var value = $(this).val();
                 $('#productsTable tbody tr').filter(function () {
-                    // 獲取等級單元格的值，並進行精確比較
                     $(this).toggle($(this).find('td:nth-child(3)').text() === value || value === "");
                 });
             });
