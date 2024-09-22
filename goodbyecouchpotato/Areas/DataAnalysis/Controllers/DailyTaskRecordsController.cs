@@ -10,6 +10,7 @@ using goodbyecouchpotato.Areas.DataAnalysis.ViewModel;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using X.PagedList;
 
 namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 {
@@ -37,7 +38,7 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 
             return View();
         }
-        public async Task<IActionResult> TimeTotalRecord(_TaskRecordsViewModel _TaskRecords)
+        public async Task<IActionResult> TimeTotalRecord(_TaskRecordsViewModel _TaskRecords,int page=1)
         {
             //-------------計算任務完成狀況---------------------------
             int completedcount = 0;
@@ -89,28 +90,44 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
             var countColumn3 = Taskresult.GroupBy(t => t.T3name)
                                                .Select(g => new ContentCount { Content = g.Key, Count = g.Count(), TrueCount = g.Count(x => (x.T3completed == true)) });
 
-            var countTask = countColumn1.Concat(countColumn3).Concat(countColumn2).GroupBy(s => s.Content).Select(g => new ContentCount { Content = g.Key, Count = g.Sum(x => x.Count), TrueCount = g.Sum(x => x.TrueCount)}).ToList(); 
+            var countTask = countColumn1.Concat(countColumn3).Concat(countColumn2).GroupBy(s => s.Content).Select(g => new ContentCount { Content = g.Key, Count = g.Sum(x => x.Count), TrueCount = g.Sum(x => x.TrueCount)}).ToPagedList(page,10);
 
-            ViewBag.Tasktotal = countTask.OrderByDescending(c => c.Percentage);
+            //做兩個是因為要計算總筆數，如果使用已經分頁的去做，會只取到單頁
+            var Taskpage = countColumn1.Concat(countColumn3).Concat(countColumn2).GroupBy(s => s.Content).Select(g => new ContentCount { Content = g.Key, Count = g.Sum(x => x.Count), TrueCount = g.Sum(x => x.TrueCount) });
+            ViewBag.Tasktotal = countTask.OrderByDescending(c => c.Percentage);  //用他來輸出數據內容
+            ViewBag.totalpages = countTask.PageCount;
+            ViewBag.currentpages = countTask.PageNumber;
+            ViewBag.totaltask = Taskpage.Count();
 
             //---------------計算任務數據end---------------------------
             //---------------計算任務獎勵數據------------------------------
-            var totalRewards = await result.Join(_context.DailyTasks, //加入DailyTask的model到result裡
-                record => record.T1name,  //取t1name
-                task => task.TaskName,  //取taskname
-                (record, task) => new  //兩者做比較
-                {
-              TaskReward =(bool)record.T1completed ? task.Reward : 0  //如果完成是true，則獎勵，否則0
-                }).SumAsync(r => r.TaskReward);
-
+            var task1 = from R in result join T in _context.DailyTasks on R.T1name equals T.TaskName where R.T1completed==true select new TaskRewardResult {TaskName=R.T1name,Reward=T.Reward};
+            var task2 = from R in result join T in _context.DailyTasks on R.T2name equals T.TaskName where R.T2completed==true select new TaskRewardResult { TaskName = R.T2name, Reward = T.Reward };
+            var task3 = from R in result join T in _context.DailyTasks on R.T3name equals T.TaskName where R.T3completed==true select new TaskRewardResult { TaskName = R.T3name, Reward = T.Reward };
+            
+            var countreward=task1.Concat(task2).Concat(task3).GroupBy(s=>new {s.Reward}).Select(s=> new TaskRewardResult {Reward=s.Key.Reward,sum=s.Count() });
+            var reward= countreward.OrderBy(s => s.Reward).ToList();
+            if (reward != null)
+            {
+                ViewBag.CountReward = reward.Select(s => s.Reward).ToList();
+                ViewBag.CountCounts = reward.Select(s => s.sum).ToList();
+            }
+            else
+            {
+                ViewBag.CountReward = new List<string>();
+                ViewBag.CountCounts = new List<int>();
+            }
 
             //---------------計算任務獎勵數據end------------------------------
 
             return PartialView("_TaskRecordsPartial", transresult);
         }
-
-
-
+        public class TaskRewardResult
+        {
+            public string TaskName { get; set; }
+            public int sum { get; set; }
+            public int Reward { get; set; }
+        }
 
         public class ContentCount  //建立一個新類別來存放資料
         {

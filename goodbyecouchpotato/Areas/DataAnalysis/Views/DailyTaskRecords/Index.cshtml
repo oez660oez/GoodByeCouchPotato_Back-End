@@ -1,5 +1,6 @@
 ﻿@model _TaskRecordsViewModel
 
+
 <h1>數據分析</h1>
 <form asp-controller="DailyTaskRecords" asp-action="TimeTotalRecord" id="searchform">
 <div class="col-12 col-md-4">
@@ -16,11 +17,10 @@
 </div>
 
 
- 
-
 @section Scripts{
+            <script src="~/lib/echarts.min.js"></script>
     <script>
-    $(document).ready(function(){
+        $(document).ready(function () {
             function performDataUpdate() {
                 var startDate = new Date($('#starttime').val());
                 var endDate = new Date($('#endtime').val());
@@ -34,21 +34,35 @@
                     });
                 } else {
                     alert("開始日期大於結束日期");
-                startDate = new Date(endDate); //取得結束日期
-                startDate.setDate(endDate.getDate() - 30); //取得結束日期的前七天
-        
-                 // 更新结束日期的 input 框值
-                $('#starttime').val(startDate.toISOString().split('T')[0]); //toISOString()，將日期轉為ISO格式、T是將日期及時間拆開，0是日期，1是時間
-                         performDataUpdate();
+                    startDate = new Date(endDate); //取得結束日期
+                    startDate.setDate(endDate.getDate() - 30); //取得結束日期的前七天
+
+                    // 更新结束日期的 input 框值
+                    $('#starttime').val(startDate.toISOString().split('T')[0]); //toISOString()，將日期轉為ISO格式、T是將日期及時間拆開，0是日期，1是時間
+                    performDataUpdate();
                 }
             }
 
             $('input').on('change', function (event) {
                 performDataUpdate();
 
-        })
-              performDataUpdate();
-    })
-
+            });
+            performDataUpdate();
+        });
+          $(document).on('click', '.pagination .page-link', function (e) {  //翻頁的事件
+                e.preventDefault();
+                    let page = $(this).data('page'); //取得點擊的頁碼
+                    if (page) {
+                        $.ajax({
+                            type: 'POST',
+                      url: '/DataAnalysis/DailyTaskRecords/TimeTotalRecord',
+                                    data: $('#searchform').serialize() + "&page=" + page,
+                        }).done(data => {
+                           $('#totalRecords').html();//先清空
+                                    $('#totalRecords').html(data); // 更新Partial
+                            updatePagination(data.currentpage, data.totalpages); //更新分頁訊息
+                        });
+                    }
+                });
     </script>
 }

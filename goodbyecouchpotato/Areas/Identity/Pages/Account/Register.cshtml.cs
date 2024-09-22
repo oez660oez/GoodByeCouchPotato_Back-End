@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace goodbyecouchpotato.Areas.Identity.Pages.Account
 {
@@ -137,6 +138,8 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                                 //將用戶信箱設置為信箱
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                user.EmailConfirmed = true;
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
 

@@ -48,13 +48,13 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
             return View();
         }
 
-        public JsonResult IndexJson(int page=1,int pagesize=10)  //先顯示所有資料
-        {
-            var data = _context.DailyTasks;
-            var datapage = data.ToPagedList(page, pagesize);
+        //public JsonResult IndexJson(int page=1,int pagesize=10)  //先顯示所有資料
+        //{
+        //    var data = _context.DailyTasks;
+        //    var datapage = data.ToPagedList(page, pagesize);
 
-            return Json(new {data=datapage,totalpages=datapage.PageCount,currentpage=datapage.PageNumber});
-        }
+        //    return Json(new {data=datapage,totalpages=datapage.PageCount,currentpage=datapage.PageNumber});
+        //}
 
         public IActionResult TaskSearch(_SearchViewModel searchViewModel, int page = 1)
         {
@@ -77,17 +77,19 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
             }
             var model = tasks.Select(t => new _SearchViewModel
             {
-                TaskId= t.TaskId,
+                TaskId = t.TaskId,
                 TaskName = t.TaskName,
                 Reward = t.Reward,
                 TaskActive = t.TaskActive,
                 TReviewStatus = t.TReviewStatus
-            }).ToPagedList(page, 10);
+            });
+            var modelpage=model.ToPagedList(page, 10);
 
-            ViewBag.currentpages=model.PageNumber;
-            ViewBag.totalpages=model.PageCount;
+            ViewBag.currentpages= modelpage.PageNumber;
+            ViewBag.totalpages= modelpage.PageCount;
+            ViewBag.totaltask = model.Count();
 
-            return PartialView("_TaskSearchPartial", model);
+            return PartialView("_TaskSearchPartial", modelpage);
         }
 
         // GET: TaskManagement/DailyTasks/Details/5
