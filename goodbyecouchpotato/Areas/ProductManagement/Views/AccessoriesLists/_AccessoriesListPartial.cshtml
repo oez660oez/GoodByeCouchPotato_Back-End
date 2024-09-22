@@ -8,7 +8,7 @@
             <th>商品等級</th>
             <th>商品有效性</th>
             <th>複核狀態</th>
-            @if (User.IsInRole("Admin"))
+            @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
             {
                 <th>操作介面</th>
             }
