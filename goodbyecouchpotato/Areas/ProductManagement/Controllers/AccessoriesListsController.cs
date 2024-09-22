@@ -70,7 +70,7 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 
 
         //局部檢視
-        public IActionResult Search(string searchName = "", string searchClass = "", string searchLevel = "", int page = 1, int pageSize = 10)
+        public IActionResult Search(string searchName = "", string searchClass = "", string searchLevel = "", string searchActive = "", string searchStatus = "",  int page = 1, int pageSize = 10)
         {
             var query = _context.AccessoriesLists.AsQueryable();
 
@@ -88,6 +88,19 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
             if (!string.IsNullOrEmpty(searchLevel) && int.TryParse(searchLevel, out int level))
             {
                 query = query.Where(c => c.PLevel == level);
+            }
+
+            // Active 狀態搜尋
+            if (!string.IsNullOrEmpty(searchActive))
+            {
+                bool isActive = searchActive == "active";
+                query = query.Where(c => c.PActive == isActive);
+            }
+
+            // Status 狀態搜尋
+            if (!string.IsNullOrEmpty(searchStatus))
+            {
+                query = query.Where(c => c.PReviewStatus == searchStatus);
             }
 
             // 計算符合篩選條件的總數

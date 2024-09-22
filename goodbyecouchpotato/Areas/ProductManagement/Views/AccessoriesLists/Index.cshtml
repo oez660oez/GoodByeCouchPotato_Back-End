@@ -25,6 +25,26 @@
                     <label for="levelSearch" class="control-label">商品等級</label>
                     <input type="text" id="levelSearch" class="form-control" autocomplete="off" placeholder="搜尋等級" min="0">
                 </div>
+                <!-- Active 搜尋欄位 -->
+                <div class="form-group">
+                    <label for="activeSearch" class="control-label">商品有效性</label>
+                    <select id="activeSearch" class="form-control">
+                        <option value="">---請選擇---</option>
+                        <option value="true">未啟用</option>
+                        <option value="false">已啟用</option>
+                    </select>
+                </div>
+
+                <!-- Status 搜尋欄位 -->
+                <div class="form-group">
+                    <label for="statusSearch" class="control-label">複核狀態</label>
+                    <select id="statusSearch" class="form-control">
+                        <option value="">---請選擇---</option>
+                        <option value="未通過">未通過</option>
+                        <option value="通過">通過</option>
+                        <option value="待複核">待複核</option>
+                    </select>
+                </div>
             </form>
             <hr />
             <div class="d-grid">
@@ -47,6 +67,8 @@
             var searchName = $('#nameSearch').val();
             var searchClass = $('#classSearch').val();
             var searchLevel = $('#levelSearch').val();
+            var searchActive = $('#activeSearch').val();  
+            var searchStatus = $('#statusSearch').val();  
 
             $.ajax({
                 url: '@Url.Action("Search", "AccessoriesLists")',
@@ -55,7 +77,9 @@
                     page: pageNumber,
                     searchName: searchName,
                     searchClass: searchClass,
-                    searchLevel: searchLevel
+                    searchLevel: searchLevel,
+                    searchActive: searchActive,  
+                    searchStatus: searchStatus,  
                 },
                 success: function (result) {
                     // 更新商品列表區域
@@ -80,6 +104,14 @@
 
             // 商品等級搜尋
             $('#levelSearch').on('input', function () {
+                loadPage(1); // 搜尋後重置到第 1 頁
+            });
+
+            $('#activeSearch').on('change', function () {
+                loadPage(1); // 搜尋後重置到第 1 頁
+            });
+
+            $('#statusSearch').on('change', function () {
                 loadPage(1); // 搜尋後重置到第 1 頁
             });
         });
