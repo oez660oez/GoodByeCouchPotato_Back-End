@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
 {
     [Area("TaskManagement")]
+    [Authorize]
     public class DailyTasksController : Controller
     {
         private readonly GoodbyepotatoContext _context;

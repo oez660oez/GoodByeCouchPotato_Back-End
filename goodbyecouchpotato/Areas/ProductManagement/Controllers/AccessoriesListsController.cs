@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 {
     [Area("ProductManagement")]
+    [Authorize]
     public class AccessoriesListsController : Controller
     {
         private readonly GoodbyepotatoContext _context;

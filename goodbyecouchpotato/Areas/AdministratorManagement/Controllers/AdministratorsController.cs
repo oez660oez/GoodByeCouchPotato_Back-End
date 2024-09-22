@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Models;
 using Microsoft.AspNetCore.Identity;
 using goodbyecouchpotato.Areas.AdministratorManagement.Views;
+using Microsoft.AspNetCore.Authorization;
 
 namespace goodbyecouchpotato.Areas.AdministratorManagement.Controllers
 {
     [Area("AdministratorManagement")]
+    [Authorize(Roles = "Admin,PermiGuard")]
     public class AdministratorsController : Controller
     {
         //private readonly GoodbyepotatoContext _context;

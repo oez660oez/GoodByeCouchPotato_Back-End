@@ -8,6 +8,7 @@ using System.Linq;
 namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 {
     [Area("DataAnalysis")]
+    [Authorize]
     public class PlayerController : Controller
     {
         private readonly GoodbyepotatoContext _context;
@@ -17,7 +18,7 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Admin")]
+        
         public IActionResult Index()
         {
             // 設置預設的日期範圍
