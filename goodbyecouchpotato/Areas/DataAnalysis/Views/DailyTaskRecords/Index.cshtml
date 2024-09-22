@@ -4,11 +4,11 @@
 <h1>數據分析</h1>
 <form asp-controller="DailyTaskRecords" asp-action="TimeTotalRecord" id="searchform">
 <div class="col-12 col-md-4">
-    <h6>開始日期</h6>
+        <h6><i class="fa-regular fa-calendar"></i> 開始日期</h6>
     <input value="@ViewBag.starttime" type="date" name="starttime" id="starttime" class="form-control" />
     </div>
 <div class="col-12 col-md-4">
-    <h6>結束日期</h6>
+        <h6><i class="fa-regular fa-calendar"></i> 結束日期</h6>
     <input value="@ViewBag.startend" type="date" name="endtime" id="endtime" class="form-control" />
     </div>
 </form>
