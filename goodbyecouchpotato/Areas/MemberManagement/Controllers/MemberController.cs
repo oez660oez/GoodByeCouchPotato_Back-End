@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Models;
 using goodbyecouchpotato.Areas.MemberManagement.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
 {
     [Area("MemberManagement")]
+    [Authorize]
     public class MemberController : Controller
     {
         private readonly GoodbyepotatoContext _context;

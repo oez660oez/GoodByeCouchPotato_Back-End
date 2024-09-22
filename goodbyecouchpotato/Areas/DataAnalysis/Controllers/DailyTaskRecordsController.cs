@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
 {
     [Area("DataAnalysis")]
+    [Authorize]
     public class DailyTaskRecordsController : Controller
     {
         private readonly GoodbyepotatoContext _context;

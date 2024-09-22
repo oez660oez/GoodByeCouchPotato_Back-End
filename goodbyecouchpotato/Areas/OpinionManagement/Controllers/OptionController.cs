@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Areas.OpinionManagement.viewmodel;
 using goodbyecouchpotato.Models;
 using Microsoft.AspNetCore.Authorization;
+using X.PagedList;
 
 
 namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
 {
     [Area("OpinionManagement")]
+    [Authorize]
     public class OptionController : Controller
     {
         private readonly GoodbyepotatoContext _context;
@@ -25,27 +27,26 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
         }
 
         // GET: OpinionManagement/Option
-        
-        public async Task<IActionResult> Index(string search)
+
+        public async Task<IActionResult> Index(string search, int? page)
         {
+            int pageSize = 10; // 每頁顯示的項目數
+            int pageNumber = (page ?? 1); // 如果沒有指定頁碼，默認為第1頁
+
             var feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == false);
-            if (search == null) {
-                feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == false);
-            }
-            else
+
+            if (!string.IsNullOrEmpty(search))
             {
                 DateTime searchDate;
                 bool isdate = DateTime.TryParse(search, out searchDate);
-
-                if (isdate) {
-                feedbacksearch = _context.Feedbacks.Where(f =>
-                f.ProActive == false &&
-                f.Submitted.Month == searchDate.Month && f.Submitted.Day == searchDate.Day);
+                if (isdate)
+                {
+                    feedbacksearch = feedbacksearch.Where(f =>
+                        f.Submitted.Month == searchDate.Month && f.Submitted.Day == searchDate.Day);
                 }
-                else {
-                    feedbacksearch = _context.Feedbacks.Where(f =>
-                f.ProActive == false &&
-                f.Email.Contains(search));
+                else
+                {
+                    feedbacksearch = feedbacksearch.Where(f => f.Email.Contains(search));
                 }
             }
 
@@ -57,37 +58,33 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 Submitted = F.Submitted,
                 //ProActive = F.ProActive,
                 //ProDate = F.ProDate,
-
             }).ToListAsync();
-            ViewData["inputword"] = search;
-            return View(feedback);
 
+            var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
+
+            ViewData["inputword"] = search;
+            return View(pagedFeedback);
         }
 
-        public async Task<IActionResult> Index2(string search)
+        public async Task<IActionResult> Index2(string search, int? page)
         {
+            int pageSize = 10; // 每頁顯示的項目數
+            int pageNumber = (page ?? 1); // 如果沒有指定頁碼，默認為第1頁
+
             var feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == true);
-            if (search == null)
-            {
-                feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == true);
-            }
-            else
+
+            if (!string.IsNullOrEmpty(search))
             {
                 DateTime searchDate;
                 bool isdate = DateTime.TryParse(search, out searchDate);
-
                 if (isdate)
                 {
-                    feedbacksearch = _context.Feedbacks.Where(f =>
-                    f.ProActive == true &&
-                    ((f.Submitted.Month == searchDate.Month && f.Submitted.Day == searchDate.Day) ||
-                    (f.ProDate.HasValue && f.ProDate.Value.Month == searchDate.Month && f.ProDate.Value.Day == searchDate.Day)));
+                    feedbacksearch = feedbacksearch.Where(f =>
+                        f.Submitted.Month == searchDate.Month && f.Submitted.Day == searchDate.Day);
                 }
                 else
                 {
-                    feedbacksearch = _context.Feedbacks.Where(f =>
-                f.ProActive == true &&
-                f.Email.Contains(search));
+                    feedbacksearch = feedbacksearch.Where(f => f.Email.Contains(search));
                 }
             }
 
@@ -98,13 +95,97 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 Content = F.Content,
                 Submitted = F.Submitted,
                 //ProActive = F.ProActive,
-                ProDate = F.ProDate,
-
+                //ProDate = F.ProDate,
             }).ToListAsync();
-            ViewData["inputword"] = search;
-            return View(feedback);
 
+            var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
+
+            ViewData["inputword"] = search;
+            return View(pagedFeedback);
         }
+
+        //public async Task<IActionResult> Index(string search)
+        //{
+        //    var feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == false);
+        //    if (search == null)
+        //    {
+        //        feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == false);
+        //    }
+        //    else
+        //    {
+        //        DateTime searchDate;
+        //        bool isdate = DateTime.TryParse(search, out searchDate);
+
+        //        if (isdate)
+        //        {
+        //            feedbacksearch = _context.Feedbacks.Where(f =>
+        //            f.ProActive == false &&
+        //            f.Submitted.Month == searchDate.Month && f.Submitted.Day == searchDate.Day);
+        //        }
+        //        else
+        //        {
+        //            feedbacksearch = _context.Feedbacks.Where(f =>
+        //        f.ProActive == false &&
+        //        f.Email.Contains(search));
+        //        }
+        //    }
+
+        //    var feedback = await feedbacksearch.Select(F => new Optionviewmodel
+        //    {
+        //        FeedbackNo = F.FeedbackNo,
+        //        Email = F.Email,
+        //        Content = F.Content,
+        //        Submitted = F.Submitted,
+        //        //ProActive = F.ProActive,
+        //        //ProDate = F.ProDate,
+
+        //    }).ToListAsync();
+        //    ViewData["inputword"] = search;
+        //    return View(feedback);
+
+        //}
+
+        //public async Task<IActionResult> Index2(string search)
+        //{
+        //    var feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == true);
+        //    if (search == null)
+        //    {
+        //        feedbacksearch = _context.Feedbacks.Where(f => f.ProActive == true);
+        //    }
+        //    else
+        //    {
+        //        DateTime searchDate;
+        //        bool isdate = DateTime.TryParse(search, out searchDate);
+
+        //        if (isdate)
+        //        {
+        //            feedbacksearch = _context.Feedbacks.Where(f =>
+        //            f.ProActive == true &&
+        //            ((f.Submitted.Month == searchDate.Month && f.Submitted.Day == searchDate.Day) ||
+        //            (f.ProDate.HasValue && f.ProDate.Value.Month == searchDate.Month && f.ProDate.Value.Day == searchDate.Day)));
+        //        }
+        //        else
+        //        {
+        //            feedbacksearch = _context.Feedbacks.Where(f =>
+        //        f.ProActive == true &&
+        //        f.Email.Contains(search));
+        //        }
+        //    }
+
+        //    var feedback = await feedbacksearch.Select(F => new Optionviewmodel
+        //    {
+        //        FeedbackNo = F.FeedbackNo,
+        //        Email = F.Email,
+        //        Content = F.Content,
+        //        Submitted = F.Submitted,
+        //        //ProActive = F.ProActive,
+        //        ProDate = F.ProDate,
+
+        //    }).ToListAsync();
+        //    ViewData["inputword"] = search;
+        //    return View(feedback);
+
+        //}
 
         
 

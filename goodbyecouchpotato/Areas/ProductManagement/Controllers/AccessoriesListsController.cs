@@ -13,6 +13,7 @@ using goodbyecouchpotato.Areas.TaskManagement.Views;
 namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 {
     [Area("ProductManagement")]
+    [Authorize]
     public class AccessoriesListsController : Controller
     {
         private readonly GoodbyepotatoContext _context;

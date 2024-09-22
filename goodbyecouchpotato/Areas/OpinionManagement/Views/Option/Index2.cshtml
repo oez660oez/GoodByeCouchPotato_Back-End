@@ -1,5 +1,6 @@
-﻿@model IEnumerable<goodbyecouchpotato.Areas.OpinionManagement.viewmodel.Optionviewmodel>
-
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList
+@model IPagedList<goodbyecouchpotato.Areas.OpinionManagement.viewmodel.Optionviewmodel>
 @{
     ViewData["Title"] = "Index";
 }
@@ -12,33 +13,18 @@
 </form>
 <hr />
 <table class ="table table-striped jambo_table bulk_action" style="width:800px ;margin-left: auto; margin-right: auto;">
-    <thead class="even pointer" style="font-size:20px ; text-align: center;">
+    <thead class="even pointer" style="font-size:18px ; text-align: center;">
         <tr class="odd pointer">
+            <th><i class="fa-solid fa-list-ol"></i> &nbsp;@Html.DisplayNameFor(model => model.First().FeedbackNo)</th>
+            <th><i class="fa-regular fa-envelope"></i> &nbsp;@Html.DisplayNameFor(model => model.First().Email)</th>
+            <th><i class="fa-solid fa-calendar"></i> &nbsp;@Html.DisplayNameFor(model => model.First().Submitted)</th>
             <th>
-                @Html.DisplayNameFor(model => model.FeedbackNo)
+                <i class="fa-solid fa-calendar-check"></i> &nbsp;@Html.DisplayNameFor(model => model.First().ProDate)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            @* <th>
-            @Html.DisplayNameFor(model => model.Content)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.Submitted)
-            </th>
-            @*  <th>
-            @Html.DisplayNameFor(model => model.ProActive)
-            </th> *@
-            <th>
-            @Html.DisplayNameFor(model => model.ProDate)
-            </th> 
-            <th>
-                處理
-            </th>
-
+            <th>處理</th>
         </tr>
     </thead>
-    <tbody style="font-size:16px">
+    <tbody style="font-size:14px">
         @foreach (var item in Model)
         {
             <tr class="odd pointer">
@@ -63,3 +49,11 @@
         }
     </tbody>
 </table>
+<div style="display: flex; justify-content: center; margin-top: 20px;">
+    @Html.PagedListPager(Model, page => Url.Action("Index2", new { page, search = ViewData["inputword"] }),
+            new PagedListRenderOptions
+    {
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" }
+    })
+</div>
