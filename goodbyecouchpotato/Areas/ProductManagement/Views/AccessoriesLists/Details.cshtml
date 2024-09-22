@@ -1,4 +1,4 @@
-﻿@model goodbyecouchpotato.Models.AccessoriesList
+﻿@model _AccessoriesViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -9,6 +9,12 @@
 <div>
     <hr />
     <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PCode)
+        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PName)
         </dt>
@@ -29,12 +35,6 @@
             @Html.DisplayFor(model => model.PPrice)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PCode)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PImageShop)
         </dt>
         <dd class = "col-sm-10">
@@ -46,9 +46,20 @@
         <dd class = "col-sm-10">
             <partial name="_ShowAllPhotoPartial" />
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PActive)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PActive)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PReviewStatus)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PReviewStatus)
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.PCode">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">回到商品列表</a>
 </div>

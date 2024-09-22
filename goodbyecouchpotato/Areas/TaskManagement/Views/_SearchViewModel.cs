@@ -27,7 +27,7 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Views
                 if (TaskActive == true)
                     return "已啟用";
                 else if (TaskActive == false)
-                    return "已停用";
+                    return "未啟用";
                 else
                     return "未知";
             }

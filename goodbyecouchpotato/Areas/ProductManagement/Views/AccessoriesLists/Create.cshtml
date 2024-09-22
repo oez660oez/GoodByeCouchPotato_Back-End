@@ -1,4 +1,4 @@
-﻿@model goodbyecouchpotato.Models.AccessoriesList
+﻿@model _AccessoriesViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -12,39 +12,39 @@
         <form asp-area="ProductManagement" asp-controller="AccessoriesLists" asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="PCode" class="control-label">商品編號</label>
+                <label asp-for="PCode" class="control-label">@Html.DisplayNameFor(m=>m.PCode)</label>
                 <input asp-for="PCode" class="form-control" readonly />
                 <span asp-validation-for="PCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PClass" class="control-label">商品類別</label>
+                <label asp-for="PClass" class="control-label">@Html.DisplayNameFor(m => m.PClass)</label>
                 <select asp-for="PClass" class="form-control form-select" aria-label="Default select example">
                     <option selected>請選擇商品類別</option>
-                    <option value="1">髮型</option>
-                    <option value="2">衣服</option>
-                    <option value="3">飾品</option>
-                    <option value="4">家具</option>
+                    <option value="髮型">髮型</option>
+                    <option value="衣服">衣服</option>
+                    <option value="飾品">飾品</option>
+                    <option value="家具">家具</option>
                 </select>
                 <span asp-validation-for="PClass" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PName" class="control-label">商品名稱</label>
+                <label asp-for="PName" class="control-label">@Html.DisplayNameFor(m => m.PName)</label>
                 <input asp-for="PName" class="form-control" />
                 <span asp-validation-for="PName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PPrice" class="control-label">商品價格</label>
-                <input asp-for="PPrice" class="form-control" min="0" />
+                <label asp-for="PPrice" class="control-label">@Html.DisplayNameFor(m => m.PPrice)</label>
+                <input asp-for="PPrice" class="form-control" min="310" step="5" />
                 <span asp-validation-for="PPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PLevel" class="control-label">等級</label>
+                <label asp-for="PLevel" class="control-label">@Html.DisplayNameFor(m => m.PLevel)</label>
                 <input asp-for="PLevel" class="form-control" min="0" />
                 <span asp-validation-for="PLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <div>
-                    <label asp-for="PImageShop" class="control-label">商品圖片</label>
+                    <label asp-for="PImageShop" class="control-label">@Html.DisplayNameFor(m => m.PImageShop)</label>
                 </div>
                 <img id="imgpreview1"
                      src="@Url.Content("~/images/NoImage.png")"
@@ -54,7 +54,7 @@
             </div>
             <div class="form-group">
                 <div>
-                    <label asp-for="PImageAll" class="control-label">圖片清單</label>
+                    <label asp-for="PImageAll" class="control-label">@Html.DisplayNameFor(m => m.PImageAll)</label>
                 </div>
                 <img id="imgpreview2"
                      src="@Url.Content("~/images/NoImage.png")"

@@ -1,4 +1,4 @@
-﻿@model AccessoriesList
+﻿@model _AccessoriesViewModel
 @inject GoodbyepotatoContext _context
 @{
     AccessoriesList accessoriesList = await _context.AccessoriesLists.FindAsync(Model.PCode);

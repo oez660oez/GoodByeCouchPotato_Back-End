@@ -30,7 +30,7 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
         {
             //----------取搜尋時間------------------
             DateOnly today = DateOnly.FromDateTime(DateTime.Now); //將datetime轉換成dateonly
-            var stratday= today.AddDays(-7);
+            var stratday= today.AddDays(-30);
             ViewBag.starttime=stratday.ToString("yyyy-MM-dd");
             ViewBag.startend= today.ToString("yyyy-MM-dd");
 
@@ -88,11 +88,22 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
             var countColumn3 = Taskresult.GroupBy(t => t.T3name)
                                                .Select(g => new ContentCount { Content = g.Key, Count = g.Count(), TrueCount = g.Count(x => (x.T3completed == true)) });
 
-            var countTask = countColumn1.Concat(countColumn3).Concat(countColumn2).GroupBy(s => s.Content).Select(g => new ContentCount { Content = g.Key, Count = g.Sum(x => x.Count), TrueCount = g.Sum(x => x.TrueCount) });
+            var countTask = countColumn1.Concat(countColumn3).Concat(countColumn2).GroupBy(s => s.Content).Select(g => new ContentCount { Content = g.Key, Count = g.Sum(x => x.Count), TrueCount = g.Sum(x => x.TrueCount)}).ToList(); 
 
-            ViewBag.Tasktotal = countTask;
+            ViewBag.Tasktotal = countTask.OrderByDescending(c => c.Percentage);
 
             //---------------計算任務數據end---------------------------
+            //---------------計算任務獎勵數據------------------------------
+            var totalRewards = await result.Join(_context.DailyTasks, //加入DailyTask的model到result裡
+                record => record.T1name,  //取t1name
+                task => task.TaskName,  //取taskname
+                (record, task) => new  //兩者做比較
+                {
+              TaskReward =(bool)record.T1completed ? task.Reward : 0  //如果完成是true，則獎勵，否則0
+                }).SumAsync(r => r.TaskReward);
+
+
+            //---------------計算任務獎勵數據end------------------------------
 
             return PartialView("_TaskRecordsPartial", transresult);
         }

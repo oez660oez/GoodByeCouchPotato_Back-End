@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Areas.ReviewManagement.viewmodel;
 using goodbyecouchpotato.Areas.OpinionManagement.viewmodel;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace goodbyecouchpotato.Models;
 
@@ -12,6 +13,8 @@ public partial class GoodbyepotatoContext : DbContext
         : base(options)
     {
     }
+
+
 
     public virtual DbSet<AccessoriesList> AccessoriesLists { get; set; }
 
@@ -38,6 +41,7 @@ public partial class GoodbyepotatoContext : DbContext
     public virtual DbSet<WeeklyHealthRecord> WeeklyHealthRecords { get; set; }
 
     public virtual DbSet<WeightRecord> WeightRecords { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

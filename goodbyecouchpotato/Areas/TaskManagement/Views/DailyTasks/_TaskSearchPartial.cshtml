@@ -22,9 +22,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.TReviewStatus)
             </td>
+            @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
+             {
             <td>
             <a class="btn btn-info" asp-action="Edit" asp-route-id=@item.TaskId>編輯</a>
             </td>
+             }
         </tr>
             }
         }
@@ -35,4 +38,38 @@
     </tbody>
 </table>
 
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
 
+        @if (@ViewBag.currentpages - 1 > 0)
+        {
+            <li class="page-item">
+                <a class="page-link" data-page="@ViewBag.currentpages-1">上一頁</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <a class="page-link">第一頁</a>
+                </li>
+        }
+        
+        @for (int i = 1; i <= @ViewBag.totalpages; i++)
+        {
+            <li class="page-item @(@ViewBag.currentpages==i ? "active" : "")">
+                <a class="page-link" href="#" data-page="@i">@i</a>
+            </li>
+        }
+        @if (@ViewBag.currentpages + 1 < @ViewBag.totalpages)
+        {
+            <li class="page-item">
+                <a class="page-link" data-page="@ViewBag.currentpages-1">下一頁</a>
+            </li>
+        }
+        else
+        {   <li class="page-item disabled">
+            <a class="page-link">最後一頁</a>
+            </li>
+        }
+    </ul>
+</nav>

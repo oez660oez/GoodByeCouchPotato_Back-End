@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using goodbyecouchpotato.Models;
 using Microsoft.AspNetCore.Authorization;
+using goodbyecouchpotato.Areas.ProductManagement.Views;
+using goodbyecouchpotato.Areas.TaskManagement.Views;
 
 namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 {
@@ -21,10 +23,43 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         }
 
         // GET: ProductManagement/AccessoriesLists
-        
+        public _AccessoriesViewModel transViewmodel(AccessoriesList c)
+        {
+            return new _AccessoriesViewModel
+            {
+                PName = c.PName,
+                PClass = c.PClass,
+                PPrice = c.PPrice,
+                PCode = c.PCode,
+                PLevel = c.PLevel,
+                PReviewStatus = c.PReviewStatus,
+                PActive = c.PActive,
+                PImageShop = c.PImageShop,
+                PImageAll = c.PImageAll
+            };
+        }
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AccessoriesLists.ToListAsync());
+            var accessoriesList = _context.AccessoriesLists.ToList();
+            if (accessoriesList == null)
+            {
+                return NotFound();
+            }
+
+            // 將 AccessoriesList 轉換成 ViewModel
+            var viewModelList = accessoriesList.Select(c => new _AccessoriesViewModel
+            {
+                PName = c.PName,
+                PClass = c.PClass,
+                PPrice = c.PPrice,
+                PCode = c.PCode,
+                PLevel = c.PLevel,
+                PReviewStatus = c.PReviewStatus,
+                PActive = c.PActive,
+                PImageShop = c.PImageShop,
+                PImageAll = c.PImageAll
+            }).ToList();
+            return View(viewModelList);
         }
 
         //Upload Image 
@@ -93,18 +128,31 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         //    return Ok(new { message = "商品已成功下架" });
         //}
 
+
+
         //取得檔案路徑
         public async Task<IActionResult> GetPicture(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            string ImagePath= Path.Combine(Directory.GetCurrentDirectory(), "/images", c.PImageShop);
+            if (c == null || string.IsNullOrEmpty(c.PImageShop))
+            {
+                return NotFound();
+            }
+            _AccessoriesViewModel viewmodel=transViewmodel(c);
+
+            string ImagePath= Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageShop);
             return File(ImagePath, "image/png");
         }
 
         public async Task<IActionResult> GetPictureAll(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            string ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "/images", c.PImageAll);
+            if (c == null || string.IsNullOrEmpty(c.PImageShop))
+            {
+                return NotFound();
+            }
+            _AccessoriesViewModel viewmodel = transViewmodel(c);
+            string ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageAll);
             return File(ImagePath, "image/png");
         }
 
@@ -116,26 +164,23 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
                 return NotFound();
             }
 
-            var accessoriesList = await _context.AccessoriesLists.Select(c=>new AccessoriesList
-            {
-                PName = c.PName,
-                PClass = c.PClass,
-                PPrice = c.PPrice,
-                PCode = c.PCode,
-            })
-                .FirstOrDefaultAsync(m => m.PCode == id);
+            // 查 AccessoriesList 對象 
+            var accessoriesList = await _context.AccessoriesLists.FindAsync(id);
             if (accessoriesList == null)
             {
                 return NotFound();
             }
 
-            return View(accessoriesList);
+            // 將 AccessoriesList 轉換成 ViewModel
+            _AccessoriesViewModel viewModel=transViewmodel(accessoriesList);
+
+            return View(viewModel);
         }
 
         // GET: ProductManagement/AccessoriesLists/Create
         public IActionResult Create()
         {
-            var list = new AccessoriesList //預設值
+            var list = new _AccessoriesViewModel  //預設值
             {
                 PReviewStatus = "待複核",
             };
@@ -149,6 +194,7 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PCode,PClass,PName,PPrice,PLevel,PImageShop,PImageAll,PActive,PReviewStatus")] AccessoriesList accessoriesList)
         {
+
             if (ModelState.IsValid)
             {
                 if (Request.Form.Files["PImageShop"] != null)
@@ -194,7 +240,8 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
             {
                 return NotFound();
             }
-            return View(accessoriesList);
+            _AccessoriesViewModel viewModel = transViewmodel(accessoriesList);
+            return View(viewModel);
         }
 
         // POST: ProductManagement/AccessoriesLists/Edit/5
@@ -274,8 +321,7 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
                 return NotFound();
             }
 
-            var accessoriesList = await _context.AccessoriesLists
-                .FirstOrDefaultAsync(m => m.PCode == id);
+            var accessoriesList = await _context.AccessoriesLists.FirstOrDefaultAsync(m => m.PCode == id);
             if (accessoriesList == null)
             {
                 return NotFound();

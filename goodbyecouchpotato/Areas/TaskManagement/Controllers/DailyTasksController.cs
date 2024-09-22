@@ -11,6 +11,9 @@ using Microsoft.Build.Framework;
 using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using X.PagedList;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Drawing.Printing;
 
 namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
 {
@@ -44,12 +47,15 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
             return View();
         }
 
-        public JsonResult IndexJson()  //先顯示所有資料
+        public JsonResult IndexJson(int page=1,int pagesize=10)  //先顯示所有資料
         {
-            return Json(_context.DailyTasks);
+            var data = _context.DailyTasks;
+            var datapage = data.ToPagedList(page, pagesize);
+
+            return Json(new {data=datapage,totalpages=datapage.PageCount,currentpage=datapage.PageNumber});
         }
 
-        public IActionResult TaskSearch(_SearchViewModel searchViewModel)
+        public IActionResult TaskSearch(_SearchViewModel searchViewModel, int page = 1)
         {
             var tasks=_context.DailyTasks.AsQueryable();
             if (!string.IsNullOrEmpty(searchViewModel.TaskName))
@@ -75,7 +81,10 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
                 Reward = t.Reward,
                 TaskActive = t.TaskActive,
                 TReviewStatus = t.TReviewStatus
-            }).ToList();
+            }).ToPagedList(page, 10);
+
+            ViewBag.currentpages=model.PageNumber;
+            ViewBag.totalpages=model.PageCount;
 
             return PartialView("_TaskSearchPartial", model);
         }

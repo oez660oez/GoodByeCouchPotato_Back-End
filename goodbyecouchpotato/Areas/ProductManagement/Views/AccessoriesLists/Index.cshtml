@@ -1,4 +1,4 @@
-﻿@model IEnumerable<goodbyecouchpotato.Models.AccessoriesList>
+﻿@model IEnumerable<_AccessoriesViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -49,7 +49,9 @@
                     <tr class="odd pointer">
                         <th>商品名稱</th>
                         <th>商品類別</th>
-                        <th>等級</th>
+                        <th>商品等級</th>
+                        <th>商品有效性</th>
+                        <th>複核狀態</th>
                         @if (User.IsInRole("Admin"))
                         {
                             <th>操作介面</th>
@@ -66,6 +68,8 @@
                             </td>
                             <td>@item.PClass</td>
                             <td>@item.PLevel</td>
+                            <td>@item.PActiveDisplay</td>
+                            <td>@item.PReviewStatus</td>
                             @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
                             {
                                 <td>

@@ -1,6 +1,10 @@
 ﻿@model _SearchViewModel
 @* 因為要使用在viewmodel的設定，所以這張文件所參考的Model屬性是_SearchViewModel，而不是原始的Model，這樣才可以引用viewmodel的東西
  *@
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core.Fluent
+
  <h1>每日任務管理</h1>
 <div class="container">
     <div class="row">
@@ -56,40 +60,52 @@
 
     </tbody>
         </table>
+
 </div>
 </div>
     </div>
 @section Scripts{
         <script>
-            $(document).ready(function () {
-                $.ajax({
-                    url: "/TaskManagement/DailyTasks/IndexJson",  //取要請求的資料
-                    type: 'GET',
-                    dataType: 'json',
-                    success:
-                    function (data) {
-                        if (Array.isArray(data)) {
-                            $('table tbody').html(
-                                data.map(task => `
-                                            <tr>
-                                                <td>${task.taskName}</td>
-                                                <td>${task.reward}</td>
-                                                <td>${task.taskActive === null ? "未知狀態" : (task.taskActive== true?"已啟用":"未啟用")}</td>
-                                                <td>${task.tReviewStatus}</td>
-                                                @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
-                                                 {
-                                                    <td><a class="btn btn-info" href="/TaskManagement/DailyTasks/Edit/${task.taskId}">編輯</a></td>
-                                                  }
 
-                                            </tr>
-                                        `).join('')
-                            );
-                        } else {
-                            console.error('Expected an array of tasks.');
-                        }
-                    },
-                });
+        $(document).ready(function () {
+            let page = 1;
+            $.ajax({
+                url: "/TaskManagement/DailyTasks/IndexJson",  // 請求後端資料
+                type: 'GET',
+                data: { page: page },
+                success: function (data) {
+                    if (data && Array.isArray(data.data)) {
+                        // 清空表格
+                        $('table tbody').html('');
+
+                        // 遍歷返回的數據並構建表格行
+                        data.data.forEach(task => {
+                            $('table tbody').append(`
+                                        <tr>
+                                            <td>${task.taskName}</td>
+                                            <td>${task.reward}</td>
+                                            <td>${task.taskActive === null ? "未知狀態" : (task.taskActive == true ? "已啟用" : "未啟用")}</td>
+                                            <td>${task.tReviewStatus}</td>
+                                            @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
+                                            {
+                                                <td><a class="btn btn-info" href="/TaskManagement/DailyTasks/Edit/${task.taskId}">編輯</a></td>
+                                            }
+
+                                        </tr>
+                                    `);
+                        });
+
+                        // 更新分頁
+                        updatePagination(data.currentpage, data.totalpages);
+                    } else {
+                        console.error('Expected an array of tasks.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('An error occurred: ', error);
+                }
             });
+        });
             $('input').on('keyup', function () {
                 $.ajax({
                     type:'POST',
@@ -114,5 +130,21 @@
                     }).done(data => { $('.list').html(data); });
                 
             })
+
+        $(document).on('click', '.pagination .page-link', function (e) {
+            e.preventDefault();
+
+            let page = $(this).data('page'); // 获取目标页码
+            if (page) {
+                $.ajax({
+                    type: 'POST',
+                    url: "/TaskManagement/DailyTasks/TaskSearch",
+                    data: $('#Searchform').serialize() + "&page=" + page,
+                }).done(data => {
+                    $('.list').html(data); // 更新部分视图
+                    updatePagination(data.currentpage, data.totalpages); // 更新分页信息
+                });
+            }
+        });
         </script>
 }
