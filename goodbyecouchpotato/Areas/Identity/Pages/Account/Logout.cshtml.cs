@@ -38,5 +38,6 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
                 return RedirectToPage();
             }
         }
+
     }
 }

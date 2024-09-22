@@ -121,7 +121,47 @@ namespace goodbyecouchpotato.Areas.AdministratorManagement.Controllers
             // 成功更改角色，重定向回管理員列表頁面
             return RedirectToAction("Index", "Administrators", new { area = "AdministratorManagement" });
         }
-    }
+
+		public async Task<IActionResult> GetAdminListPartial()
+		{
+			// 查詢所有用戶
+			var users = await _userManager.Users.ToListAsync();
+
+			// 查詢所有角色
+			var allRoles = await _roleManager.Roles.ToListAsync();
+
+			// 創建 ViewModel 列表來保存結果
+			List<AdminViewModel> adminViewModels = new List<AdminViewModel>();
+
+			foreach (var user in users)
+			{
+				// 查詢該用戶的角色
+				var roles = await _userManager.GetRolesAsync(user);
+
+				var adminViewModel = new AdminViewModel
+				{
+					UserId = user.Id,
+					UserName = user.UserName,
+					Email = user.Email,
+					Roles = roles.Select(role =>
+					{
+						var matchedRole = allRoles.FirstOrDefault(r => r.Name == role);
+						return new AdminViewModel.RoleInfo
+						{
+							RoleId = matchedRole?.Id,
+							RoleName = role
+						};
+					}).ToList()
+				};
+
+				adminViewModels.Add(adminViewModel);
+			}
+
+			// 返回局部檢視
+			return PartialView("_AdminListPartial", adminViewModels);
+		}
+
+	}
 }
 
 
