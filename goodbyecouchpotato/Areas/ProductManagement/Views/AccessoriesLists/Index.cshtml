@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<_AccessoriesViewModel>
 
 <h1>商品管理</h1>
-
 <div class="container">
     <div class="row">
+        <hr />
         <div class="col-12 col-md-3">
             <h5>搜尋商品</h5>
             <form>
@@ -25,79 +25,94 @@
                     <label for="levelSearch" class="control-label">商品等級</label>
                     <input type="text" id="levelSearch" class="form-control" autocomplete="off" placeholder="搜尋等級" min="0">
                 </div>
+                <!-- Active 搜尋欄位 -->
+                <div class="form-group">
+                    <label for="activeSearch" class="control-label">商品有效性</label>
+                    <select id="activeSearch" class="form-control">
+                        <option value="">---請選擇---</option>
+                        <option value="true">未啟用</option>
+                        <option value="false">已啟用</option>
+                    </select>
+                </div>
+
+                <!-- Status 搜尋欄位 -->
+                <div class="form-group">
+                    <label for="statusSearch" class="control-label">複核狀態</label>
+                    <select id="statusSearch" class="form-control">
+                        <option value="">---請選擇---</option>
+                        <option value="未通過">未通過</option>
+                        <option value="通過">通過</option>
+                        <option value="待複核">待複核</option>
+                    </select>
+                </div>
             </form>
             <hr />
-            
             <div class="d-grid">
                 <a asp-action="Create" class="btn btn-info" type="button">新增商品</a>
             </div>
         </div>
 
         <div class="col-12 col-md-9">
-            <div  id="AccessoriesListContainer">            
+            <div id="AccessoriesListContainer">
                 <!-- 這裡會顯示局部視圖內容 -->
-            @Html.Partial("_AccessoriesListPartial", Model)
-            </div>        
-            <div>
-                <nav>
-                    <ul class="pagination">
-                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:void(0);" onclick="loadPage(@i)">@i</a>
-                                </li>
-                        }
-                    </ul>
-                </nav>            
-           </div>
+                @Html.Partial("_AccessoriesListPartial", Model)
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-function loadPage(pageNumber) {
-    $.ajax({
-        url: '@Url.Action("GetPagedItems", "AccessoriesLists")',
-        type: 'GET',
-        data: { page: pageNumber },
-        success: function (result) {
-            $('#AccessoriesListContainer').html(result);
-        },
-        error: function (xhr) {
-            if (xhr.status === 401) {
-                // 如果收到未授權（401），重定向到登入頁面
-                window.location.href = '@Url.Page("/Login", new { area = "Identity" })';
-            } else {
-                alert('Error loading data!');
-            }
+        function loadPage(pageNumber) {
+            var searchName = $('#nameSearch').val();
+            var searchClass = $('#classSearch').val();
+            var searchLevel = $('#levelSearch').val();
+            var searchActive = $('#activeSearch').val();  
+            var searchStatus = $('#statusSearch').val();  
+
+            $.ajax({
+                url: '@Url.Action("Search", "AccessoriesLists")',
+                type: 'GET',
+                data: {
+                    page: pageNumber,
+                    searchName: searchName,
+                    searchClass: searchClass,
+                    searchLevel: searchLevel,
+                    searchActive: searchActive,  
+                    searchStatus: searchStatus,  
+                },
+                success: function (result) {
+                    // 更新商品列表區域
+                    $('#AccessoriesListContainer').html(result);
+                },
+                error: function () {
+                    alert('Error loading data!');
+                }
+            });
         }
-    });
-}
 
         $(document).ready(function () {
             // 商品名稱搜尋
             $('#nameSearch').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                $('#productsTable tbody tr').filter(function () {
-                    $(this).toggle($(this).find('td:first').text().toLowerCase().indexOf(value) > -1);
-                });
+                loadPage(1); // 搜尋後重置到第 1 頁
             });
 
             // 商品類別搜尋
             $('#classSearch').on('change', function () {
-                var value = $(this).val().toLowerCase();
-                $('#productsTable tbody tr').filter(function () {
-                    $(this).toggle($(this).find('td:nth-child(2)').text().toLowerCase().indexOf(value) > -1 || value === "");
-                });
+                loadPage(1); // 搜尋後重置到第 1 頁
             });
 
-            // 等級搜尋
+            // 商品等級搜尋
             $('#levelSearch').on('input', function () {
-                var value = $(this).val();
-                $('#productsTable tbody tr').filter(function () {
-                    $(this).toggle($(this).find('td:nth-child(3)').text() === value || value === "");
-                });
+                loadPage(1); // 搜尋後重置到第 1 頁
+            });
+
+            $('#activeSearch').on('change', function () {
+                loadPage(1); // 搜尋後重置到第 1 頁
+            });
+
+            $('#statusSearch').on('change', function () {
+                loadPage(1); // 搜尋後重置到第 1 頁
             });
         });
     </script>

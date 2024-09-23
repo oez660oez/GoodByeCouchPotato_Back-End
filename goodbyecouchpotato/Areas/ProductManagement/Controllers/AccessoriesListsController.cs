@@ -70,13 +70,44 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 
 
         //局部檢視
-        public IActionResult GetPagedItems(int page = 1, int pageSize = 10, string returnUrl = null)
+        public IActionResult Search(string searchName = "", string searchClass = "", string searchLevel = "", string searchActive = "", string searchStatus = "",  int page = 1, int pageSize = 10)
         {
-            if (!User.Identity.IsAuthenticated)
+            var query = _context.AccessoriesLists.AsQueryable();
+
+            // 根據搜尋條件篩選資料
+            if (!string.IsNullOrEmpty(searchName))
             {
-                return LocalRedirect(returnUrl ?? "/Identity/Account/Login");
+                query = query.Where(c => c.PName.Contains(searchName));
             }
-            var pagedItems = _context.AccessoriesLists
+
+            if (!string.IsNullOrEmpty(searchClass))
+            {
+                query = query.Where(c => c.PClass == searchClass);
+            }
+
+            if (!string.IsNullOrEmpty(searchLevel) && int.TryParse(searchLevel, out int level))
+            {
+                query = query.Where(c => c.PLevel == level);
+            }
+
+            // Active 狀態搜尋
+            if (!string.IsNullOrEmpty(searchActive))
+            {
+                bool isActive = searchActive == "active";
+                query = query.Where(c => c.PActive == isActive);
+            }
+
+            // Status 狀態搜尋
+            if (!string.IsNullOrEmpty(searchStatus))
+            {
+                query = query.Where(c => c.PReviewStatus == searchStatus);
+            }
+
+            // 計算符合篩選條件的總數
+            var totalItems = query.Count();
+
+            // 分頁
+            var pagedItems = query
                 .OrderBy(a => a.PName)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -94,6 +125,14 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
                 PImageShop = c.PImageShop,
                 PImageAll = c.PImageAll
             }).ToList();
+
+            // 計算總頁數
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            // 將符合條件的總筆數和分頁資訊傳遞給 ViewBag
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalItems = totalItems; // 總資料筆數
 
             return PartialView("_AccessoriesListPartial", viewModelList);
         }
