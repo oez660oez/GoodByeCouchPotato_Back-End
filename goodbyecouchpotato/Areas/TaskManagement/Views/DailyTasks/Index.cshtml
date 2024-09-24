@@ -11,7 +11,7 @@
     <div class="row">
         <hr />
     <div class="searcharea col-12 col-md-3">
-        <h5>搜尋任務</h5>
+            <h5><i class="fas fa-search"></i>&nbsp;搜尋任務</h5>
         <form asp-controller="DailyTasks" asp-action="TaskSearch" id="Searchform">
             <div class="form-group">
             <label class="control-label" name="Name">@Html.DisplayNameFor(Model=>Model.TaskName)</label>
@@ -48,13 +48,13 @@
             <table class="table table-striped jambo_table bulk_action">
                 <thead class="even pointer">
                     <tr class="odd pointer">
-                    <td>@Html.DisplayNameFor(Model => Model.TaskName)</td>
-                    <td>@Html.DisplayNameFor(Model => Model.Reward)</td>
-                    <td>@Html.DisplayNameFor(Model => Model.TaskActive)</td>
-                    <td>@Html.DisplayNameFor(Model => Model.TReviewStatus)</td>
+                        <td><i class="fas fa-tasks"></i>&nbsp;@Html.DisplayNameFor(Model => Model.TaskName)</td>
+                        <td>            <i class="fas fa-dollar-sign"></i>&nbsp;@Html.DisplayNameFor(Model => Model.Reward)</td>
+                        <td><i class="fas fa-clock"></i>&nbsp;@Html.DisplayNameFor(Model => Model.TaskActive)</td>
+                        <td><i class="fa-regular fa-circle-check"></i>&nbsp;@Html.DisplayNameFor(Model => Model.TReviewStatus)</td>
                         @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
                       {
-                         <td>操作介面</td>
+                            <td><i class="fas fa-wrench"></i>&nbsp;操作介面</td>
                       }
                     
                 </tr>

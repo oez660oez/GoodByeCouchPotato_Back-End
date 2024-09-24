@@ -107,61 +107,63 @@ namespace goodbyecouchpotato.Areas.DataAnalysis.Controllers
         {
             // 查詢角色資料
             var characters = _context.Characters.Where(c => c.MoveInDate >= startDate && c.MoveInDate <= endDate);
-
-            // 計算統計數據
-            var totalCharacters = characters.Count();
-            var averageLevel = characters.Average(c => c.Level);
-            var averageWeight = Math.Round((decimal)characters.Average(c => c.Weight), 1);
-            var averageHeight = Math.Round((decimal)characters.Average(c => c.Height), 1);
-            var livingCount = characters.Count(c => c.LivingStatus == "居住");
-            var movedCount = characters.Count(c => c.LivingStatus == "搬離");
-
-            // 計算圖表數據
-            var dates = new List<string>();
-            var totalCharactersData = new List<int>();
-            var averageLevelsData = new List<double>();
-            var livingCountsData = new List<int>();
-            var movedCountData = new List<int>();
-
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            if (characters.Any())
             {
-                dates.Add(date.ToString("yyyy-MM-dd"));
+                // 計算統計數據
+                var totalCharacters = characters.Count();
+                var averageLevel = characters.Average(c => c.Level);
+                var averageWeight = Math.Round((decimal)characters.Average(c => c.Weight), 1);
+                var averageHeight = Math.Round((decimal)characters.Average(c => c.Height), 1);
+                var livingCount = characters.Count(c => c.LivingStatus == "居住");
+                var movedCount = characters.Count(c => c.LivingStatus == "搬離");
 
-                var charactersOnDate = _context.Characters
-                    .Where(c => c.MoveInDate.HasValue && c.MoveInDate.Value.Date <= date.Date);
+                // 計算圖表數據
+                var dates = new List<string>();
+                var totalCharactersData = new List<int>();
+                var averageLevelsData = new List<double>();
+                var livingCountsData = new List<int>();
+                var movedCountData = new List<int>();
 
-                var totalCharactersCount = charactersOnDate.Count();
-                var averageLevelOnDate = charactersOnDate.Any() ? charactersOnDate.Average(c => c.Level) : 0;
-                var livingCountOnDate = charactersOnDate.Count(c => c.LivingStatus == "居住");
-                var moveoutCount = _context.Characters
-                    .Count(c => c.LivingStatus == "搬離" && c.MoveOutDate.HasValue && c.MoveOutDate.Value.Date <= date.Date);
-
-                totalCharactersData.Add(totalCharactersCount);
-                averageLevelsData.Add(Math.Round(averageLevelOnDate, 2));
-                livingCountsData.Add(livingCountOnDate);
-                movedCountData.Add(moveoutCount);
-            }
-
-            // 創建返回的數據對象
-            var result = new
-            {
-                totalCharacters,
-                averageLevel,
-                averageWeight,
-                averageHeight,
-                livingCount,
-                movedCount,
-                chartData = new
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
                 {
-                    dates,
-                    totalCharacters = totalCharactersData,
-                    averageLevels = averageLevelsData,
-                    livingCounts = livingCountsData,
-                    movedCount = movedCountData
-                }
-            };
+                    dates.Add(date.ToString("yyyy-MM-dd"));
 
-            return result;
+                    var charactersOnDate = _context.Characters
+                        .Where(c => c.MoveInDate.HasValue && c.MoveInDate.Value.Date <= date.Date);
+
+                    var totalCharactersCount = charactersOnDate.Count();
+                    var averageLevelOnDate = charactersOnDate.Any() ? charactersOnDate.Average(c => c.Level) : 0;
+                    var livingCountOnDate = charactersOnDate.Count(c => c.LivingStatus == "居住");
+                    var moveoutCount = _context.Characters
+                        .Count(c => c.LivingStatus == "搬離" && c.MoveOutDate.HasValue && c.MoveOutDate.Value.Date <= date.Date);
+
+                    totalCharactersData.Add(totalCharactersCount);
+                    averageLevelsData.Add(Math.Round(averageLevelOnDate, 2));
+                    livingCountsData.Add(livingCountOnDate);
+                    movedCountData.Add(moveoutCount);
+                }
+
+                // 創建返回的數據對象
+                var result = new
+                {
+                    totalCharacters,
+                    averageLevel,
+                    averageWeight,
+                    averageHeight,
+                    livingCount,
+                    movedCount,
+                    chartData = new
+                    {
+                        dates,
+                        totalCharacters = totalCharactersData,
+                        averageLevels = averageLevelsData,
+                        livingCounts = livingCountsData,
+                        movedCount = movedCountData
+                    }
+                };
+                return result;
+            }
+            return Json(123);
         }
     }
 }

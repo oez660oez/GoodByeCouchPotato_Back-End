@@ -3,14 +3,14 @@
 <table class="table table-striped jambo_table bulk_action" id="productsTable">
     <thead>
         <tr>
-            <th>商品名稱</th>
-            <th>商品類別</th>
-            <th>商品等級</th>
-            <th>商品有效性</th>
-            <th>複核狀態</th>
+            <th><i class="fas fa-tshirt"></i>&nbsp;商品名稱</th>
+            <th><i class="fas fa-stream"></i>&nbsp;商品類別</th>
+            <th><i class="fas fa-sort-amount-up"></i>&nbsp;商品等級</th>
+            <th><i class="fas fa-clock"></i>&nbsp;商品有效性</th>
+            <th><i class="fa-regular fa-circle-check"></i>&nbsp;複核狀態</th>
             @if (User.IsInRole("Admin") || User.IsInRole("PermiGuard"))
             {
-                <th>操作介面</th>
+                <th><i class="fas fa-wrench"></i>&nbsp;操作介面</th>
             }
         </tr>
     </thead>

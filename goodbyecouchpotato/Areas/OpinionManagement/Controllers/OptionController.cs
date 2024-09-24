@@ -59,6 +59,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 //ProActive = F.ProActive,
                 //ProDate = F.ProDate,
             }).ToListAsync();
+            ViewBag.currentpages = feedback;
 
             var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
 
@@ -97,7 +98,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 //ProActive = F.ProActive,
                 ProDate = F.ProDate,
             }).ToListAsync();
-
+            ViewBag.currentpages = feedback;
             var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
 
             ViewData["inputword"] = search;

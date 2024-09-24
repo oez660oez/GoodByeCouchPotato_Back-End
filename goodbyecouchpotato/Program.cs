@@ -33,7 +33,7 @@ builder.Services.Configure<IdentityOptions>(options => {
 	options.Password.RequiredUniqueChars = 1;
 
 	//鎖幾分
-	options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+	options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
 	//輸錯幾次鎖
 	options.Lockout.MaxFailedAccessAttempts = 3;
 	options.Lockout.AllowedForNewUsers = true;

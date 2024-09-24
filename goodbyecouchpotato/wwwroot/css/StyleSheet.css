@@ -43,3 +43,29 @@
         background: rgba(0, 0, 0, 0.08);
         color: rgba(0, 0, 0, 0.3);
     }
+
+
+.pagebtn {
+    background-color: white; /* 自定义背景色 */
+    color: #445366; /* 自定义字体颜色 */
+    border: 1px solid #445366; /* 边框 */
+    padding: 8px 12px; /* 内边距 */
+    border-radius: 5px; /* 圆角 */
+    text-decoration: none; /* 去掉下划线 */
+    margin: 0 5px; /* 按钮之间的间距 */
+    display: inline-block; /* 让按钮保持内联块样式 */
+}
+
+    .pagebtn:hover {
+        background-color: #5a6d87; /* 悬停时背景色变化 */
+        color: white; /* 悬停时文字颜色 */
+        cursor: pointer; /* 鼠标悬停时显示手形 */
+    }
+.custom-page-item {
+    margin: 0 5px; /* 列表项之间的间距 */
+    display: inline-block; /* 让列表项保持内联块样式 */
+}
+.pagebtn.active {
+    background-color: #445366; /* 激活状态背景色 */
+    color: white; /* 激活状态字体颜色 */
+}

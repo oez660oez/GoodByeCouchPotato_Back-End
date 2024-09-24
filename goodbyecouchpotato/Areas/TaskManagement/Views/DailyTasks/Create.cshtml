@@ -7,7 +7,7 @@
 <h1>新增任務</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 formcenter">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -26,7 +26,7 @@
                 <input type="hidden" asp-for="TReviewStatus" value="待複核" />
             </div>
             <div class="form-group">
-                <button type="submit" value="Create" class="btn btn-info" />新增</button>
+                <button type="submit" value="Create" class="btn btn-info" >新增</button>
             </div>
         </form>
     </div>

@@ -21,7 +21,7 @@
             <th>
                 <i class="fa-solid fa-calendar-check"></i> &nbsp;@Html.DisplayNameFor(model => model.First().ProDate)
             </th>
-            <th>處理</th>
+            <th><i class="fas fa-wrench"></i>&nbsp;處理</th>
         </tr>
     </thead>
     <tbody style="font-size:14px">
@@ -53,7 +53,9 @@
     @Html.PagedListPager(Model, page => Url.Action("Index2", new { page, search = ViewData["inputword"] }),
             new PagedListRenderOptions
     {
-        LiElementClasses = new string[] { "page-item" },
-        PageClasses = new string[] { "page-link" }
+        LiElementClasses = new string[] { "custom-page-item" },
+        PageClasses = new string[] { "pagebtn" }
+
+
     })
 </div>
