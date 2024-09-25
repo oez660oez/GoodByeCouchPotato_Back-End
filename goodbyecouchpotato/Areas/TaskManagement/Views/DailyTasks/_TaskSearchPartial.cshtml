@@ -44,7 +44,7 @@
         @if (@ViewBag.currentpages - 1 > 0)
         {
             <li class="page-item">
-                <a style="color:#445366" class="page-link" data-page="@(ViewBag.currentpages - 1)">上一頁</a>
+                <a style="color:#445366;" class="page-link" data-page="@(ViewBag.currentpages - 1)">上一頁</a>
             </li>
         }
         else
@@ -59,7 +59,7 @@
             <li class="page-item @(@ViewBag.currentpages==i ? "active " : "")">
                 @if (@ViewBag.currentpages == i)
                 {
-                    <a class="page-link" style="background-color:#445366; color:white" href="#" data-page="@i">@i</a>
+                    <a class="page-link" style="background-color:#445366; color:white;border:0px" href="#" data-page="@i">@i</a>
                 }
                 else
                 {
@@ -71,7 +71,7 @@
         @if (@ViewBag.currentpages + 1 <= @ViewBag.totalpages)
         {
             <li class="page-item">
-                <a style="color:#445366" class="page-link" data-page="@(ViewBag.currentpages + 1)">下一頁</a>
+                <a style="color:#445366;" class="page-link" data-page="@(ViewBag.currentpages + 1)">下一頁</a>
             </li>
         }
         else
@@ -82,3 +82,8 @@
     </ul>
     <h6 style="color:#445366;display:block;margin-left:10px">共 @ViewBag.totaltask 筆</h6>
 </nav>
+
+
+
+
+ 
