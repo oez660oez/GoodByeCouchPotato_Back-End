@@ -65,11 +65,20 @@
     margin: 0 5px; /* 列表项之间的间距 */
     display: inline-block; /* 让列表项保持内联块样式 */
 }
+/*給product用的*/
 .pagebtn.active {
     background-color: #445366;  /*激活状态背景色 */
     color: white;  /*激活状态字体颜色 */
 }
 
+/*給task用的*/
+ul.pagination .page-item .pagebtn.active {
+    background-color: #445366; /* 激活背景色 */
+    color: white; /* 激活字體顏色 */
+    border: 0px; /*不知道為甚麼會有border 把他強制刪除*/
+}
+
+/*給opinion用的*/
 li.active .pagebtn,
 .pagebtn.active {
     background-color: #445366;
