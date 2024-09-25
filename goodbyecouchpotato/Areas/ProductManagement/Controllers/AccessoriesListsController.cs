@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net.NetworkInformation;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using goodbyecouchpotato.Models;
 using Microsoft.AspNetCore.Authorization;
 using goodbyecouchpotato.Areas.ProductManagement.Views;
 using goodbyecouchpotato.Areas.TaskManagement.Views;
+using Microsoft.AspNetCore.Hosting;
 
 namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 {
@@ -228,6 +231,19 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
             string ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageAll);
             return File(ImagePath, "image/png");
         }
+
+        //檢查圖片是否存在
+        //public IActionResult CheckImage(string imageFile)
+        //{
+        //    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFile);
+        //    if (!System.IO.File.Exists(imageFile))
+        //    {
+        //        // 如果檔案不存在，可以回傳一個預設圖片或錯誤訊息
+        //        return t;
+        //    }
+
+        //}
+
 
         // GET: ProductManagement/AccessoriesLists/Details/5
         public async Task<IActionResult> Details(int? id)
