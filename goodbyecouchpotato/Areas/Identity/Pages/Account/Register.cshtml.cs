@@ -119,7 +119,7 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var roles = await _roleManager.Roles.ToListAsync();
+            var roles = await _roleManager.Roles.Where(s=>s.Name!="admin").ToListAsync();
             RoleList = new List<SelectListItem>
         {
         new SelectListItem { Value = string.Empty, Text = "", Selected = true } //加上空白字段，令使用者必須選擇

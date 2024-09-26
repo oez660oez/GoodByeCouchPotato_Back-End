@@ -12,9 +12,9 @@
         <form asp-area="ProductManagement" asp-controller="AccessoriesLists" asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="PCode" class="control-label">@Html.DisplayNameFor(m=>m.PCode)</label>
-                <input asp-for="PCode" type="text" class="form-control" autocomplete="off" readonly />
-                <span asp-validation-for="PCode" class="text-danger"></span>
+@*                 <label asp-for="PCode" class="control-label">@Html.DisplayNameFor(m=>m.PCode)</label> *@
+                <input asp-for="PCode" type="text" class="form-control" autocomplete="off" readonly hidden />
+@*                 <span asp-validation-for="PCode" class="text-danger"></span> *@
             </div>
             <div class="form-group">
                 <label asp-for="PClass" class="control-label">@Html.DisplayNameFor(m => m.PClass)</label>
