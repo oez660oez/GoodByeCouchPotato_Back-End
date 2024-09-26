@@ -127,8 +127,10 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
             {
                 _context.Add(dailyTask);
                 await _context.SaveChangesAsync();
+                TempData["CreateTask"] = "success";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["CreateTask"] = "error";
             return View(dailyTask);
         }
 
@@ -187,8 +189,10 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
                         throw;
                     }
                 }
+                TempData["EditTask"] = "success";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["EditTask"] = "error";
             return View(dailyTask);
         }
 

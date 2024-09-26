@@ -62,7 +62,20 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/sweetalert.js"></script>
     <script>
+        $(document).ready(function () {
+            var messagetype = '@TempData["CreateProduct"] ' != "" ? '@TempData["CreateProduct"]': null;
+            if (messagetype != null) {
+                sweetalert(messagetype);
+            };
+            var messagetype = '@TempData["EditProduct"] ' != "" ? '@TempData["EditProduct"]' : null;
+            if (messagetype != null) {
+                sweetalertedit(messagetype);
+            };
+        });
+
+
         function loadPage(pageNumber) {
             var searchName = $('#nameSearch').val();
             var searchClass = $('#classSearch').val();

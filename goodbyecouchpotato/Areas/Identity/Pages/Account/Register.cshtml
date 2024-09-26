@@ -13,9 +13,10 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control"  autocomplete="off" aria-required="true" placeholder="name@example.com" />
+                <input id="emailInput" asp-for="Input.Email" class="form-control" autocomplete="off" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">@Html.DisplayNameFor(m => m.Input.Email)</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <span asp-validation-for="Input.Email" class="text-danger" id="validation"></span>
+                <div id="reserch"></div>
             </div>
 
             <div class="form-floating mb-3">
@@ -71,4 +72,13 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/sweetalert.js"></script>
+    <script>
+        $(document).ready(function () {
+            var messagetype = '@TempData["Register"]' != "" ? '@TempData["Register"]' : null;
+            if (messagetype != null) {
+                sweetalert(messagetype);
+            };
+        });
+    </script>
 }

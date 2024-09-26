@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -25,6 +26,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 namespace goodbyecouchpotato.Areas.Identity.Pages.Account
 {
     [Authorize(Roles = "Admin")]
+    [Area("Identity")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -117,10 +119,10 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList(); //取得外部認證(外部帳號)
 
-            var roles = await _roleManager.Roles.Where(s=>s.Name!="admin").ToListAsync();
-            RoleList = new List<SelectListItem>
+            var roles = await _roleManager.Roles.Where(s=>s.Name!="admin").ToListAsync();  //篩選所有角色的內容
+            RoleList = new List<SelectListItem> 
         {
         new SelectListItem { Value = string.Empty, Text = "", Selected = true } //加上空白字段，令使用者必須選擇
          };
@@ -129,9 +131,9 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
+            returnUrl ??= Url.Content("/AdministratorManagement/Administrators/Index");  //設定創建成功之後重指向的位置
+            //ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();  //取得外部認證(外部帳號)
+            if (ModelState.IsValid)  //檢查提交的表單數據是否有效
             {
                 var user = CreateUser();  //調用方法來創建使用者，會將資料封裝在裡面，如果錯誤會整包退回不會建一半
                                 //將用戶信箱設置為用戶名字
@@ -139,50 +141,66 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
                                 //將用戶信箱設置為信箱
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
-                user.EmailConfirmed = true;
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
-
+                user.EmailConfirmed = true;  //直接確認用戶的電子信箱通過，不必驗證
                 //----------取得角色---------------
-                if (!string.IsNullOrEmpty(Input.Role))
-                {
-                    await _userManager.AddToRoleAsync(user, Input.Role);  //直接執行角色的分配
-                }
                 //----------取得角色---------------
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User created a new account with password.");
+                var result = await _userManager.CreateAsync(user, Input.Password);  //創建用戶
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+
+                //---------電子信箱驗證----------------
+                //if (result.Succeeded)
+                //{
+                //    _logger.LogInformation("User created a new account with password.");  //紀錄日記
+
+                //    var userId = await _userManager.GetUserIdAsync(user);  //取得新用戶的id
+                //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);  //生成電子信箱驗證令牌
+                //    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));  //編譯令牌
+                //    var callbackUrl = Url.Page(  //建構電子信箱驗證的url
+                //        "/Account/ConfirmEmail",
+                //        pageHandler: null,
+                //        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                //        protocol: Request.Scheme);
+
+                //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                //{
+                //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                //}
+                //else
+                //{
+                //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                //}
+                //}
+                //---------電子信箱驗證end----------------
+                if (result.Succeeded) {
+                    if (!string.IsNullOrEmpty(Input.Role))
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        await _userManager.AddToRoleAsync(user, Input.Role);  //直接執行角色的分配
                     }
-                    else
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    TempData["Register"] = "success";
+                    return LocalRedirect(returnUrl);  //重新定向位置
+                }
+                else
+                {
+                foreach (var error in result.Errors)  //返回錯誤訊息
+                {
+                        TempData["Register"] = "error";
+                        ModelState.AddModelError(string.Empty, error.Description);
+                        await OnGetAsync(returnUrl);
+                        return Page();//返回頁面
                     }
                 }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+
             }
 
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
 
         private IdentityUser CreateUser()
         {

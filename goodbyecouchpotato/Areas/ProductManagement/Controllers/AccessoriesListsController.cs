@@ -283,8 +283,10 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 
                 _context.Add(accessoriesList);
                 await _context.SaveChangesAsync();
+                TempData["CreateProduct"] = "success";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["CreateProduct"] = "error";
             return View(accessoriesList);
         }
 
@@ -380,9 +382,10 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
                         throw;
                     }
                 }
+                TempData["EditProduct"] = "success";
                 return RedirectToAction(nameof(Index));
             }
-
+            TempData["EditProduct"] = "error";
             return View(accessoriesList);
         }
 

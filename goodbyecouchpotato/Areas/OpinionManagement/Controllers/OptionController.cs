@@ -9,6 +9,7 @@ using goodbyecouchpotato.Areas.OpinionManagement.viewmodel;
 using goodbyecouchpotato.Models;
 using Microsoft.AspNetCore.Authorization;
 using X.PagedList;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 
 namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
@@ -318,6 +319,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                     await _mailService.SendEmailAsync(optionviewmodel.Email, subject, message);
 
                     // 返回列表頁面
+                    TempData["Opinion"] = "success";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -332,6 +334,7 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                     }
                 }
             }
+            TempData["Opinion"] = "error";
             return View(optionviewmodel);
         }
 
