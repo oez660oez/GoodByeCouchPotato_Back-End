@@ -89,7 +89,7 @@ else{
     @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
+        <script src="~/js/sweetalert.js"></script>
     <script>
         $(document).ready(function () {
              $('.review-btn').click(function () {
@@ -120,11 +120,19 @@ else{
                 $.post('@Url.Action("ApproveTask", "ProductReview")', { id: taskId })
                     .done(function (response) {
                         if (response.success) {
-                            $('#successMessage').text(response.message);  // 顯示成功訊息
-                            $('#successModal').modal('show');  // 顯示成功模態框
+                            var messagetype = response.message != null ? response.message : null;
+                            if (messagetype != null) {
+                                sweetalertopinion(messagetype)
+                            };
+                            // $('#successMessage').text(response.message);  // 顯示成功訊息
+                            // $('#successModal').modal('show');  // 顯示成功模態框
                         } else {
-                            $('#successMessage').text("覆核失敗: " + response.message);
-                            $('#successModal').modal('show');
+                               var messagetype = response.message != null ? response.message : null;
+                               if (messagetype != null) {
+                                sweetalertopinion(messagetype)
+                            };
+                            // $('#successMessage').text("覆核失敗: " + response.message);
+                            // $('#successModal').modal('show');
                         }
                     })
                     .fail(function (xhr, status, error) {
@@ -139,11 +147,19 @@ else{
                 $.post('@Url.Action("RejectTask", "ProductReview")', { id: taskId })
                     .done(function (response) {
                         if (response.success) {
-                            $('#successMessage').text(response.message);  // 顯示成功訊息
-                            $('#successModal').modal('show');  // 顯示成功模態框
+                            var messagetype = response.message != null ? response.message : null;
+                            if (messagetype != null) {
+                                sweetalertopinion(messagetype)
+                            };
+                            // $('#successMessage').text(response.message);  顯示成功訊息
+                            // $('#successModal').modal('show');  顯示成功模態框
                         } else {
-                            $('#successMessage').text("覆核失敗: " + response.message);
-                            $('#successModal').modal('show');
+                                                        var messagetype = response.message != null ? response.message : null;
+                              if (messagetype != null) {
+                                sweetalertopinion(messagetype)
+                            };
+                            // $('#successMessage').text("覆核失敗: " + response.message);
+                            // $('#successModal').modal('show');
                         }
                     })
                     .fail(function (xhr, status, error) {
@@ -153,11 +169,11 @@ else{
                     });
             });
 
-            $('#confirmSuccessBtn').click(function () {
-                $('#successModal').modal('hide');  // 關閉成功模態框
-                $('#taskModal').modal('hide');  // 關閉任務詳細模態框
-                location.reload();  // 刷新頁面
-            })
+            // $('#confirmSuccessBtn').click(function () {
+            //     $('#successModal').modal('hide');  // 關閉成功模態框
+            //     $('#taskModal').modal('hide');  // 關閉任務詳細模態框
+            //     location.reload();  // 刷新頁面
+            // })
 
             
            

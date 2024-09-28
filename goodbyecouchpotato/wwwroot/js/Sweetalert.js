@@ -41,10 +41,10 @@ function sweetalertopinion(messagetype) {
     if (messagetype) {
         Swal.fire({
             position: "center",
-            icon: messagetype === 'success' ? "success" : "error",
-            title: messagetype === 'success' ? "覆核成功" : "覆核失敗",
+            icon: messagetype === '覆核成功' ? "success" : "error",
+            title: messagetype === '覆核成功' ? "覆核成功" : "覆核失敗，查無該筆資料",
             showConfirmButton: true,
-        });
+        }).then(function () { location.reload() });  //按下確認之後刷新
     }
 }
 
