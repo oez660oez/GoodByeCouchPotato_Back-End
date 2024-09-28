@@ -2,10 +2,14 @@
 @inject GoodbyepotatoContext _context
 @{
     AccessoriesList accessoriesList = await _context.AccessoriesLists.FindAsync(Model.PCode);
-    if (accessoriesList != null && accessoriesList.PImageAll != null)
+    // string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", accessoriesList.PImageShop);
+    // bool checkimage = System.IO.File.Exists(accessoriesList.PImageAll);
+
+
+    if (accessoriesList != null && accessoriesList.PImageAll != null )
     {
 
-        <img src="@Url.Action("GetPictureAll", "AccessoriesLists",
+        <img src="@Url.Action("GetPictureAll",
              new { id = Model.PCode })"
              style="width:320px;height:240px"
              title="@Html.DisplayFor(model =>model.PName)"
@@ -14,7 +18,7 @@
     else
     {
         <img src="@Url.Content( "~/images/NoImage.png")"
-             style="width:320px;height:240px"
+             style="width:320px;height:260px"
              title="尚無圖片" />
     }
 }

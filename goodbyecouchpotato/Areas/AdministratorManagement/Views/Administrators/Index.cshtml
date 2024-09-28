@@ -51,7 +51,20 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/sweetalert.js"></script>
     <script>
+        $(document).ready(function () {
+            var messagetype = '@TempData["Register"]' != "" ? '@TempData["Register"]' : null;
+            if (messagetype != null) {
+                sweetalert(messagetype);
+            };
+
+            var messagetype = '@TempData["IdentityRoles"]' != "" ? '@TempData["IdentityRoles"]' : null;
+            if (messagetype != null) {
+                sweetalertroles(messagetype);
+            };
+        });
+
             function loadPage(pageNumber) {
                 $.ajax({
                     url: '@Url.Action("GetAdminListPartial", "Administrators")',

@@ -68,7 +68,20 @@
 </div>
     </div>
 @section Scripts{
+    <script src="~/js/sweetalert.js"></script>
         <script>
+            $(document).ready(function () {
+            var messagetype = '@TempData["CreateTask"]' != "" ? '@TempData["CreateTask"]': null;
+            if (messagetype != null) {
+                sweetalert(messagetype);
+            };
+            var messagetype = '@TempData["EditTask"]' != "" ? '@TempData["EditTask"]' : null;
+            if (messagetype != null) {
+                sweetalertedit(messagetype);
+            };
+        });
+
+
             function partiallist() {  //刷新partial
             $.ajax({
                 type: 'POST',

@@ -62,3 +62,14 @@ else{
          
 
 }
+@section Scripts {
+    <script src="~/js/sweetalert.js"></script>
+    <script>
+        $(document).ready(function () {
+            var messagetype = '@TempData["Opinion"]' != "" ? '@TempData["Opinion"]' : null;
+            if (messagetype != null) {
+                sweetalertopinion(messagetype);
+            };
+        });
+    </script>
+}

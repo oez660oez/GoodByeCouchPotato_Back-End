@@ -114,55 +114,60 @@ namespace goodbyecouchpotato.Areas.AdministratorManagement.Controllers
             var addResult = await _userManager.AddToRoleAsync(user, newRoleName);
             if (!addResult.Succeeded)
             {
+                TempData["IdentityRoles"] = "error";
                 ModelState.AddModelError("", "分配新角色失敗：" + string.Join(", ", addResult.Errors.Select(e => e.Description)));
                 return RedirectToAction("Index", "Administrators", new { area = "AdministratorManagement" });
             }
 
             // 成功更改角色，重定向回管理員列表頁面
+            TempData["IdentityRoles"] = "success";
             return RedirectToAction("Index", "Administrators", new { area = "AdministratorManagement" });
         }
 
-		public async Task<IActionResult> GetAdminListPartial()
-		{
-			// 查詢所有用戶
-			var users = await _userManager.Users.ToListAsync();
+        public async Task<IActionResult> GetAdminListPartial()
+        {
+            // 查詢所有用戶
+            var users = await _userManager.Users.ToListAsync();
 
-			// 查詢所有角色
-			var allRoles = await _roleManager.Roles.ToListAsync();
+            // 查詢所有角色
+            var allRoles = await _roleManager.Roles.ToListAsync();
 
-			// 創建 ViewModel 列表來保存結果
-			List<AdminViewModel> adminViewModels = new List<AdminViewModel>();
+            // 創建 ViewModel 列表來保存結果
+            List<AdminViewModel> adminViewModels = new List<AdminViewModel>();
 
-			foreach (var user in users)
-			{
-				// 查詢該用戶的角色
-				var roles = await _userManager.GetRolesAsync(user);
+            foreach (var user in users)
+            {
+                // 查詢該用戶的角色
+                var roles = await _userManager.GetRolesAsync(user);
 
-				var adminViewModel = new AdminViewModel
-				{
-					UserId = user.Id,
-					UserName = user.UserName,
-					Email = user.Email,
-					Roles = roles.Select(role =>
-					{
-						var matchedRole = allRoles.FirstOrDefault(r => r.Name == role);
-						return new AdminViewModel.RoleInfo
-						{
-							RoleId = matchedRole?.Id,
-							RoleName = role
-						};
-					}).ToList()
-				};
+                var adminViewModel = new AdminViewModel
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Roles = roles.Select(role =>
+                    {
+                        var matchedRole = allRoles.FirstOrDefault(r => r.Name == role);
+                        return new AdminViewModel.RoleInfo
+                        {
+                            RoleId = matchedRole?.Id,
+                            RoleName = role
+                        };
+                    }).ToList()
+                };
 
-				adminViewModels.Add(adminViewModel);
-			}
+                adminViewModels.Add(adminViewModel);
+            }
 
-			// 返回局部檢視
-			return PartialView("_AdminListPartial", adminViewModels);
-		}
+            // 返回局部檢視
+            return PartialView("_AdminListPartial", adminViewModels);
+        }
 
-	}
-}
+    }
+
+    }
+
+
 
 
 // GET: AdministratorManagement/Administrators

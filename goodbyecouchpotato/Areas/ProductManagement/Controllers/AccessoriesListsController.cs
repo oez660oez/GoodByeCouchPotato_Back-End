@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net.NetworkInformation;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using goodbyecouchpotato.Models;
 using Microsoft.AspNetCore.Authorization;
 using goodbyecouchpotato.Areas.ProductManagement.Views;
 using goodbyecouchpotato.Areas.TaskManagement.Views;
+using Microsoft.AspNetCore.Hosting;
 
 namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 {
@@ -207,27 +210,54 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         public async Task<IActionResult> GetPicture(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            if (c == null || string.IsNullOrEmpty(c.PImageShop))
-            {
-                return NotFound();
-            }
+            //if (c == null || string.IsNullOrEmpty(c.PImageShop))
+            //{
+            //    return NotFound();
+            //}
             _AccessoriesViewModel viewmodel=transViewmodel(c);
 
             string ImagePath= Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageShop);
-            return File(ImagePath, "image/png");
+            if (System.IO.File.Exists(ImagePath))
+            {
+                return File(Path.Combine(Directory.GetCurrentDirectory(), "/images", "NoImage.png"), "image/png");
+            }
+            else
+            {
+                return File(ImagePath, "image/png");
+            }
         }
 
         public async Task<IActionResult> GetPictureAll(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            if (c == null || string.IsNullOrEmpty(c.PImageShop))
-            {
-                return NotFound();
-            }
+            //if (c == null || string.IsNullOrEmpty(c.PImageShop))
+            //{
+            //    return NotFound();
+            //}
             _AccessoriesViewModel viewmodel = transViewmodel(c);
             string ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageAll);
-            return File(ImagePath, "image/png");
+            if (System.IO.File.Exists(ImagePath))
+            {
+                return File(Path.Combine(Directory.GetCurrentDirectory(), "/images", "NoImage.png"), "image/png");
+            }
+            else
+            {         
+                return File(ImagePath, "image/png");
+            }
         }
+
+        //檢查圖片是否存在
+        //public IActionResult CheckImage(string imageFile)
+        //{
+        //    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFile);
+        //    if (!System.IO.File.Exists(imageFile))
+        //    {
+        //        // 如果檔案不存在，可以回傳一個預設圖片或錯誤訊息
+        //        return t;
+        //    }
+
+        //}
+
 
         // GET: ProductManagement/AccessoriesLists/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -283,8 +313,10 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
 
                 _context.Add(accessoriesList);
                 await _context.SaveChangesAsync();
+                TempData["CreateProduct"] = "success";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["CreateProduct"] = "error";
             return View(accessoriesList);
         }
 
@@ -380,9 +412,10 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
                         throw;
                     }
                 }
+                TempData["EditProduct"] = "success";
                 return RedirectToAction(nameof(Index));
             }
-
+            TempData["EditProduct"] = "error";
             return View(accessoriesList);
         }
 
