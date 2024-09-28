@@ -78,6 +78,13 @@ ul.pagination .page-item .pagebtn.active {
     border: 0px; /*不知道為甚麼會有border 把他強制刪除*/
 }
 
+/*給task用的*/
+ul.pagination .page-item .pagebtn.active {
+    background-color: #445366; /* 激活背景色 */
+    color: white; /* 激活字體顏色 */
+    border: 0px; /*不知道為甚麼會有border 把他強制刪除*/
+}
+
 /*給opinion用的*/
 li.active .pagebtn,
 .pagebtn.active {
