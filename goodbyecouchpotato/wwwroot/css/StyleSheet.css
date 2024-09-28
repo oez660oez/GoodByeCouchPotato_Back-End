@@ -78,6 +78,8 @@ ul.pagination .page-item .pagebtn.active {
     border: 0px; /*不知道為甚麼會有border 把他強制刪除*/
 }
 
+
+
 /*給opinion用的*/
 li.active .pagebtn,
 .pagebtn.active {
