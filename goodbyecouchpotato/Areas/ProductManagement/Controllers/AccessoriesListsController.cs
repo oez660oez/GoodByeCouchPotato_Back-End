@@ -210,26 +210,40 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         public async Task<IActionResult> GetPicture(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            if (c == null || string.IsNullOrEmpty(c.PImageShop))
-            {
-                return NotFound();
-            }
+            //if (c == null || string.IsNullOrEmpty(c.PImageShop))
+            //{
+            //    return NotFound();
+            //}
             _AccessoriesViewModel viewmodel=transViewmodel(c);
 
             string ImagePath= Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageShop);
-            return File(ImagePath, "image/png");
+            if (System.IO.File.Exists(ImagePath))
+            {
+                return File(Path.Combine(Directory.GetCurrentDirectory(), "/images", "NoImage.png"), "image/png");
+            }
+            else
+            {
+                return File(ImagePath, "image/png");
+            }
         }
 
         public async Task<IActionResult> GetPictureAll(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            if (c == null || string.IsNullOrEmpty(c.PImageShop))
-            {
-                return NotFound();
-            }
+            //if (c == null || string.IsNullOrEmpty(c.PImageShop))
+            //{
+            //    return NotFound();
+            //}
             _AccessoriesViewModel viewmodel = transViewmodel(c);
             string ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageAll);
-            return File(ImagePath, "image/png");
+            if (System.IO.File.Exists(ImagePath))
+            {
+                return File(Path.Combine(Directory.GetCurrentDirectory(), "/images", "NoImage.png"), "image/png");
+            }
+            else
+            {         
+                return File(ImagePath, "image/png");
+            }
         }
 
         //檢查圖片是否存在

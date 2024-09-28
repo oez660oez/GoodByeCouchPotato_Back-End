@@ -2,12 +2,14 @@
 @inject GoodbyepotatoContext _context
 @{
     AccessoriesList accessoriesList = await _context.AccessoriesLists.FindAsync(Model.PCode);
-    bool checkimage = System.IO.File.Exists(accessoriesList.PImageAll);
+    // string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", accessoriesList.PImageShop);
+    // bool checkimage = System.IO.File.Exists(accessoriesList.PImageAll);
 
-    if (accessoriesList != null && accessoriesList.PImageAll != null && checkimage == true)
+
+    if (accessoriesList != null && accessoriesList.PImageAll != null )
     {
 
-        <img src="@Url.Action("GetPictureAll", "AccessoriesLists",
+        <img src="@Url.Action("GetPictureAll",
              new { id = Model.PCode })"
              style="width:320px;height:240px"
              title="@Html.DisplayFor(model =>model.PName)"

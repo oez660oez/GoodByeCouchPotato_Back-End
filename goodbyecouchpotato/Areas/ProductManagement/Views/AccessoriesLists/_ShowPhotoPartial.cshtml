@@ -2,8 +2,7 @@
 @inject GoodbyepotatoContext _context
 @{
     AccessoriesList accessoriesList = await _context.AccessoriesLists.FindAsync(Model.PCode);
-    bool checkimage = System.IO.File.Exists(accessoriesList.PImageShop);
-    if (accessoriesList != null && accessoriesList.PImageShop != null && checkimage == true)
+    if (accessoriesList != null && accessoriesList.PImageShop != null)
     {
 
         <img src="@Url.Action("GetPicture", "AccessoriesLists",
