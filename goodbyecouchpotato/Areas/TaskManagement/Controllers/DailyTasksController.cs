@@ -92,6 +92,18 @@ namespace goodbyecouchpotato.Areas.TaskManagement.Controllers
             return PartialView("_TaskSearchPartial", modelpage);
         }
 
+        [HttpPost]
+        public  IActionResult GetTaskName(string taskname)
+        {
+                                            //any回傳bool值，求是否有完全相同的名字
+            var result= _context.DailyTasks.Any(s=>s.TaskName==taskname);
+            if (result)
+            {
+                return Json(new {message=true });  //如果名稱重複的話
+            }
+            return Json(new { message = false });
+        }
+
         // GET: TaskManagement/DailyTasks/Details/5
         //public async Task<IActionResult> Details(int? id)
         //{

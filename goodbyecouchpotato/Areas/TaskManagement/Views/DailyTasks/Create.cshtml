@@ -14,6 +14,7 @@
                 <label asp-for="TaskName" class="control-label">@Html.DisplayNameFor(Model => Model.TaskName)</label>
                 <input asp-for="TaskName" class="form-control" />
                 <span asp-validation-for="TaskName" class="text-danger"></span>
+                <div class="samename text-danger">已有相同的任務內容</div>
             </div>
             <div class="form-group">
                 <label asp-for="Reward" class="control-label">@Html.DisplayNameFor(Model => Model.Reward)</label>
@@ -26,7 +27,7 @@
                 <input type="hidden" asp-for="TReviewStatus" value="待複核" />
             </div>
             <div class="form-group">
-                <button type="submit" value="Create" class="btn btn-info" >新增</button>
+                <button id="createbutton" type="submit" value="Create" class="btn btn-info" >新增</button>
             </div>
         </form>
     </div>
@@ -39,6 +40,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            $('.samename').hide();
             $('#rewardcoin').on('keyup', function () {
                 var value = $(this).val();
                 if (value % 5 !== 0) {
@@ -49,6 +51,27 @@
                     $('#oldnotify').show();
                 }
             });
+
+
+            // 驗證任務名稱
+            function validateTaskName() {
+                var value = $('#TaskName').val();
+                $.ajax({
+                    type: "POST",
+                    url: "/TaskManagement/DailyTasks/GetTaskName",
+                    data: { taskname: value },
+                }).done(data => {
+                    if (data.message) {
+                        $('.samename').show();
+                        $('#createbutton').prop('disabled', true);
+                    } else {
+                        $('.samename').hide();
+                        $('#createbutton').prop('disabled', false);
+                    }
+                });
+            }
+
+            $('#TaskName').on('keyup focus', validateTaskName);
         });
     </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
