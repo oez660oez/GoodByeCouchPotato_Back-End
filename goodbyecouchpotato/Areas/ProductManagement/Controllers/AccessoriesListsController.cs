@@ -210,40 +210,47 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Controllers
         public async Task<IActionResult> GetPicture(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            //if (c == null || string.IsNullOrEmpty(c.PImageShop))
-            //{
-            //    return NotFound();
-            //}
-            _AccessoriesViewModel viewmodel=transViewmodel(c);
+            if (c == null || string.IsNullOrEmpty(c.PImageShop))
+            {
+                return NotFound();
+            }
 
-            string ImagePath= Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageShop);
-            if (System.IO.File.Exists(ImagePath))
+            _AccessoriesViewModel viewmodel = transViewmodel(c);
+
+            // 使用相對路徑，從 wwwroot/images 中尋找圖片
+            string ImagePath = Path.Combine("wwwroot", "images", viewmodel.PImageShop);
+
+            // 如果檔案不存在，返回預設圖片 NoImage.png
+            if (!System.IO.File.Exists(ImagePath))
             {
-                return File(Path.Combine(Directory.GetCurrentDirectory(), "/images", "NoImage.png"), "image/png");
+                ImagePath = Path.Combine("wwwroot", "images", "NoImage.png");
             }
-            else
-            {
-                return File(ImagePath, "image/png");
-            }
+
+            var imageFileStream = System.IO.File.OpenRead(ImagePath);
+            return File(imageFileStream, "image/png");
         }
 
         public async Task<IActionResult> GetPictureAll(int id)
         {
             AccessoriesList? c = await _context.AccessoriesLists.FindAsync(id);
-            //if (c == null || string.IsNullOrEmpty(c.PImageShop))
-            //{
-            //    return NotFound();
-            //}
-            _AccessoriesViewModel viewmodel = transViewmodel(c);
-            string ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "/images", viewmodel.PImageAll);
-            if (System.IO.File.Exists(ImagePath))
+            if (c == null || string.IsNullOrEmpty(c.PImageAll))
             {
-                return File(Path.Combine(Directory.GetCurrentDirectory(), "/images", "NoImage.png"), "image/png");
+                return NotFound();
             }
-            else
-            {         
-                return File(ImagePath, "image/png");
+
+            _AccessoriesViewModel viewmodel = transViewmodel(c);
+
+            // 使用相對路徑，從 wwwroot/images 中尋找圖片
+            string ImagePath = Path.Combine("wwwroot", "images", viewmodel.PImageAll);
+
+            // 如果檔案不存在，返回預設圖片 NoImage.png
+            if (!System.IO.File.Exists(ImagePath))
+            {
+                ImagePath = Path.Combine("wwwroot", "images", "NoImage.png");
             }
+
+            var imageFileStream = System.IO.File.OpenRead(ImagePath);
+            return File(imageFileStream, "image/png");
         }
 
         //檢查圖片是否存在
