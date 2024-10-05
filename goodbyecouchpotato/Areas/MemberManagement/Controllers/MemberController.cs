@@ -30,7 +30,6 @@ namespace goodbyecouchpotato.Areas.MemberManagement.Controllers
                 Account = p.Account,
                 Email = p.Email,
                 Playerstatus = p.Playerstatus ? "已開通" : p.Playerstatus == false ? "未開通" : "未知",
-                Coins = p.Coins
             }).ToList();
 
             return Json(players);
