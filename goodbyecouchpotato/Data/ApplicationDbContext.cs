@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using goodbyecouchpotato.Areas.Identity.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace goodbyecouchpotato.Data
@@ -9,5 +10,6 @@ namespace goodbyecouchpotato.Data
             : base(options)
         {
         }
+        public DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
     }
 }

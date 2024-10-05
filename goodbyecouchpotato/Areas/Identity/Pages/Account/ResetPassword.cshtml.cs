@@ -4,16 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Linq;
+using goodbyecouchpotato.Data;
 
 public class ResetPasswordModel : PageModel
 {
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly ILogger<ResetPasswordModel> _logger;
+    private readonly ApplicationDbContext _context; // 使用你的 DbContext
 
-    public ResetPasswordModel(UserManager<IdentityUser> userManager, ILogger<ResetPasswordModel> logger)
+    public ResetPasswordModel(UserManager<IdentityUser> userManager, ApplicationDbContext context)
     {
         _userManager = userManager;
-        _logger = logger;
+        _context = context;
     }
 
     [BindProperty]
@@ -38,18 +40,26 @@ public class ResetPasswordModel : PageModel
         public string Code { get; set; }
     }
 
-    public IActionResult OnGet(string code = null, string email = null)
+    public IActionResult OnGet(string id = null)
     {
-        if (code == null || email == null)
+        if (id == null)
         {
-            return BadRequest("必須提供 code 和 email 以重置密碼。");
+            return BadRequest("無法處理請求，缺少必要的重設 ID。");
+        }
+
+        // 從資料庫查詢 PasswordResetRequest
+        var resetRequest = _context.PasswordResetRequests.FirstOrDefault(r => r.Id == id);
+        if (resetRequest == null)
+        {
+            return BadRequest("無效的重設請求。");
         }
 
         Input = new InputModel
         {
-            Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code)),
-            Email = email
+            Email = resetRequest.Email,
+            Code = resetRequest.Token
         };
+
         return Page();
     }
 
@@ -63,21 +73,19 @@ public class ResetPasswordModel : PageModel
         var user = await _userManager.FindByEmailAsync(Input.Email);
         if (user == null)
         {
-            _logger.LogWarning($"嘗試重置密碼的用戶不存在: {Input.Email}");
             return RedirectToPage("./ResetPasswordConfirmation");
         }
 
-        var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Input.Code));
+        var result = await _userManager.ResetPasswordAsync(user, decodedToken, Input.Password);
         if (result.Succeeded)
         {
-            _logger.LogInformation($"用戶 {Input.Email} 成功重置密碼");
             return RedirectToPage("./ResetPasswordConfirmation");
         }
 
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);
-            _logger.LogError($"重置密碼錯誤: {error.Description}");
         }
 
         return Page();
