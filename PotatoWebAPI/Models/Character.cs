@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace goodbyecouchpotato.Models;
+namespace PotatoWebAPI.Models;
 
 public partial class Character
 {
@@ -26,6 +26,7 @@ public partial class Character
     public DateTime? MoveInDate { get; set; }
 
     public DateTime? MoveOutDate { get; set; }
+
     public int? StandardWater { get; set; }
 
     public int? StandardStep { get; set; }

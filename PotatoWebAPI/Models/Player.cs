@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace goodbyecouchpotato.Models;
+namespace PotatoWebAPI.Models;
 
 public partial class Player
 {
@@ -12,5 +12,4 @@ public partial class Player
     public string Password { get; set; } = null!;
 
     public bool Playerstatus { get; set; }
-
 }
