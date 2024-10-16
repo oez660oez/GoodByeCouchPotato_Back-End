@@ -12,4 +12,7 @@ public partial class Player
     public string Password { get; set; } = null!;
 
     public bool Playerstatus { get; set; }
+
+    public string Token { get; set; } = null!;
+
 }

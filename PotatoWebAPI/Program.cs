@@ -1,11 +1,13 @@
 using PotatoWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using MailKit;
+using PotatoWebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<GoodbyepotatoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("goodbyepotato")));
-
+builder.Services.AddScoped<SendEmail>();
 
 //設定開放網域
 builder.Services.AddCors(options =>

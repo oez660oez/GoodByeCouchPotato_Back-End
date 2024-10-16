@@ -295,7 +295,8 @@ public partial class GoodbyepotatoContext : DbContext
 
             entity.Property(e => e.Account).HasMaxLength(30);
             entity.Property(e => e.Email).HasMaxLength(80);
-            entity.Property(e => e.Password).HasMaxLength(30);
+            entity.Property(e => e.Password).HasMaxLength(150);
+            entity.Property(e => e.Token).HasMaxLength(100);
         });
 
         modelBuilder.Entity<RoomAccessory>(entity =>
