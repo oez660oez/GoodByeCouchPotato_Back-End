@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PotatoWebAPI.DTO;
 using PotatoWebAPI.Models;
-using PotatoWebAPI.Models.DTO;
 
 namespace PotatoWebAPI.Controllers
 {

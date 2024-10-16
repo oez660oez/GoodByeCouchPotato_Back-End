@@ -1,4 +1,4 @@
-﻿namespace PotatoWebAPI.Models.DTO
+﻿namespace PotatoWebAPI.DTO
 {
     public class DailyHealthRecordDTO
     {
