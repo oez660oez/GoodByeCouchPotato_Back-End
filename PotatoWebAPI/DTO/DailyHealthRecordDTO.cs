@@ -2,6 +2,10 @@
 {
     public class DailyHealthRecordDTO
     {
+        public int CId { get; set; }
+
+        public DateOnly HrecordDate { get; set; }
+
         public int? Water { get; set; }
 
         public int? Steps { get; set; }
