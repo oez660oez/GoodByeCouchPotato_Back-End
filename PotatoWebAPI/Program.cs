@@ -16,6 +16,10 @@ builder.Services.AddCors(options =>
         builder => builder.WithOrigins("http://localhost:5173").WithHeaders("*").WithMethods("*"));
 });
 
+//快取
+builder.Services.AddControllers(); // 加入 MVC 控制器服務
+builder.Services.AddMemoryCache(); // 加入內存快取服務
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
