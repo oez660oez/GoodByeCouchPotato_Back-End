@@ -314,7 +314,16 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
 
                     // 發送回覆郵件給反饋者
                     string subject = "答覆您的意見";
-                    string message = $"<p>親愛的用戶：</p><p>謝謝您的意見回饋：</p><p>{optionviewmodel.Content}。</p><p>我們的回覆如下：</p><p>{optionviewmodel.Pro_Content}</p><p>敬祝順利</p><p>byepotato團隊</p>";
+                    string message = $@"
+                                    <p>親愛的用戶：</p>
+                                    <p><strong>謝謝您的意見回饋：</strong></p>
+                                    <p>{optionviewmodel.Content}</p>
+                               
+                                    <p><strong>我們的回覆如下：</strong></p>
+                                    <p>{optionviewmodel.Pro_Content}</p>
+                                    <p>若有其他疑問歡迎再次來信</p>
+                                    <p>敬祝安康</p>
+                                    <p>byepotato團隊</p>";
 
                     await _mailService.SendEmailAsync(optionviewmodel.Email, subject, message);
 
