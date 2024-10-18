@@ -13,7 +13,7 @@ builder.Services.AddScoped<SendEmail>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        builder => builder.WithOrigins("http://localhost:5173").WithHeaders("*").WithMethods("*"));
+        builder => builder.WithOrigins("http://localhost:5173", "http://127.0.0.1:5501").WithHeaders("*").WithMethods("*"));
 });
 
 //快取
@@ -35,9 +35,9 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");  //允許跨網域讀取
+
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();//傳送靜態圖片
 
