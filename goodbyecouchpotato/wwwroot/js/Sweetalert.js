@@ -37,7 +37,7 @@ function sweetalertopinion(messagetype) {
 }
 
 //覆核用
-function sweetalertopinion(messagetype) {
+function sweetalertreview(messagetype) {
     if (messagetype) {
         Swal.fire({
             position: "center",
