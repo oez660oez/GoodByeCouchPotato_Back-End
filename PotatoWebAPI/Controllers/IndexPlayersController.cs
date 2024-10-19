@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using MailKit;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using NuGet.Common;
 using PotatoWebAPI.DTO;
 using PotatoWebAPI.Models;
@@ -131,15 +133,30 @@ namespace PotatoWebAPI.Controllers
             var member = _context.Players.Where(s => s.Account == loginPlayDTO.Account).FirstOrDefault();
             if (member != null)
             {
-                var passwordIsCorrect = BCrypt.Net.BCrypt.Verify(loginPlayDTO.password, member.Password); //比對兩者，如果資料庫裡面的資料不是加密規格就會bug
-                if (passwordIsCorrect)
+                if (member.Playerstatus)
                 {
-                    return Ok(new { Message = "登入成功" });
+                    bool passwordIsCorrect = BCrypt.Net.BCrypt.Verify(loginPlayDTO.password, member.Password); //比對兩者，如果資料庫裡面的資料不是加密規格就會bug
+                    if (passwordIsCorrect)
+                    { 
+                        var Character=_context.Characters.Where(s=>s.Account == loginPlayDTO.Account).FirstOrDefault();
+                        if (Character != null)
+                        {
+                            var characterbody = _context.CharacterAccessories.Where(s => s.CId == Character.CId).FirstOrDefault();
+                            if (Character != null && characterbody != null)
+                            {
+                                return Ok(new { Message = "success",PlayerCharacter = Character, CharacterAccessorie = characterbody });
+
+                            }
+                            return Ok(new { Message = "尚未創建角色的玩家" });
+                        }
+                    return Ok(new { Message = "新玩家，登入成功" });
                 }
                 else
                 {
                     return Ok(new { Message = "帳號或密碼錯誤" });
                 }
+                }
+                return Ok(new { Message = "帳號尚未開通" });
             }
             return Ok(new { Message = "此帳號尚未註冊" });
         }
@@ -175,7 +192,7 @@ namespace PotatoWebAPI.Controllers
                 string baseUrl = _configuration["AppSettings:BaseUrl"];
                 int verificationnumber = random.Next(100000, 999999);
                 CacheValue = verificationnumber;
-                _cache.Set(CacheKey, CacheValue, TimeSpan.FromMinutes(10)); //儲存數據到快取，設定為5分鐘內
+                _cache.Set(CacheKey, CacheValue, TimeSpan.FromMinutes(5)); //儲存數據到快取，設定為5分鐘內
                 string subject = "Potato忘記密碼驗證碼";
                 string message = $"親愛的用戶您好，您的驗證碼為{verificationnumber}，請勿將驗證碼透露給陌生人，並請於5分鐘內進行驗證";
                 await _senewEmail.SendEmailAsync(ForgetPassword.forgetEmail, subject, message);
@@ -213,11 +230,12 @@ namespace PotatoWebAPI.Controllers
                 //return Ok(new { Message = "密碼重設成功，請使用新密碼登入" });
 
             }
-            return Ok(new { Message = "帳號錯誤或驗證碼已過期，請重新嘗試" });
+            return Ok(new { Message = "帳號錯誤或驗證碼已過期，請重新嘗試"});
 
             //下面這個是用來驗證資料是否有進來，結果抓到password的資料前端有抓到，後端沒進來，因為前端的password的name跟後端的password不一致，要注意送form的時候name要跟類別/模型一樣
             //return Ok(new { Message = $"{forgetNEWPassword.email},{forgetNEWPassword.password}, {forgetNEWPassword.Verificationnumber}, {forgetNEWPassword.account}" });
         }
+
 
         private bool CheckVerificationnumber([FromForm] ForgetNEWPasswordDTO forgetNEWPassword)  //忘記密碼的資料與驗證碼驗證
         {
@@ -242,7 +260,28 @@ namespace PotatoWebAPI.Controllers
         }
 
 
-
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult<ChangePasswordDTO>> ChangePassword([FromForm] ChangePasswordDTO changePassword)
+        {
+            if (!string.IsNullOrEmpty(changePassword.NewPassword) && !string.IsNullOrEmpty(changePassword.OldPassword) && !string.IsNullOrEmpty(changePassword.Account))
+            {
+                var player = _context.Players.Where(s => s.Account == changePassword.Account).FirstOrDefault();
+                if (player != null)
+                {
+                    bool isrightoldpassword= BCrypt.Net.BCrypt.Verify(changePassword.OldPassword,player.Password);
+                    if (isrightoldpassword)
+                    {
+                        string bcryptnewpassword=BCrypt.Net.BCrypt.HashPassword(changePassword.NewPassword);
+                        player.Password =bcryptnewpassword;
+                        await _context.SaveChangesAsync();
+                        return Ok(new { Message = "密碼變更成功"});
+                    }
+                    return Ok(new { Message = "原密碼錯誤"});
+                }
+                return Ok(new { Message = "查無此帳號" });
+            }
+            return Ok(new { Message = "有資料未填寫" });
+        }
 
         // DELETE: api/IndexPlayers/5
         //[HttpDelete("{id}")]
