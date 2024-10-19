@@ -208,12 +208,12 @@ namespace PotatoWebAPI.Controllers
             return _context.DailyHealthRecords.Any(e => e.CId == id);
         }
 
-        [HttpPatch("{cid}")]
-        public async Task<IActionResult> PatchDailyHealthRecord(int cid, [FromBody] DailyHealthRecordDTO dailyHealthRecord)
+        [HttpPatch("{cid}/{hrecordDate}")]
+        public async Task<IActionResult> PatchDailyHealthRecord(int cid, DateOnly hrecordDate, [FromBody] DailyHealthRecordDTO dailyHealthRecord)
         {
             // 檢查是否存在該玩家記錄
             var dhr = await _context.DailyHealthRecords
-                .Where(e => e.CId == cid)
+                .Where(e => e.CId == cid && e.HrecordDate == hrecordDate)
                 .SingleOrDefaultAsync();
 
             if (dhr == null)
