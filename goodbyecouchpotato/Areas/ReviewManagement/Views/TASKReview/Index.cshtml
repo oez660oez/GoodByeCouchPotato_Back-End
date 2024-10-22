@@ -120,7 +120,7 @@ else{
                         if (response.success) {
                             var messagetype = response.message != null ? response.message : null;
                             if (messagetype != null) {
-                                sweetalertopinion(messagetype)
+                                sweetalertreview(messagetype)
                             }
                             // $('#successMessage').text(response.message);  // 顯示成功訊息
                             // $('#successModal').modal('show');  // 顯示成功模態框
@@ -128,7 +128,7 @@ else{
                         } else {
                             var messagetype = response.message != null ? response.message : null;
                             if (messagetype != null) {
-                                sweetalertopinion(messagetype)
+                                sweetalertreview(messagetype)
                             }
                             // $('#successMessage').text("拒絕任務失敗: " + response.message);
                             // $('#successModal').modal('show');
@@ -150,12 +150,12 @@ else{
                             // $('#successModal').modal('show');  // 顯示成功模態框
                             var messagetype = response.message != null ? response.message : null;
                             if (messagetype != null) {
-                                sweetalertopinion(messagetype)
+                                sweetalertreview(messagetype)
                             }
                          }else {
                             var messagetype = response.message != null ? response.message : null;
                             if (messagetype != null) {
-                                sweetalertopinion(messagetype)
+                                sweetalertreview(messagetype)
                             }
                         //     $('#successMessage').text("拒絕任務失敗: " + response.message);
                         //     $('#successModal').modal('show');
