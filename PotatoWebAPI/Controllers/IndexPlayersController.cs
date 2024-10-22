@@ -128,35 +128,30 @@ namespace PotatoWebAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public IActionResult Login(LoginPlayDTO loginPlayDTO)
+        public IActionResult Login(LoginPlayDTO loginPlayDTO)  //登入
         {
             var member = _context.Players.Where(s => s.Account == loginPlayDTO.Account).FirstOrDefault();
             if (member != null)
             {
-                if (member.Playerstatus)
-                {
                     bool passwordIsCorrect = BCrypt.Net.BCrypt.Verify(loginPlayDTO.password, member.Password); //比對兩者，如果資料庫裡面的資料不是加密規格就會bug
-                    if (passwordIsCorrect)
-                    { 
-                        var Character=_context.Characters.Where(s=>s.Account == loginPlayDTO.Account).FirstOrDefault();
-                        if (Character != null)
-                        {
-                            var characterbody = _context.CharacterAccessories.Where(s => s.CId == Character.CId).FirstOrDefault();
-                            if (Character != null && characterbody != null)
-                            {
-                                return Ok(new { Message = "success",PlayerCharacter = Character, CharacterAccessorie = characterbody });
-
+                if (passwordIsCorrect)
+                { 
+                            if (member.Playerstatus)
+                            {   
+                                    bool havecharacter= _context.Characters.Any(s => s.Account == loginPlayDTO.Account && s.LivingStatus == "居住");
+                                    if(havecharacter) {  //有角色照理說要同時建立角色現有配件，所以他們會同時存在
+                                        var Character=_context.Characters.Where(s=>s.Account == loginPlayDTO.Account&&s.LivingStatus=="居住").FirstOrDefault();
+                                        var characterbody = _context.CharacterAccessories.Where(s => s.CId == Character.CId).FirstOrDefault();
+                                        return Ok(new { Message = "success",PlayerCharacter = Character, CharacterAccessorie = characterbody });
+                                    }
+                                        return Ok(new { Message = "新玩家，尚未創建角色" });
                             }
-                            return Ok(new { Message = "尚未創建角色的玩家" });
-                        }
-                    return Ok(new { Message = "新玩家，登入成功" });
+                            else
+                            {
+                                 return Ok(new { Message = "帳號尚未開通" });
+                            }
                 }
-                else
-                {
-                    return Ok(new { Message = "帳號或密碼錯誤" });
-                }
-                }
-                return Ok(new { Message = "帳號尚未開通" });
+                                return Ok(new { Message = "帳號或密碼錯誤" });
             }
             return Ok(new { Message = "此帳號尚未註冊" });
         }

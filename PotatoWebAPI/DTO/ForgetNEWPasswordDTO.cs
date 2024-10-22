@@ -1,5 +1,10 @@
 ﻿namespace PotatoWebAPI.DTO
 {
+    public class GetForgetPasswordEmailDTO
+    {
+        public string forgetEmail { get; set; } = null!;
+    }
+
     public class ForgetNEWPasswordDTO
     {
         public string? email { get; set; }
