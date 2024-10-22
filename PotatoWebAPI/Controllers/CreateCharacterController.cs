@@ -15,7 +15,23 @@ public class CreateCharacterController : ControllerBase
         _context = context;
     }
 
+    [HttpGet("Status/{account}")]
+    public async Task<IActionResult> GetCharacterStatus(string account)
+    {
+        var character = await _context.Characters
+           .Where(c => c.Account == account)
+           .OrderByDescending(c => c.CId)
+           .FirstOrDefaultAsync();
+        if (character == null)
+        {
+            return Ok(new { livingStatus = "none" });
+        }
+
+        return Ok(new { livingStatus = character.LivingStatus });
+    }
+
     [HttpPost]
+    //https://localhost:7180/api/CreateCharacter
     public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterDTO dto)
     {
         var character = new Character
