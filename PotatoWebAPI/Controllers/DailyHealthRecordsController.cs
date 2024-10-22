@@ -73,41 +73,43 @@ namespace PotatoWebAPI.Controllers
             return Ok(recordDTO);
         }
 
-        // GET: api/DailyHealthRecords/{cId}
+        //    GET: api/DailyHealthRecords/{cId
+        //}
+        [HttpGet("{cid}")]
         public async Task<IActionResult> GetAllDailyHealthRecordsByCId(int cId)
+    {
+        // 使用 Where 只根據 cId 查詢所有資料
+        var dailyHealthRecords = await _context.DailyHealthRecords
+            .Where(d => d.CId == cId)
+            .ToListAsync();
+
+        if (dailyHealthRecords == null || !dailyHealthRecords.Any())
         {
-            // 使用 Where 只根據 cId 查詢所有資料
-            var dailyHealthRecords = await _context.DailyHealthRecords
-                .Where(d => d.CId == cId)
-                .ToListAsync();
-
-            if (dailyHealthRecords == null || !dailyHealthRecords.Any())
-            {
-                // 如果資料不存在，返回 404
-                return NotFound();
-            }
-
-            // 將查詢結果轉換為 DTO 列表
-            var recordDTOs = dailyHealthRecords.Select(d => new DailyHealthRecordDTO
-            {
-                CId = d.CId,
-                HrecordDate = d.HrecordDate,
-                Water = d.Water,
-                Steps = d.Steps,
-                Vegetables = d.Vegetables,
-                Snacks = d.Snacks,
-                Sleep = d.Sleep.HasValue ? d.Sleep.Value.ToString("HH:mm") : "00:00",
-                Mood = d.Mood
-            }).ToList();
-
-            // 返回查詢結果列表
-            return Ok(recordDTOs);
+            // 如果資料不存在，返回 404
+            return NotFound();
         }
 
+        // 將查詢結果轉換為 DTO 列表
+        var recordDTOs = dailyHealthRecords.Select(d => new DailyHealthRecordDTO
+        {
+            CId = d.CId,
+            HrecordDate = d.HrecordDate,
+            Water = d.Water,
+            Steps = d.Steps,
+            Vegetables = d.Vegetables,
+            Snacks = d.Snacks,
+            Sleep = d.Sleep.HasValue ? d.Sleep.Value.ToString("HH:mm") : "00:00",
+            Mood = d.Mood
+        }).ToList();
 
-        // PUT: api/DailyHealthRecords/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{cid}")]
+        // 返回查詢結果列表
+        return Ok(recordDTOs);
+    }
+
+
+    // PUT: api/DailyHealthRecords/5
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPut("{cid}")]
         public async Task<string> PutDailyHealthRecord(int cid,[FromBody] DailyHealthRecordDTO dailyHealthRecord)
         {
             if (cid != dailyHealthRecord.CId)
