@@ -156,8 +156,17 @@ namespace PotatoWebAPI.Controllers
             findcoin.Coins = findcoin.Coins + returnreward;
             _context.Characters.Update(findcoin);
             await _context.SaveChangesAsync();
+            var updatecoin = _context.Characters.FirstOrDefault(p => p.CId == DailytaskDTO.CId);
+
+            //要回傳的DTO
+            var DailytaskUpdateDTO = new DailytaskUpdateDTO
+            {
+                returnword = returnward,
+                coin = (int)updatecoin.Coins
+            };
+
             //回傳
-            return Ok(returnward);
+            return Ok(DailytaskUpdateDTO);
         }
     }
 

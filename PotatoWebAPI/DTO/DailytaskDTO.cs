@@ -17,4 +17,11 @@
         public bool T3completed { get; set; }
         public int T3Reward { get; set; }
     }
+
+    public class DailytaskUpdateDTO
+    {
+        public string returnword { get; set; }
+        public int coin { get; set; }
+    }
+
 }
