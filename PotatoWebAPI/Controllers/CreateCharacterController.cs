@@ -15,6 +15,49 @@ public class CreateCharacterController : ControllerBase
         _context = context;
     }
 
+    // GET: api/CreateCharacter/{account}
+    [HttpGet("{account}")]
+    public async Task<IActionResult> GetAllCharacterByCId(string account)
+    {
+        // 根據 account 查詢所有角色資料
+        var character = await _context.Characters
+            .Where(d => d.Account == account)
+            .ToListAsync();
+
+        if (character == null)
+        {
+            // 如果資料不存在，返回 404
+            return NotFound();
+        }
+
+        // 將查詢結果轉換為 DTO 列表
+        var characterDTOs = character.Select(d => new PreviousCharactersDTO
+        {
+            CId = d.CId,
+            Name = d.Name,
+            Level = d.Level,
+            LivingStatus = d.LivingStatus,
+            GetEnvironment = d.GetEnvironment,
+            GetExperience = d.GetExperience,
+            GetCoins = d.GetCoins,
+        }).ToList();
+
+        // 只提取 CId
+        var Getid = character.Select(d => new
+        {
+            CId = d.CId,
+        }).ToList();
+
+        // 返回包含角色資料和 CId 的匿名對象
+        return Ok(new
+        {
+            Characters = characterDTOs,
+            CIds = Getid
+        });
+    }
+
+
+
     [HttpPost]
     public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterDTO dto)
     {
