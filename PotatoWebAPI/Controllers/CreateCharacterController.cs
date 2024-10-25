@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using PotatoWebAPI.DTO;
 using PotatoWebAPI.Models;
 using System;
+using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace PotatoWebAPI.Controllers;
 [ApiController]
 [Route("api/[controller]")]
@@ -15,52 +17,28 @@ public class CreateCharacterController : ControllerBase
         _context = context;
     }
 
-    // GET: api/CreateCharacter/{account}
-    [HttpGet("{account}")]
-    public async Task<IActionResult> GetAllCharacterByCId(string account)
+    [HttpGet("Status/{account}")]
+    public async Task<IActionResult> GetCharacterStatus(string account)
     {
-        // 根據 account 查詢所有角色資料
         var character = await _context.Characters
-            .Where(d => d.Account == account)
-            .ToListAsync();
-
+           .Where(c => c.Account == account)
+           .OrderByDescending(c => c.CId)
+           .FirstOrDefaultAsync();
         if (character == null)
         {
-            // 如果資料不存在，返回 404
-            return NotFound();
+            return Ok(new { livingStatus = "none" });
         }
 
-        // 將查詢結果轉換為 DTO 列表
-        var characterDTOs = character.Select(d => new PreviousCharactersDTO
-        {
-            CId = d.CId,
-            Name = d.Name,
-            Level = d.Level,
-            LivingStatus = d.LivingStatus,
-            GetEnvironment = d.GetEnvironment,
-            GetExperience = d.GetExperience,
-            GetCoins = d.GetCoins,
-        }).ToList();
-
-        // 只提取 CId
-        var Getid = character.Select(d => new
-        {
-            CId = d.CId,
-        }).ToList();
-
-        // 返回包含角色資料和 CId 的匿名對象
-        return Ok(new
-        {
-            Characters = characterDTOs,
-            CIds = Getid
-        });
+        return Ok(new { livingStatus = character.LivingStatus });
     }
 
-
-
     [HttpPost]
+    //https://localhost:7180/api/CreateCharacter
     public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterDTO dto)
     {
+        //使用交易，若前面新建失敗後面會回滾，防止建一半的狀況。
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try {
         var character = new Character
         {
             Name = dto.Name,
@@ -96,11 +74,35 @@ public class CreateCharacterController : ControllerBase
             GetExperience = 0,
             GetCoins = 0
         };
-
+            //新增Character
         _context.Characters.Add(character);
         await _context.SaveChangesAsync();
 
-        return Ok(character);
+        // 使用剛創建的 Character 的 CId 來建立 CharacterAccessorie
+        var characterAccessorie = new CharacterAccessorie
+        {
+            CId = character.CId,
+            Head = 0,
+            Upper = 0,
+            Lower = 0
+        };
+            //新增CharacterAccessorie
+        _context.CharacterAccessories.Add(characterAccessorie);
+        await _context.SaveChangesAsync();
+            //交易提交(確保一致性)
+        await transaction.CommitAsync();
+
+        return Ok(new
+        {
+            Character = character,
+            CharacterAccessorie = characterAccessorie
+        });
+        }catch (Exception ex)
+        {
+            // 如果發生錯誤，回滾事務
+            await transaction.RollbackAsync();
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     private int CalculateStandardWater(decimal waterAmount)

@@ -10,6 +10,14 @@ public class ItemController : ControllerBase
 {
     private readonly GoodbyepotatoContext _context;
 
+    private readonly Dictionary<string, string> _typeMapping = new Dictionary<string, string>    {
+        { "accessory", "飾品" },
+        { "hairstyle", "髮型" },
+        { "outfit", "衣服" },
+        { "飾品", "accessory" },
+        { "髮型", "hairstyle" },
+        { "衣服", "outfit" }
+    };
     public ItemController(GoodbyepotatoContext context)
     {
         _context = context;
@@ -37,7 +45,9 @@ public class ItemController : ControllerBase
                                where ci.Account == account
                                select new
                                {
-                                   type = al.PClass,
+                                   type = _typeMapping.ContainsKey(al.PClass)
+                                       ? _typeMapping[al.PClass]
+                                       : al.PClass,
                                    imageName = al.PImageShop
                                }).ToListAsync();
 
@@ -62,7 +72,7 @@ public class ItemController : ControllerBase
 
             // 2. 使用 C_ID 從 CharacterAccessorie 表獲取裝備資訊
             var characterAccessories = await _context.CharacterAccessories
-                .FirstOrDefaultAsync(ca => ca.CId == character.CId);
+               .FirstOrDefaultAsync(ca => ca.CId == character.CId);
 
             if (characterAccessories == null)
                 return NotFound($"No accessories found for character ID: {character.CId}");
@@ -91,9 +101,17 @@ public class ItemController : ControllerBase
         var accessory = await _context.AccessoriesLists
             .FirstOrDefaultAsync(a => a.PCode == equipmentCode);
 
-        return accessory == null ? null : new
+        if (accessory == null)
+            return null;
+
+        // 使用映射將中文類型轉換為英文
+        var englishType = _typeMapping.ContainsKey(accessory.PClass)
+            ? _typeMapping[accessory.PClass]
+            : accessory.PClass;
+
+        return new
         {
-            type = accessory.PClass,
+            type = englishType,
             imageName = accessory.PImageShop
         };
     }

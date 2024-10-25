@@ -9,5 +9,5 @@ public partial class WeightRecord
 
     public DateTime WRecordDate { get; set; }
 
-    public int Weight { get; set; }
+    public decimal? Weight { get; set; }
 }
