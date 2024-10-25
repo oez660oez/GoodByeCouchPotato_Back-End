@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PotatoWebAPI.DTO;
 using PotatoWebAPI.Models;
@@ -25,31 +26,83 @@ namespace PotatoWebAPI.Controllers
             _configuration = configuration;
         }
 
+
+
         // GET: api/ShopAccessoriesLists
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<AccessoriesList>>> GetAccessoriesLists()
+        [HttpPost("GetList")]                    //直接用int page接不到前端的數字，因為前端傳遞的時候是json對象，是page:2這樣的規格，int page期待的是一個單一整數型態會無法解析
+        public async Task<ActionResult<IEnumerable<AccessoriesList>>> GetAccessoriesLists([FromBody] PageRequestDTO request)
         {
+            int page = request.Page > 0 ? request.Page : 1;
             string baseUrl = _configuration["ImgSetting:ImgUrl"];  //用來串接圖片
-            var Items = await _context.AccessoriesLists
-                .Where(s => s.PActive == true)
-                .ToListAsync();
-            var allclass = _context.AccessoriesLists.Select(s => s.PClass).Distinct();
+            var allclass = _context.AccessoriesLists.Select(s => s.PClass).Distinct();  //求類別
+            Console.WriteLine( request.Account);
+            var Items = _context.AccessoriesLists
+                .Where(s => s.PActive == true);  //求所有商品
+            var haveitem =from list in _context.AccessoriesLists join myitems in _context.CharacterItems on list.PCode equals myitems.PCode where myitems.Account==request.Account select myitems.PCode;  //求玩家持有物品
             var GetphotoItems = Items.Select(s => new AccessoriesListsDTO
             {
                 PCode = s.PCode,
-                PClass=s.PClass,
-                PName=s.PName,
-                PPrice=s.PPrice,
-                PLevel=s.PLevel,
-                PImageShop=$"{baseUrl}/images/{s.PImageShop}",
+                PClass = s.PClass,
+                PName = s.PName,
+                PPrice = s.PPrice,
+                PLevel = s.PLevel,
+                PImageShop = $"{baseUrl}/images/{s.PImageShop}",
+                ishaveitem =haveitem.Any(myitem=>myitem==s.PCode) ,  //確認是否有重複pcode，如果有表示有持有
             });
-            //var PageItem = GetphotoItems.ToPagedList(page, 12);
 
-            return Ok(new { Allclass=allclass,QualifiedItem= GetphotoItems });
+            GetphotoItems = GetphotoItems.OrderBy(s => s.ishaveitem).ThenBy(s => s.PLevel);
+            var PageItem = GetphotoItems.ToPagedList(page, 10);  //使用page的資料必須用資料庫數據，不能先做tolist
+
+            int currentpages = PageItem.PageNumber;   //目前在第幾頁
+            int totalpages = PageItem.PageCount;  //所有頁數
+
+            return Ok(new
+            {
+                Allclass = allclass,
+                QualifiedItem =PageItem,
+                Currentpage = PageItem.PageNumber,
+                Totalpages = PageItem.PageCount,
+                AllqualifiedItem= GetphotoItems,  //取全部不分頁的商品
+            });
         }
 
+        [HttpPost("purchase")]
+        public async Task<ActionResult<PurchaseDTO>> PurchaseAccessoriesLists([FromBody] PurchaseDTO purchase)
+        {
+            bool isplayercharacter = _context.Characters.Any(s => s.CId == purchase.CId);
+            if (isplayercharacter)
+            {
+                var player = _context.Players.Where(s => s.Account == purchase.Account);
+                var playercharacte = _context.Characters.Where(s => s.Account == purchase.Account).FirstOrDefault();
+                if (playercharacte.Coins.Equals((int)purchase.Coins))  //確認抓到的金額是正確的
+                {
+                    if (purchase.PPrice < purchase.Coins)
+                    {
+                        if (player != null && playercharacte != null)
+                        {
+                            var newpurchase = new CharacterItem
+                            {
+                                Account = purchase.Account,
+                                PCode = (int)purchase.PCode
+                            };
+                            _context.CharacterItems.Add(newpurchase);
+                            int Newcoins= (int)playercharacte.Coins - (int)purchase.PPrice;
+                            playercharacte.Coins = Newcoins;
+                            await _context.SaveChangesAsync();
+                            return Ok(new { Message = "購買成功", newcoins = Newcoins });  //回傳金額，確保前後儲存的金額是一致的
+                        }
+                        return Ok(new { Message = "購買失敗，商品已重複"});
+                    }
+                    return Ok(new { Message = "Coins不足" });
+                }
+                    return Ok(new { Message = "coin不相符" });
+            }
+                return Ok(new { Message = "查無此帳號，或此角色已搬離" });
+        }
+
+
         // GET: api/ShopAccessoriesLists/5
-        [HttpGet("{id}")]
+        //[HttpGet("{id}")]
         //public async Task<ActionResult<AccessoriesList>> GetAccessoriesList(int id)
         //{
         //    var accessoriesList = await _context.AccessoriesLists.FindAsync(id);
@@ -95,14 +148,14 @@ namespace PotatoWebAPI.Controllers
 
         // POST: api/ShopAccessoriesLists
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<AccessoriesList>> PostAccessoriesList(AccessoriesList accessoriesList)
-        {
-            _context.AccessoriesLists.Add(accessoriesList);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        //public async Task<ActionResult<AccessoriesList>> PostAccessoriesList(AccessoriesList accessoriesList)
+        //{
+        //    _context.AccessoriesLists.Add(accessoriesList);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAccessoriesList", new { id = accessoriesList.PCode }, accessoriesList);
-        }
+        //    return CreatedAtAction("GetAccessoriesList", new { id = accessoriesList.PCode }, accessoriesList);
+        //}
 
         // DELETE: api/ShopAccessoriesLists/5
         //[HttpDelete("{id}")]

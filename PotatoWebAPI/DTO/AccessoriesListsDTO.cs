@@ -13,7 +13,22 @@
         public int? PLevel { get; set; }
 
         public string? PImageShop { get; set; }
+        public bool ishaveitem { get; set; }
 
+    }
+    public class PageRequestDTO
+    {
+        public int Page { get; set; }
+        public string? Account { get; set; }
+    }
 
+    public class PurchaseDTO
+    {
+        public string? Account { get; set; }
+        public int? CId { get; set; }
+        public int? Coins { get; set; }
+        public int? PCode { get; set; }
+        public int? PPrice { get; set; }
+        public int? PLevel { get; set; }
     }
 }

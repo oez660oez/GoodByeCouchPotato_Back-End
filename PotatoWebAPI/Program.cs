@@ -16,6 +16,7 @@ builder.Services.AddCors(options =>
         builder => builder.WithOrigins("http://localhost:5173", "http://127.0.0.1:5501").WithHeaders("*").WithMethods("*"));
 });
 
+
 //快取
 builder.Services.AddControllers(); // 加入 MVC 控制器服務
 builder.Services.AddMemoryCache(); // 加入內存快取服務

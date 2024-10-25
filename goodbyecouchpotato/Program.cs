@@ -22,7 +22,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<MailService>();
 
-
 //========身分驗證貼上Start========
 builder.Services.Configure<IdentityOptions>(options => {
 	options.Password.RequireDigit = true;
