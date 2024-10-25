@@ -22,11 +22,11 @@ namespace PotatoWebAPI.Controllers
         }
 
         // GET: api/DailyHealthRecords
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<DailyHealthRecord>>> GetDailyHealthRecords()
-        {
-            return await _context.DailyHealthRecords.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<DailyHealthRecord>>> GetDailyHealthRecords()
+        //{
+        //    return await _context.DailyHealthRecords.ToListAsync();
+        //}
 
         // GET: api/DailyHealthRecords/5
         // GET: api/DailyHealthRecords/{cId}/{hrecordDate}
@@ -73,8 +73,7 @@ namespace PotatoWebAPI.Controllers
             return Ok(recordDTO);
         }
 
-        //    GET: api/DailyHealthRecords/{cId
-        //}
+        // GET: api/DailyHealthRecords/{cId}
         [HttpGet("{cid}")]
         public async Task<IActionResult> GetAllDailyHealthRecordsByCId(int cId)
     {
@@ -109,60 +108,60 @@ namespace PotatoWebAPI.Controllers
 
     // PUT: api/DailyHealthRecords/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{cid}")]
-        public async Task<string> PutDailyHealthRecord(int cid,[FromBody] DailyHealthRecordDTO dailyHealthRecord)
-        {
-            if (cid != dailyHealthRecord.CId)
-            {
-                return "修改記錄失敗，ID 不一致"; 
-            }
+    //[HttpPut("{cid}")]
+    //    public async Task<string> PutDailyHealthRecord(int cid,[FromBody] DailyHealthRecordDTO dailyHealthRecord)
+    //    {
+    //        if (cid != dailyHealthRecord.CId)
+    //        {
+    //            return "修改記錄失敗，ID 不一致"; 
+    //        }
 
-            var dhr = await _context.DailyHealthRecords.Where(e=>e.CId == cid).SingleOrDefaultAsync();
+    //        var dhr = await _context.DailyHealthRecords.Where(e=>e.CId == cid).SingleOrDefaultAsync();
            
 
-            if(dhr == null)
-            {
-                return "修改失敗，玩家記錄未找到";
-            }
-            // 將 HH:mm 的時間字串轉換為當天的 DateTime
-            string timeString = dailyHealthRecord.Sleep; // HH:mm 格式
-            DateTime dateToday = DateTime.Today;  // 取得今天的日期，時間部分為 00:00:00
+    //        if(dhr == null)
+    //        {
+    //            return "修改失敗，玩家記錄未找到";
+    //        }
+    //        // 將 HH:mm 的時間字串轉換為當天的 DateTime
+    //        string timeString = dailyHealthRecord.Sleep; // HH:mm 格式
+    //        DateTime dateToday = DateTime.Today;  // 取得今天的日期，時間部分為 00:00:00
 
-            // 將時間部分解析並加上今天的年月日
-            DateTime dateTimeWithTime = DateTime.ParseExact(timeString, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-            dateTimeWithTime = dateToday.AddHours(dateTimeWithTime.Hour).AddMinutes(dateTimeWithTime.Minute);
-            if(dailyHealthRecord.Water == null)
-            {
-                dailyHealthRecord.Water = dhr.Water;
-            }
-            else
-            {
-                dailyHealthRecord.Water += dhr.Water;
-                if(dailyHealthRecord.Water >= 99999)
-                {
-                    dailyHealthRecord.Water = 99999;
-                }
-            }
+    //        // 將時間部分解析並加上今天的年月日
+    //        DateTime dateTimeWithTime = DateTime.ParseExact(timeString, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+    //        dateTimeWithTime = dateToday.AddHours(dateTimeWithTime.Hour).AddMinutes(dateTimeWithTime.Minute);
+    //        if(dailyHealthRecord.Water == null)
+    //        {
+    //            dailyHealthRecord.Water = dhr.Water;
+    //        }
+    //        else
+    //        {
+    //            dailyHealthRecord.Water += dhr.Water;
+    //            if(dailyHealthRecord.Water >= 99999)
+    //            {
+    //                dailyHealthRecord.Water = 99999;
+    //            }
+    //        }
 
-            dhr.Water = dailyHealthRecord.Water;
-            dhr.Steps = dailyHealthRecord.Steps;
-            dhr.Vegetables = dailyHealthRecord.Vegetables;
-            dhr.Snacks = dailyHealthRecord.Snacks;
-            dhr.Sleep = dateTimeWithTime;
-            dhr.Mood = dailyHealthRecord.Mood;
+    //        dhr.Water = dailyHealthRecord.Water;
+    //        dhr.Steps = dailyHealthRecord.Steps;
+    //        dhr.Vegetables = dailyHealthRecord.Vegetables;
+    //        dhr.Snacks = dailyHealthRecord.Snacks;
+    //        dhr.Sleep = dateTimeWithTime;
+    //        dhr.Mood = dailyHealthRecord.Mood;
 
-            _context.Entry(dhr).State = EntityState.Modified;
+    //        _context.Entry(dhr).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-                return "修改成功";
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return "修改失敗，發生並發衝突";
-            }
-        }
+    //        try
+    //        {
+    //            await _context.SaveChangesAsync();
+    //            return "修改成功";
+    //        }
+    //        catch (DbUpdateConcurrencyException)
+    //        {
+    //            return "修改失敗，發生並發衝突";
+    //        }
+    //    }
 
         // POST: api/DailyHealthRecords
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -223,25 +222,25 @@ namespace PotatoWebAPI.Controllers
         }
 
         // DELETE: api/DailyHealthRecords/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDailyHealthRecord(int id)
-        {
-            var dailyHealthRecord = await _context.DailyHealthRecords.FindAsync(id);
-            if (dailyHealthRecord == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteDailyHealthRecord(int id)
+        //{
+        //    var dailyHealthRecord = await _context.DailyHealthRecords.FindAsync(id);
+        //    if (dailyHealthRecord == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.DailyHealthRecords.Remove(dailyHealthRecord);
-            await _context.SaveChangesAsync();
+        //    _context.DailyHealthRecords.Remove(dailyHealthRecord);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        private bool DailyHealthRecordExists(int id)
-        {
-            return _context.DailyHealthRecords.Any(e => e.CId == id);
-        }
+        //private bool DailyHealthRecordExists(int id)
+        //{
+        //    return _context.DailyHealthRecords.Any(e => e.CId == id);
+        //}
 
         [HttpPatch("{cid}/{hrecordDate}")]
         public async Task<IActionResult> PatchDailyHealthRecord(int cid, DateOnly hrecordDate, [FromBody] DailyHealthRecordDTO dailyHealthRecord)
