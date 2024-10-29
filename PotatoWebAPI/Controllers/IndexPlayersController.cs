@@ -144,16 +144,21 @@ namespace PotatoWebAPI.Controllers
                                         var characterbody = _context.CharacterAccessories.Where(s => s.CId == Character.CId).FirstOrDefault();
                                         return Ok(new { Message = "success",PlayerCharacter = Character, CharacterAccessorie = characterbody });
                                     }
-                                        return Ok(new { Message = "新玩家，尚未創建角色" });
+                                        return Ok(new { Message = "新玩家，尚未創建角色",
+                                            respond = "newcharacter"});
                             }
                             else
                             {
-                                 return Ok(new { Message = "帳號尚未開通" });
+                                 return Ok(new { Message = "帳號尚未開通",
+                                     respond = "Nopermission" });
                             }
                 }
-                                return Ok(new { Message = "帳號或密碼錯誤" });
+                                return Ok(new { Message = "帳號或密碼錯誤",
+                                    respond = "Nopermission"  });
             }
-            return Ok(new { Message = "此帳號尚未註冊" });
+            return Ok(new { Message = "此帳號尚未註冊",
+                respond
+            ="Noaccount"});
         }
 
         //驗證信結果

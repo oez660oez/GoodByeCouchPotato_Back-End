@@ -13,6 +13,8 @@
         public int? PLevel { get; set; }
 
         public string? PImageShop { get; set; }
+        public string? PImageAll { get; set; }
+
         public bool ishaveitem { get; set; }
 
     }
@@ -31,4 +33,5 @@
         public int? PPrice { get; set; }
         public int? PLevel { get; set; }
     }
+
 }

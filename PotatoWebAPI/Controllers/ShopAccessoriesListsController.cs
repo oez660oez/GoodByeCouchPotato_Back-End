@@ -47,6 +47,7 @@ namespace PotatoWebAPI.Controllers
                 PPrice = s.PPrice,
                 PLevel = s.PLevel,
                 PImageShop = $"{baseUrl}/images/{s.PImageShop}",
+                PImageAll = $"{baseUrl}/images/{s.PImageAll}",
                 ishaveitem =haveitem.Any(myitem=>myitem==s.PCode) ,  //確認是否有重複pcode，如果有表示有持有
             });
 
@@ -99,7 +100,6 @@ namespace PotatoWebAPI.Controllers
             }
                 return Ok(new { Message = "查無此帳號，或此角色已搬離" });
         }
-
 
         // GET: api/ShopAccessoriesLists/5
         //[HttpGet("{id}")]
