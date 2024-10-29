@@ -89,13 +89,18 @@ public class CreateCharacterController : ControllerBase
             //新增CharacterAccessorie
         _context.CharacterAccessories.Add(characterAccessorie);
         await _context.SaveChangesAsync();
+
+            //var playCharacter = _context.Characters.Where(s => s.CId == character.CId && s.LivingStatus == "居住").FirstOrDefault();
+            //var characterbody = _context.CharacterAccessories.Where(s => s.CId == character.CId).FirstOrDefault();
             //交易提交(確保一致性)
-        await transaction.CommitAsync();
+            await transaction.CommitAsync();
 
         return Ok(new
         {
             Character = character,
-            CharacterAccessorie = characterAccessorie
+            CharacterAccessorie = characterAccessorie,
+            //playercharacter= playCharacter,
+            //charactrtbody= characterbody,
         });
         }catch (Exception ex)
         {
