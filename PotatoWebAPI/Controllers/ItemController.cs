@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PotatoWebAPI.DTO;
 using PotatoWebAPI.Models;
@@ -9,8 +10,10 @@ namespace PotatoWebAPI.Controllers;
 public class ItemController : ControllerBase
 {
     private readonly GoodbyepotatoContext _context;
+    private readonly IConfiguration _configuration;
+    private readonly string _baseUrl;
 
-    private readonly Dictionary<string, string> _typeMapping = new Dictionary<string, string>    {
+    private readonly Dictionary<string, string> _typeMapping = new Dictionary<string, string> {
         { "accessory", "飾品" },
         { "hairstyle", "髮型" },
         { "outfit", "衣服" },
@@ -18,9 +21,12 @@ public class ItemController : ControllerBase
         { "髮型", "hairstyle" },
         { "衣服", "outfit" }
     };
-    public ItemController(GoodbyepotatoContext context)
+
+    public ItemController(GoodbyepotatoContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
+        _baseUrl = _configuration["ImgSetting:ImgUrl"];
     }
 
     [HttpGet("byShopImage")]
@@ -28,14 +34,23 @@ public class ItemController : ControllerBase
     {
         var accessory = await _context.AccessoriesLists
             .FirstOrDefaultAsync(a => a.PImageShop == shopImage);
+
         if (accessory == null)
         {
             return NotFound();
         }
-        return accessory;
+
+        var result = new
+        {
+            pCode = accessory.PCode,
+            pClass = accessory.PClass,
+            pImageShop = $"{_baseUrl}/images/{accessory.PImageShop}",
+            pImageAll = $"{_baseUrl}/images/{accessory.PImageAll}"
+        };
+
+        return Ok(result);
     }
 
-    // 新增: 獲取用戶物品列表的端點
     [HttpGet("userItems/{account}")]
     public async Task<ActionResult<IEnumerable<object>>> GetUserItems(string account)
     {
@@ -48,7 +63,7 @@ public class ItemController : ControllerBase
                                    type = _typeMapping.ContainsKey(al.PClass)
                                        ? _typeMapping[al.PClass]
                                        : al.PClass,
-                                   imageName = al.PImageShop
+                                   imageName = $"{_baseUrl}/images/{al.PImageShop}"
                                }).ToListAsync();
 
         if (!userItems.Any())
@@ -58,26 +73,24 @@ public class ItemController : ControllerBase
 
         return Ok(userItems);
     }
+
     [HttpGet("characterEquipment/{account}")]
     public async Task<ActionResult<object>> GetCharacterEquipment(string account)
     {
         try
         {
-            // 1. 先從 Character 表獲取 C_ID
             var character = await _context.Characters
                 .FirstOrDefaultAsync(c => c.Account == account);
 
             if (character == null)
                 return NotFound($"No character found for account: {account}");
 
-            // 2. 使用 C_ID 從 CharacterAccessorie 表獲取裝備資訊
             var characterAccessories = await _context.CharacterAccessories
                .FirstOrDefaultAsync(ca => ca.CId == character.CId);
 
             if (characterAccessories == null)
                 return NotFound($"No accessories found for character ID: {character.CId}");
 
-            // 3. 獲取各個裝備的詳細資訊
             var equipmentInfo = new
             {
                 accessory = await GetEquipmentDetails((int)characterAccessories.Head),
@@ -104,7 +117,6 @@ public class ItemController : ControllerBase
         if (accessory == null)
             return null;
 
-        // 使用映射將中文類型轉換為英文
         var englishType = _typeMapping.ContainsKey(accessory.PClass)
             ? _typeMapping[accessory.PClass]
             : accessory.PClass;
@@ -112,7 +124,7 @@ public class ItemController : ControllerBase
         return new
         {
             type = englishType,
-            imageName = accessory.PImageShop
+            imageName = $"{_baseUrl}/images/{accessory.PImageShop}"
         };
     }
     [HttpPost("updateEquipment")]
@@ -144,45 +156,6 @@ public class ItemController : ControllerBase
             characterAccessories.Head = await GetPCodeFromImageName(dto.Accessory?.ImageName);
             characterAccessories.Upper = await GetPCodeFromImageName(dto.Hairstyle?.ImageName);
             characterAccessories.Lower = await GetPCodeFromImageName(dto.Outfit?.ImageName);
-
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
-
-    [HttpPost("updateInventory")]
-    public async Task<IActionResult> UpdateInventory([FromBody] InventoryUpdateDTO dto)
-    {
-        try
-        {
-            // 1. 刪除現有物品
-            var existingItems = await _context.CharacterItems
-                .Where(ci => ci.Account == dto.Account)
-                .ToListAsync();
-
-            _context.CharacterItems.RemoveRange(existingItems);
-
-            // 2. 添加新物品
-            if (dto.Items != null)
-            {
-                foreach (var item in dto.Items)
-                {
-                    var pCode = await GetPCodeFromImageName(item.ImageName);
-                    if (pCode.HasValue)
-                    {
-                        var characterItem = new CharacterItem
-                        {
-                            Account = dto.Account,
-                            PCode = pCode.Value
-                        };
-                        _context.CharacterItems.Add(characterItem);
-                    }
-                }
-            }
 
             await _context.SaveChangesAsync();
             return Ok();
