@@ -88,95 +88,128 @@ namespace PotatoWebAPI.Controllers
             return Ok(result);
         }
 
-        // GET: api/Report/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DailyTaskRecord>> GetDailyTaskRecord(int id)
+        [HttpPost("weight")]
+        public async Task<ActionResult<IEnumerable<weightRecordDTO>>> GetweightRecords([FromBody] SearchdayDTO SearchdayDTO)
         {
-            var dailyTaskRecord = await _context.DailyTaskRecords.FindAsync(id);
+            var result = await _context.WeightRecords
+               .Where(f => f.CId == SearchdayDTO.CId)
+               .Where(f => f.WRecordDate >= SearchdayDTO.StartDate && f.WRecordDate <= SearchdayDTO.EndDate)
+               .Select(f => new weightRecordDTO
+               {
+                   HrecordDate = f.WRecordDate,
+                   weight = f.Weight,
+               })
+              .ToListAsync();
 
-            if (dailyTaskRecord == null)
-            {
-                return NotFound();
-            }
-
-            return dailyTaskRecord;
+            return Ok(result);
         }
 
-        // PUT: api/Report/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDailyTaskRecord(int id, DailyTaskRecord dailyTaskRecord)
+        [HttpPost("eating")]
+        public async Task<ActionResult<IEnumerable<weightRecordDTO>>> GeteatingRecords([FromBody] SearchdayDTO SearchdayDTO)
         {
-            if (id != dailyTaskRecord.CId)
-            {
-                return BadRequest();
-            }
+            var result = await _context.DailyHealthRecords
+               .Where(f => f.CId == SearchdayDTO.CId)
+               .Where(f => f.HrecordDate >= SearchdayDTO.StartDate && f.HrecordDate <= SearchdayDTO.EndDate)
+               .Select(f => new eatRecordDTO
+               {
+                   HrecordDate = f.HrecordDate,
+                   good = f.Vegetables,
+                   bad =f.Snacks 
+               })
+              .ToListAsync();
 
-            _context.Entry(dailyTaskRecord).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DailyTaskRecordExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result);
         }
 
-        // POST: api/Report
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<DailyTaskRecord>> PostDailyTaskRecord(DailyTaskRecord dailyTaskRecord)
-        {
-            _context.DailyTaskRecords.Add(dailyTaskRecord);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (DailyTaskRecordExists(dailyTaskRecord.CId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    // GET: api/Report/5
+        //    [HttpGet("{id}")]
+        //    public async Task<ActionResult<DailyTaskRecord>> GetDailyTaskRecord(int id)
+        //    {
+        //        var dailyTaskRecord = await _context.DailyTaskRecords.FindAsync(id);
 
-            return CreatedAtAction("GetDailyTaskRecord", new { id = dailyTaskRecord.CId }, dailyTaskRecord);
-        }
+        //        if (dailyTaskRecord == null)
+        //        {
+        //            return NotFound();
+        //        }
 
-        // DELETE: api/Report/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDailyTaskRecord(int id)
-        {
-            var dailyTaskRecord = await _context.DailyTaskRecords.FindAsync(id);
-            if (dailyTaskRecord == null)
-            {
-                return NotFound();
-            }
+        //        return dailyTaskRecord;
+        //    }
 
-            _context.DailyTaskRecords.Remove(dailyTaskRecord);
-            await _context.SaveChangesAsync();
+        //    // PUT: api/Report/5
+        //    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //    [HttpPut("{id}")]
+        //    public async Task<IActionResult> PutDailyTaskRecord(int id, DailyTaskRecord dailyTaskRecord)
+        //    {
+        //        if (id != dailyTaskRecord.CId)
+        //        {
+        //            return BadRequest();
+        //        }
 
-            return NoContent();
-        }
+        //        _context.Entry(dailyTaskRecord).State = EntityState.Modified;
 
-        private bool DailyTaskRecordExists(int id)
-        {
-            return _context.DailyTaskRecords.Any(e => e.CId == id);
-        }
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!DailyTaskRecordExists(id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+
+        //        return NoContent();
+        //    }
+
+        //    // POST: api/Report
+        //    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //    [HttpPost]
+        //    public async Task<ActionResult<DailyTaskRecord>> PostDailyTaskRecord(DailyTaskRecord dailyTaskRecord)
+        //    {
+        //        _context.DailyTaskRecords.Add(dailyTaskRecord);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException)
+        //        {
+        //            if (DailyTaskRecordExists(dailyTaskRecord.CId))
+        //            {
+        //                return Conflict();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+
+        //        return CreatedAtAction("GetDailyTaskRecord", new { id = dailyTaskRecord.CId }, dailyTaskRecord);
+        //    }
+
+        //    // DELETE: api/Report/5
+        //    [HttpDelete("{id}")]
+        //    public async Task<IActionResult> DeleteDailyTaskRecord(int id)
+        //    {
+        //        var dailyTaskRecord = await _context.DailyTaskRecords.FindAsync(id);
+        //        if (dailyTaskRecord == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        _context.DailyTaskRecords.Remove(dailyTaskRecord);
+        //        await _context.SaveChangesAsync();
+
+        //        return NoContent();
+        //    }
+
+        //    private bool DailyTaskRecordExists(int id)
+        //    {
+        //        return _context.DailyTaskRecords.Any(e => e.CId == id);
+        //    }
     }
 }
