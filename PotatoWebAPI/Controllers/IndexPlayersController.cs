@@ -128,7 +128,7 @@ namespace PotatoWebAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public IActionResult Login(LoginPlayDTO loginPlayDTO)  //登入
+        public  IActionResult Login(LoginPlayDTO loginPlayDTO)  //登入
         {
             var member = _context.Players.Where(s => s.Account == loginPlayDTO.Account).FirstOrDefault();
             if (member != null)
@@ -141,20 +141,29 @@ namespace PotatoWebAPI.Controllers
                                     bool havecharacter= _context.Characters.Any(s => s.Account == loginPlayDTO.Account && s.LivingStatus == "居住");
                                     if(havecharacter) {  //有角色照理說要同時建立角色現有配件，所以他們會同時存在
                                         var Character=_context.Characters.Where(s=>s.Account == loginPlayDTO.Account&&s.LivingStatus=="居住").FirstOrDefault();
-                                        var characterbody = _context.CharacterAccessories.Where(s => s.CId == Character.CId).FirstOrDefault();
-                                        return Ok(new { Message = "success",PlayerCharacter = Character, CharacterAccessorie = characterbody });
-                                    }
-                                        return Ok(new { Message = "新玩家，尚未創建角色",
-                                            respond = "newcharacter"});
+                                        var characterbody = _context.CharacterAccessories.Where(s => s.CId == Character.CId).FirstOrDefault();       
+                            if (Character.Environment > 0)
+                                        {
+                                            return Ok(new { Message = "success",PlayerCharacter = Character, CharacterAccessorie = characterbody });
+
+                                        }
+                                        else
+                                        {
+                                            Character.LivingStatus = "搬離";
+                                Character.MoveOutDate = DateTime.Now;
+                                             _context.SaveChangesAsync();
+                                           return Ok(new { Message = "因環境值歸0，角色已搬離，請重新創建角色", respond = "gameover" });
+                                        }
+                                    
+                            }
+                                        return Ok(new { Message = "無居住中的角色",respond = "newcharacter"});
                             }
                             else
                             {
-                                 return Ok(new { Message = "帳號尚未開通",
-                                     respond = "Nopermission" });
+                                 return Ok(new { Message = "帳號尚未開通",respond = "Nopermission" });
                             }
                 }
-                                return Ok(new { Message = "帳號或密碼錯誤",
-                                    respond = "Nopermission"  });
+                                return Ok(new { Message = "帳號或密碼錯誤",respond = "Nopermission"  });
             }
             return Ok(new { Message = "此帳號尚未註冊",
                 respond

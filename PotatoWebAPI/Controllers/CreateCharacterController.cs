@@ -39,41 +39,43 @@ public class CreateCharacterController : ControllerBase
         //使用交易，若前面新建失敗後面會回滾，防止建一半的狀況。
         using var transaction = await _context.Database.BeginTransactionAsync();
         try {
-        var character = new Character
-        {
-            Name = dto.Name,
-            Height = dto.Height,
-            Weight = dto.Weight,
-            Account = dto.Account,
-            // 設定運動目標步數
-            TargetStep = dto.ExerciseIntensity switch
+            var character = new Character
             {
-                "久坐" => 5000,
-                "低活動" => 7500,
-                "中活動" => 10000,
-                "高活動" => 12500,
-                _ => 5000
-            },
-            // 設定標準步數
-            StandardStep = dto.ExerciseIntensity switch
-            {
-                "久坐" => 3000,
-                "低活動" => 6000,
-                "中活動" => 8000,
-                "高活動" => 10000,
-                _ => 3000
-            },
-            // 計算目標飲水量（四捨五入到百位數）
-            TargetWater = (int)(Math.Round(dto.Weight * 30 / 100m, 0) * 100),
-            // 計算標準飲水量
-            StandardWater = CalculateStandardWater(dto.Weight * 30),
-            // 預設值
-            LivingStatus = "居住",
-            Coins = 0,
-            GetEnvironment = 0,
-            GetExperience = 0,
-            GetCoins = 0
-        };
+                Name = dto.Name,
+                Height = dto.Height,
+                Weight = dto.Weight,
+                Account = dto.Account,
+                // 設定運動目標步數
+                TargetStep = dto.ExerciseIntensity switch
+                {
+                    "久坐" => 5000,
+                    "低活動" => 7500,
+                    "中活動" => 10000,
+                    "高活動" => 12500,
+                    _ => 5000
+                },
+                // 設定標準步數
+                StandardStep = dto.ExerciseIntensity switch
+                {
+                    "久坐" => 3000,
+                    "低活動" => 6000,
+                    "中活動" => 8000,
+                    "高活動" => 10000,
+                    _ => 3000
+                },
+                // 計算目標飲水量（四捨五入到百位數）
+                TargetWater = (int)(Math.Round(dto.Weight * 30 / 100m, 0) * 100),
+                // 計算標準飲水量
+                StandardWater = CalculateStandardWater(dto.Weight * 30),
+                // 預設值
+                Environment=80,
+                LivingStatus = "居住",
+                Coins = 0,
+                GetEnvironment = 0,
+                GetExperience = 0,
+                GetCoins = 0
+            };
+
             //新增Character
         _context.Characters.Add(character);
         await _context.SaveChangesAsync();
@@ -90,18 +92,14 @@ public class CreateCharacterController : ControllerBase
         _context.CharacterAccessories.Add(characterAccessorie);
         await _context.SaveChangesAsync();
 
-            //var playCharacter = _context.Characters.Where(s => s.CId == character.CId && s.LivingStatus == "居住").FirstOrDefault();
-            //var characterbody = _context.CharacterAccessories.Where(s => s.CId == character.CId).FirstOrDefault();
             //交易提交(確保一致性)
             await transaction.CommitAsync();
-
-        return Ok(new
+            return Ok(new
         {
             Character = character,
             CharacterAccessorie = characterAccessorie,
-            //playercharacter= playCharacter,
-            //charactrtbody= characterbody,
-        });
+
+            });
         }catch (Exception ex)
         {
             // 如果發生錯誤，回滾事務
