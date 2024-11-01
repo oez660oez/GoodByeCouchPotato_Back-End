@@ -335,7 +335,7 @@ public partial class GoodbyepotatoContext : DbContext
             entity.Property(e => e.CId).HasColumnName("C_ID");
             entity.Property(e => e.WRecordDate)
                 .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
+                .HasColumnType("date")
                 .HasColumnName("W_RecordDate");
         });
 

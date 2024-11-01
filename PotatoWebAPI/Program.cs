@@ -2,6 +2,7 @@ using PotatoWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using MailKit;
 using PotatoWebAPI;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,9 @@ builder.Services.AddScoped<SendEmail>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        builder => builder.WithOrigins("http://localhost:5173", "http://127.0.0.1:5501").WithHeaders("*").WithMethods("*"));
+        builder => builder.WithOrigins("http://localhost:5173", "http://127.0.0.1:5501").SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowAnyHeader()
+                .AllowAnyMethod());
 });
 
 
@@ -25,8 +28,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//處理靜態文件
+builder.Services.AddDirectoryBrowser(); // 允許瀏覽目錄
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -35,12 +42,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-app.UseCors("AllowAll");  //允許跨網域讀取
+// 為靜態文件添加CORS頭
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "..", "goodbyecouchpotato", "wwwroot")),
+    RequestPath = "/static-content",
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:5173");
+    }
+});
 
 app.UseHttpsRedirection();
-
-app.UseStaticFiles();//傳送靜態圖片
 
 app.UseAuthorization();
 

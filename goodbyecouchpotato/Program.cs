@@ -52,8 +52,18 @@ builder.Services.ConfigureApplicationCookie(options => {
 	options.SlidingExpiration = true;
 });
 //========身分驗證貼上End========
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder.WithOrigins("http://localhost:5173", "http://localhost:7180").SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowAnyHeader()
+                .AllowAnyMethod());
+});
 
+//處理靜態文件
+builder.Services.AddDirectoryBrowser(); // 允許瀏覽目錄
 var app = builder.Build();
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -76,7 +86,13 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Cache-Control"] = "no-store";
+    }
+});
 
 app.UseRouting();
 
