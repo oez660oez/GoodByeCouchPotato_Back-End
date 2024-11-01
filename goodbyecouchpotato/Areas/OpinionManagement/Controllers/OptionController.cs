@@ -59,7 +59,9 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 Submitted = F.Submitted,
                 //ProActive = F.ProActive,
                 //ProDate = F.ProDate,
-            }).ToListAsync();
+            })
+                .OrderByDescending(F => F.FeedbackNo)
+                .ToListAsync();
             ViewBag.currentpages = feedback;
 
             var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
@@ -98,7 +100,9 @@ namespace goodbyecouchpotato.Areas.OpinionManagement.Controllers
                 Submitted = F.Submitted,
                 //ProActive = F.ProActive,
                 ProDate = F.ProDate,
-            }).ToListAsync();
+            })
+                .OrderByDescending(F => F.FeedbackNo)
+                .ToListAsync();
             ViewBag.currentpages = feedback;
             var pagedFeedback = feedback.ToPagedList(pageNumber, pageSize);
 

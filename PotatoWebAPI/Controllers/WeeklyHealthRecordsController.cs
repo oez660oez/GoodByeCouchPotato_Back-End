@@ -22,15 +22,15 @@ namespace PotatoWebAPI.Controllers
             _context = context;
         }
 
-        private (DateTime monday, DateTime sunday) GetCurrentWeekDates()
+        private (DateOnly monday, DateOnly sunday) GetCurrentWeekDates()
         {
-            DateTime today = DateTime.Today;
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             DayOfWeek dayOfWeek = today.DayOfWeek;
             int daysUntilMonday = (int)dayOfWeek - (int)DayOfWeek.Monday;
             if (daysUntilMonday < 0) { daysUntilMonday += 7; }
 
-            DateTime monday = today.AddDays(-daysUntilMonday);
-            DateTime sunday = monday.AddDays(6);
+            DateOnly monday = today.AddDays(-daysUntilMonday);
+            DateOnly sunday = monday.AddDays(6);
 
             return (monday, sunday);
         }
@@ -69,7 +69,7 @@ namespace PotatoWebAPI.Controllers
             int countclean = await CountWeeklyClean(getid.CId);
 
             //得出今日日期，找出今日是否已經達成
-            DateTime today = DateTime.Today; //今天日期(年月日)
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today); //今天日期(年月日)
             var todayrecord = await _context.WeeklyHealthRecords
                             .Where(c => c.CId == getid.CId)
                             .Where(c => c.WrecordDate == today)
@@ -106,7 +106,7 @@ namespace PotatoWebAPI.Controllers
 
             //如果有True的話，到資料庫尋找有沒有今日資料
             string returnword = "";
-            DateTime today = DateTime.Today; //今天日期(年月日)
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             var oldrecord = await _context.WeeklyHealthRecords
                             .Where(o => o.CId == WeeklyTaskDTO.CId)
                             .Where(o => o.WrecordDate == today)

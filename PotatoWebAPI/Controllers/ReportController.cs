@@ -105,7 +105,7 @@ namespace PotatoWebAPI.Controllers
         }
 
         [HttpPost("eating")]
-        public async Task<ActionResult<IEnumerable<weightRecordDTO>>> GeteatingRecords([FromBody] SearchdayDTO SearchdayDTO)
+        public async Task<ActionResult<IEnumerable<eatRecordDTO>>> GeteatingRecords([FromBody] SearchdayDTO SearchdayDTO)
         {
             var result = await _context.DailyHealthRecords
                .Where(f => f.CId == SearchdayDTO.CId)
@@ -120,6 +120,24 @@ namespace PotatoWebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("weekly")]
+        public async Task<ActionResult<IEnumerable<weeklyRecordDTO>>> GetweeklyRecords([FromBody] SearchdayDTO SearchdayDTO)
+        {
+            var result = await _context.WeeklyHealthRecords
+               .Where(f => f.CId == SearchdayDTO.CId)
+               .Where(f => f.WrecordDate >= SearchdayDTO.StartDate && f.WrecordDate <= SearchdayDTO.EndDate)
+               .Select(f => new weeklyRecordDTO
+               {
+                   HrecordDate = f.WrecordDate,
+                   sport = f.Exercise,
+                   cleaning = f.Cleaning
+               })
+              .ToListAsync();
+
+            return Ok(result);
+        }
+
 
         //    // GET: api/Report/5
         //    [HttpGet("{id}")]

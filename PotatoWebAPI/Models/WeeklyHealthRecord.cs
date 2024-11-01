@@ -7,7 +7,7 @@ public partial class WeeklyHealthRecord
 {
     public int CId { get; set; }
 
-    public DateTime WrecordDate { get; set; }
+    public DateOnly WrecordDate { get; set; }
 
     public bool Exercise { get; set; }
 

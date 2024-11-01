@@ -45,4 +45,10 @@
         public int? good { get; set; }
         public int? bad { get; set; }
     }
+    public class weeklyRecordDTO
+    {
+        public DateOnly HrecordDate { get; set; }
+        public bool? sport { get; set; }
+        public bool? cleaning { get; set; }
+    }
 }
