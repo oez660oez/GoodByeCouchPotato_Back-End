@@ -32,4 +32,17 @@
         public DateOnly HrecordDate { get; set; }
         public string? mood { get; set; }
     }
+
+    public class weightRecordDTO
+    {
+        public DateOnly HrecordDate { get; set; }
+        public decimal? weight { get; set; }
+    }
+
+    public class eatRecordDTO
+    {
+        public DateOnly HrecordDate { get; set; }
+        public int? good { get; set; }
+        public int? bad { get; set; }
+    }
 }
