@@ -131,7 +131,7 @@ namespace PotatoWebAPI.Controllers
                 //判斷舊資料跟新資料是否都相同(沒更新)
                 if((oldrecord.Exercise == WeeklyTaskDTO.todaysport) && (oldrecord.Cleaning == WeeklyTaskDTO.todayclean))
                 {
-                    returnword = "這次沒有更新任何資料｡ﾟヽ(ﾟ´Д`)ﾉﾟ｡";
+                    returnword = "本次沒有更新任何資料｡ﾟヽ(ﾟ´Д`)ﾉﾟ｡";
                 }
                 else { 
                 oldrecord.Exercise = WeeklyTaskDTO.todaysport;
