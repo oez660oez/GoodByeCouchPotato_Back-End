@@ -73,95 +73,103 @@ namespace PotatoWebAPI.Controllers
             return Ok(recordDTO);
         }
 
+
         // GET: api/DailyHealthRecords/{cId}
         [HttpGet("{cid}")]
         public async Task<IActionResult> GetAllDailyHealthRecordsByCId(int cId)
-    {
-        // 使用 Where 只根據 cId 查詢所有資料
-        var dailyHealthRecords = await _context.DailyHealthRecords
-            .Where(d => d.CId == cId)
-            .ToListAsync();
-
-        if (dailyHealthRecords == null || !dailyHealthRecords.Any())
         {
-            // 如果資料不存在，返回 404
-            return NotFound();
+            // 使用 Where 只根據 cId 查詢所有資料
+            var dailyHealthRecords = await _context.DailyHealthRecords
+                .Where(d => d.CId == cId)
+                .ToListAsync();
+
+            var weeklyHealthRecords = await _context.WeeklyHealthRecords
+                .Where(d => d.CId == cId)
+                .ToListAsync();
+
+            // 如果每日和每週資料都不存在，返回 404
+            if ((dailyHealthRecords == null || !dailyHealthRecords.Any()) &&
+                (weeklyHealthRecords == null || !weeklyHealthRecords.Any()))
+            {
+                return NotFound();
+            }
+
+            // 將每日健康紀錄轉換為 DTO 列表
+            var recordDTOs = dailyHealthRecords.Select((d, index) => new
+            {
+                CId = d.CId,
+                HrecordDate = d.HrecordDate,
+                Water = d.Water,
+                Steps = d.Steps,
+                Vegetables = d.Vegetables,
+                Snacks = d.Snacks,
+                Sleep = d.Sleep.HasValue ? d.Sleep.Value.ToString("HH:mm") : "00:00",
+                Mood = d.Mood,
+                Exercise = weeklyHealthRecords.ElementAtOrDefault(index)?.Exercise ?? false,
+                Cleaning = weeklyHealthRecords.ElementAtOrDefault(index)?.Cleaning ?? false
+            }).ToList();
+
+            // 返回查詢結果的 JSON 物件
+            return Ok(recordDTOs);
         }
 
-        // 將查詢結果轉換為 DTO 列表
-        var recordDTOs = dailyHealthRecords.Select(d => new DailyHealthRecordDTO
-        {
-            CId = d.CId,
-            HrecordDate = d.HrecordDate,
-            Water = d.Water,
-            Steps = d.Steps,
-            Vegetables = d.Vegetables,
-            Snacks = d.Snacks,
-            Sleep = d.Sleep.HasValue ? d.Sleep.Value.ToString("HH:mm") : "00:00",
-            Mood = d.Mood
-        }).ToList();
 
-        // 返回查詢結果列表
-        return Ok(recordDTOs);
-    }
+        // PUT: api/DailyHealthRecords/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{cid}")]
+        //    public async Task<string> PutDailyHealthRecord(int cid,[FromBody] DailyHealthRecordDTO dailyHealthRecord)
+        //    {
+        //        if (cid != dailyHealthRecord.CId)
+        //        {
+        //            return "修改記錄失敗，ID 不一致"; 
+        //        }
+
+        //        var dhr = await _context.DailyHealthRecords.Where(e=>e.CId == cid).SingleOrDefaultAsync();
 
 
-    // PUT: api/DailyHealthRecords/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    //[HttpPut("{cid}")]
-    //    public async Task<string> PutDailyHealthRecord(int cid,[FromBody] DailyHealthRecordDTO dailyHealthRecord)
-    //    {
-    //        if (cid != dailyHealthRecord.CId)
-    //        {
-    //            return "修改記錄失敗，ID 不一致"; 
-    //        }
+        //        if(dhr == null)
+        //        {
+        //            return "修改失敗，玩家記錄未找到";
+        //        }
+        //        // 將 HH:mm 的時間字串轉換為當天的 DateTime
+        //        string timeString = dailyHealthRecord.Sleep; // HH:mm 格式
+        //        DateTime dateToday = DateTime.Today;  // 取得今天的日期，時間部分為 00:00:00
 
-    //        var dhr = await _context.DailyHealthRecords.Where(e=>e.CId == cid).SingleOrDefaultAsync();
-           
+        //        // 將時間部分解析並加上今天的年月日
+        //        DateTime dateTimeWithTime = DateTime.ParseExact(timeString, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+        //        dateTimeWithTime = dateToday.AddHours(dateTimeWithTime.Hour).AddMinutes(dateTimeWithTime.Minute);
+        //        if(dailyHealthRecord.Water == null)
+        //        {
+        //            dailyHealthRecord.Water = dhr.Water;
+        //        }
+        //        else
+        //        {
+        //            dailyHealthRecord.Water += dhr.Water;
+        //            if(dailyHealthRecord.Water >= 99999)
+        //            {
+        //                dailyHealthRecord.Water = 99999;
+        //            }
+        //        }
 
-    //        if(dhr == null)
-    //        {
-    //            return "修改失敗，玩家記錄未找到";
-    //        }
-    //        // 將 HH:mm 的時間字串轉換為當天的 DateTime
-    //        string timeString = dailyHealthRecord.Sleep; // HH:mm 格式
-    //        DateTime dateToday = DateTime.Today;  // 取得今天的日期，時間部分為 00:00:00
+        //        dhr.Water = dailyHealthRecord.Water;
+        //        dhr.Steps = dailyHealthRecord.Steps;
+        //        dhr.Vegetables = dailyHealthRecord.Vegetables;
+        //        dhr.Snacks = dailyHealthRecord.Snacks;
+        //        dhr.Sleep = dateTimeWithTime;
+        //        dhr.Mood = dailyHealthRecord.Mood;
 
-    //        // 將時間部分解析並加上今天的年月日
-    //        DateTime dateTimeWithTime = DateTime.ParseExact(timeString, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-    //        dateTimeWithTime = dateToday.AddHours(dateTimeWithTime.Hour).AddMinutes(dateTimeWithTime.Minute);
-    //        if(dailyHealthRecord.Water == null)
-    //        {
-    //            dailyHealthRecord.Water = dhr.Water;
-    //        }
-    //        else
-    //        {
-    //            dailyHealthRecord.Water += dhr.Water;
-    //            if(dailyHealthRecord.Water >= 99999)
-    //            {
-    //                dailyHealthRecord.Water = 99999;
-    //            }
-    //        }
+        //        _context.Entry(dhr).State = EntityState.Modified;
 
-    //        dhr.Water = dailyHealthRecord.Water;
-    //        dhr.Steps = dailyHealthRecord.Steps;
-    //        dhr.Vegetables = dailyHealthRecord.Vegetables;
-    //        dhr.Snacks = dailyHealthRecord.Snacks;
-    //        dhr.Sleep = dateTimeWithTime;
-    //        dhr.Mood = dailyHealthRecord.Mood;
-
-    //        _context.Entry(dhr).State = EntityState.Modified;
-
-    //        try
-    //        {
-    //            await _context.SaveChangesAsync();
-    //            return "修改成功";
-    //        }
-    //        catch (DbUpdateConcurrencyException)
-    //        {
-    //            return "修改失敗，發生並發衝突";
-    //        }
-    //    }
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //            return "修改成功";
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            return "修改失敗，發生並發衝突";
+        //        }
+        //    }
 
         // POST: api/DailyHealthRecords
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

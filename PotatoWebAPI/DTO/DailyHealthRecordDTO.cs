@@ -17,5 +17,10 @@
         public int? Vegetables { get; set; }
 
         public int? Snacks { get; set; }
+
+        public bool Exercise { get; set; }
+
+        public bool Cleaning { get; set; }
+
     }
 }
