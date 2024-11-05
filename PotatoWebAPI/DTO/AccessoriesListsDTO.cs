@@ -34,4 +34,11 @@
         public int? PLevel { get; set; }
     }
 
+    public class bodyaccessoryDTO
+    {
+        public string head { get; set; }
+        public string body { get; set; }
+        public string accessory { get; set; }
+    }
+
 }

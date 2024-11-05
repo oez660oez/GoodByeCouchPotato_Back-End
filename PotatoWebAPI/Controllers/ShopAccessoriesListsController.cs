@@ -74,7 +74,7 @@ namespace PotatoWebAPI.Controllers
             if (isplayercharacter)
             {
                 var player = _context.Players.Where(s => s.Account == purchase.Account);
-                var playercharacte = _context.Characters.Where(s => s.Account == purchase.Account).FirstOrDefault();
+                var playercharacte = _context.Characters.Where(s => s.Account == purchase.Account && s.LivingStatus=="居住").FirstOrDefault();
                 if (playercharacte.Coins.Equals((int)purchase.Coins))  //確認抓到的金額是正確的
                 {
                     if (purchase.PPrice < purchase.Coins)
@@ -96,9 +96,44 @@ namespace PotatoWebAPI.Controllers
                     }
                     return Ok(new { Message = "Coins不足" });
                 }
-                    return Ok(new { Message = "coin不相符" });
+                    return Ok(new { Message = $"coin不相符，${playercharacte.Coins}" });
             }
                 return Ok(new { Message = "查無此帳號，或此角色已搬離" });
+        }
+        [HttpPost("GetNowBody")]
+        public async Task<ActionResult> GetbodyaccessoryDTO([FromBody] bodyaccessoryDTO bodyaccessoryDTO)
+        {
+            int head = string.IsNullOrEmpty(bodyaccessoryDTO.head) ? 0 : int.Parse(bodyaccessoryDTO.head);
+            int body = string.IsNullOrEmpty(bodyaccessoryDTO.body) ? 0 : int.Parse(bodyaccessoryDTO.body);
+            int accessory = string.IsNullOrEmpty(bodyaccessoryDTO.accessory) ? 0 : int.Parse(bodyaccessoryDTO.accessory);
+
+            string headImage = "";
+            string bodyImage = "";
+            string accessoryImage = "";
+
+            if (head > 0)
+            {
+                headImage = _context.AccessoriesLists
+                                    .Where(s => s.PCode == head)
+                                    .Select(s => s.PImageAll)
+                                    .FirstOrDefault() ?? "";  //沒有內容則回傳空
+            }
+            if (body > 0)
+            {
+                bodyImage = _context.AccessoriesLists
+                                    .Where(s => s.PCode == body)
+                                    .Select(s => s.PImageAll)
+                                    .FirstOrDefault() ?? "";
+            }
+            if (accessory > 0)
+            {
+                accessoryImage = _context.AccessoriesLists
+                                         .Where(s => s.PCode == accessory)
+                                         .Select(s => s.PImageAll)
+                                         .FirstOrDefault() ?? "";
+            }
+
+            return Ok(new { Head = headImage, Body = bodyImage, Accessory = accessoryImage });
         }
 
         // GET: api/ShopAccessoriesLists/5
@@ -172,6 +207,9 @@ namespace PotatoWebAPI.Controllers
 
         //    return NoContent();
         //}
+
+
+
 
         private bool AccessoriesListExists(int id)
         {
