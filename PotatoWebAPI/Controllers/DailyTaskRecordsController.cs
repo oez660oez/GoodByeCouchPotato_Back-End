@@ -162,7 +162,8 @@ namespace PotatoWebAPI.Controllers
             var DailytaskUpdateDTO = new DailytaskUpdateDTO
             {
                 returnword = returnward,
-                coin = (int)updatecoin.Coins
+                coin = (int)updatecoin.Coins,
+                done = plus
             };
 
             //回傳
