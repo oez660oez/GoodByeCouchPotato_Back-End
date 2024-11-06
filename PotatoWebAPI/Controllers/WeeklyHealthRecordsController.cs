@@ -99,69 +99,89 @@ namespace PotatoWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<IEnumerable<WeeklyHealthRecord>>> UpdateWeeklyHealthRecords(WeeklyTaskDTO WeeklyTaskDTO)
         {
-            //先判斷她回傳的是不是兩個False 是的話直接回傳結果
-            if (WeeklyTaskDTO.todayclean==false && WeeklyTaskDTO.todaysport == false) { 
-                return Ok(new { Message = "今天還沒達成任務呢 繼續加油(๑•̀ㅂ•́)و✧" });
-            }
-
             //如果有True的話，到資料庫尋找有沒有今日資料
             string returnword = "";
+            
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             var oldrecord = await _context.WeeklyHealthRecords
                             .Where(o => o.CId == WeeklyTaskDTO.CId)
                             .Where(o => o.WrecordDate == today)
                             .FirstOrDefaultAsync();
             //沒有資料，建一筆新的資料
-            if (oldrecord == null) {
-                var DBnew = new WeeklyHealthRecord
+            //先判斷她回傳的是不是兩個False 是的話直接回傳結果
+            if (WeeklyTaskDTO.todayclean == false && WeeklyTaskDTO.todaysport == false)
+            {
+                returnword = "今天還沒達成任務呢 繼續加油(๑•̀ㅂ•́)و✧";
+                int countsport = await CountWeeklySport(WeeklyTaskDTO.CId);
+                int countclean = await CountWeeklyClean(WeeklyTaskDTO.CId);
+                var rerecord = await _context.WeeklyHealthRecords
+                               .Where(o => o.CId == WeeklyTaskDTO.CId)
+                               .FirstOrDefaultAsync();
+                updateWeeklyTaskDTO updateok = new updateWeeklyTaskDTO
                 {
-                    CId = WeeklyTaskDTO.CId,
-                    WrecordDate = today,
-                    Exercise = WeeklyTaskDTO.todaysport,
-                    Cleaning = WeeklyTaskDTO.todayclean,
+                    countsport = countsport,
+                    countclean = countclean,
+                    todaysport = false,
+                    todayclean = false,
+                    returnword = returnword,
                 };
-                _context.WeeklyHealthRecords.Add(DBnew);
-                await _context.SaveChangesAsync();
-                returnword = "更新成功 離Potato越來越遠啦٩(๑•̀ω•́๑)۶";
+                return Ok(updateok);
             }
-
-            //有資料的話
             else
             {
-                //判斷舊資料跟新資料是否都相同(沒更新)
-                if((oldrecord.Exercise == WeeklyTaskDTO.todaysport) && (oldrecord.Cleaning == WeeklyTaskDTO.todayclean))
+                if (oldrecord == null)
                 {
-                    returnword = "本次沒有更新任何資料｡ﾟヽ(ﾟ´Д`)ﾉﾟ｡";
+                    var DBnew = new WeeklyHealthRecord
+                    {
+                        CId = WeeklyTaskDTO.CId,
+                        WrecordDate = today,
+                        Exercise = WeeklyTaskDTO.todaysport,
+                        Cleaning = WeeklyTaskDTO.todayclean,
+                    };
+                    _context.WeeklyHealthRecords.Add(DBnew);
+                    await _context.SaveChangesAsync();
+                    returnword = "更新成功 離Potato越來越遠啦٩(๑•̀ω•́๑)۶";
+
                 }
-                else { 
-                oldrecord.Exercise = WeeklyTaskDTO.todaysport;
-                oldrecord.Cleaning = WeeklyTaskDTO.todayclean;
-                _context.WeeklyHealthRecords.Update(oldrecord);
-                await _context.SaveChangesAsync();
-                returnword = "更新成功 離Potato越來越遠啦٩(๑•̀ω•́๑)۶";
+
+                //有資料的話
+                else
+                {
+                    //判斷舊資料跟新資料是否都相同(沒更新)
+                    if ((oldrecord.Exercise == WeeklyTaskDTO.todaysport) && (oldrecord.Cleaning == WeeklyTaskDTO.todayclean))
+                    {
+                        returnword = "本次沒有更新任何資料｡ﾟヽ(ﾟ´Д`)ﾉﾟ｡";
+                    }
+                    else
+                    {
+                        oldrecord.Exercise = WeeklyTaskDTO.todaysport;
+                        oldrecord.Cleaning = WeeklyTaskDTO.todayclean;
+                        _context.WeeklyHealthRecords.Update(oldrecord);
+                        await _context.SaveChangesAsync();
+                        returnword = "更新成功 離Potato越來越遠啦٩(๑•̀ω•́๑)۶";
+                    }
                 }
+
+                //到這裡應該是全部更新好了，呼叫計算本周已達成次數的方法，想確保有更新成功就再查本日最新資料一次
+                int countsport = await CountWeeklySport(WeeklyTaskDTO.CId);
+                int countclean = await CountWeeklyClean(WeeklyTaskDTO.CId);
+                var rerecord = await _context.WeeklyHealthRecords
+                                .Where(o => o.CId == WeeklyTaskDTO.CId)
+                                .Where(o => o.WrecordDate == today)
+                                .FirstOrDefaultAsync();
+
+                //
+                updateWeeklyTaskDTO updateok = new updateWeeklyTaskDTO
+                {
+                    countsport = countsport,
+                    countclean = countclean,
+                    todaysport = rerecord.Exercise,
+                    todayclean = rerecord.Cleaning,
+                    returnword = returnword,
+                };
+                return Ok(updateok);
             }
 
-            //到這裡應該是全部更新好了，呼叫計算本周已達成次數的方法，想確保有更新成功就再查本日最新資料一次
-            int countsport = await CountWeeklySport(WeeklyTaskDTO.CId);
-            int countclean = await CountWeeklyClean(WeeklyTaskDTO.CId);
-            var rerecord = await _context.WeeklyHealthRecords
-                            .Where(o => o.CId == WeeklyTaskDTO.CId)
-                            .Where(o => o.WrecordDate == today)
-                            .FirstOrDefaultAsync();
-
-            //
-            updateWeeklyTaskDTO updateok = new updateWeeklyTaskDTO
-            {
-                countsport = countsport,
-                countclean = countclean,
-                todaysport = rerecord.Exercise,
-                todayclean = rerecord.Cleaning,
-                returnword = returnword,
-            };
-
-
-            return Ok(updateok);
         }
 
 
