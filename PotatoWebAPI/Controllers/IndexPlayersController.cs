@@ -92,39 +92,51 @@ namespace PotatoWebAPI.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Player>> PostPlayer([FromForm] Player player)  //註冊
+        public async Task<ActionResult<RegisterDTO>> PostPlayer([FromForm] RegisterDTO player)  //註冊
         {
+            bool checkaccount = _context.Players.Any(s => s.Account.Equals(player.Account));
+            if (!checkaccount)
+            {
+
+            if (player.Password == player.CheckPassword)
+            {
 
             string PasswordBCrypt = BCrypt.Net.BCrypt.HashPassword(player.Password);  //將密碼加密
             player.Password = PasswordBCrypt;  //直接換成加密後的密碼
-            _context.Players.Add(player);
-            try
-            {
+
                 //發送驗證信
                 player.Token = Guid.NewGuid().ToString();  //生成驗證token
-                ////生成驗證連結
-                string baseUrl = _configuration["AppSettings:BaseUrl"];
+                    var newplayer = new Player
+                    {
+                        Account = player.Account,
+                        Email = player.Email,
+                        Password = player.Password,
+                        Playerstatus = player.Playerstatus,
+                        Token = player.Token
+                    };
+                    _context.Players.Add(newplayer);
+                    ////生成驗證連結
+                int result= await _context.SaveChangesAsync();
+                    string baseUrl = _configuration["AppSettings:BaseUrl"];
                 string verificationlink = $"{baseUrl}/api/IndexPlayers/verify?account={player.Account}&token={player.Token}";
                 string subject = "Potato帳號驗證信";
                 string message = $"親愛的用戶您好，感謝您註冊再見！沙發potato的遊戲帳號，請您點擊以下連結，進行帳號開通{verificationlink}";
+                        if (result > 0)
+                        {
+
                 await _senewEmail.SendEmailAsync(player.Email, subject, message);
-
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-
-                if (PlayerExists(player.Account))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                            return Ok(new { Message = "註冊成功，請至信箱收取驗證信" });
+                        }
+                        else
+                        {
+                            return Ok(new { Message = "註冊失敗，請重新嘗試" });
+                        }
+                
             }
 
-            return CreatedAtAction("GetPlayer", new { id = player.Account }, player);
+            return Ok(new { Message = "密碼及確認密碼不相同" });
+            }
+                return Ok(new { Message = "此帳號已被註冊" });
         }
 
         [HttpPost("Login")]
@@ -152,7 +164,7 @@ namespace PotatoWebAPI.Controllers
                                             Character.LivingStatus = "搬離";
                                 Character.MoveOutDate = DateTime.Now;
                                              _context.SaveChangesAsync();
-                                           return Ok(new { Message = "因環境值歸0，角色已搬離，請重新創建角色", respond = "gameover" });
+                                           return Ok(new { Message = "因環境值歸0，角色已搬離，請重新創建角色", respond = "gameover", PlayerCharacter = Character, CharacterAccessorie = characterbody });
                                         }
                                     
                             }
@@ -291,6 +303,27 @@ namespace PotatoWebAPI.Controllers
             }
             return Ok(new { Message = "有資料未填寫" });
         }
+
+        //[HttpPost("Gameover")]
+        //public async Task<ActionResult<GameOveryDTO>> GameOvery([FromForm] GameOveryDTO Gameoveraccount)
+        //{
+        //    var member = _context.Players.Where(s => s.Account == Gameoveraccount.Account).FirstOrDefault();
+        //    if (member != null)
+        //    {
+        //        bool havecharacter = _context.Characters.Any(s => s.Account == Gameoveraccount.Account && s.LivingStatus == "居住" && s.Environment <= 0);
+        //        if (havecharacter)
+        //        {  //有角色照理說要同時建立角色現有配件，所以他們會同時存在
+        //            var Character = _context.Characters.Where(s => s.Account == Gameoveraccount.Account && s.LivingStatus == "居住" && s.Environment <= 0).FirstOrDefault();
+
+        //            Character.LivingStatus = "搬離";
+        //            Character.MoveOutDate = DateTime.Now;
+        //            _context.SaveChangesAsync();
+        //            return Ok(new { Message = "修改狀態完成" });
+        //        }
+        //            return Ok(new { Message = "查無此角色" });
+        //    }
+        //    return Ok(new { Message = "查無此帳號" });
+        //}
 
         // DELETE: api/IndexPlayers/5
         //[HttpDelete("{id}")]

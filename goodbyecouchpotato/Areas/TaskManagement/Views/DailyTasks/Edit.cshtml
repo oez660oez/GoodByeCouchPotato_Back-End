@@ -16,9 +16,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="Reward" class="control-label">@Html.DisplayNameFor(Model => Model.Reward)</label>
-                <input asp-for="Reward" min="5" step="5" max="30" class="form-control" id="rewardcoin" />
+                <input asp-for="Reward" min="5" step="5" max="30" class="form-control" id="rewardcoin" data-val="false" />
                 <span id="notify" class="text-danger"></span>
-                <span asp-validation-for="Reward" class="text-danger" id="oldnotify"></span>
+@*               <span asp-validation-for="Reward" class="text-danger" id="oldnotify"></span>  *@
+
             </div>
             <div class="form-group">
                 <label asp-for="TaskActive" class="control-label">@Html.DisplayNameFor(Model => Model.TaskActive)</label>
@@ -58,7 +59,14 @@
                 if (value % 5 !== 0) {
                     $('#notify').html("必須以5的倍數，輸入5到30之間的數字");
                     $('#oldnotify').hide();
-                } else {
+                } 
+                else if(value>30){
+                $('#notify').html("獎勵不可大於30");
+                }
+                else if (value <= 0) {
+                $('#notify').html("獎勵不可小於等於0");
+                }
+                else {
                     $('#notify').html(""); // 清除錯誤訊息
                 }
             });
