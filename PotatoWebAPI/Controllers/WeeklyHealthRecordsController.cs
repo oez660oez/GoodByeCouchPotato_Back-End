@@ -101,7 +101,7 @@ namespace PotatoWebAPI.Controllers
         {
             //如果有True的話，到資料庫尋找有沒有今日資料
             string returnword = "";
-            
+
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             var oldrecord = await _context.WeeklyHealthRecords
                             .Where(o => o.CId == WeeklyTaskDTO.CId)

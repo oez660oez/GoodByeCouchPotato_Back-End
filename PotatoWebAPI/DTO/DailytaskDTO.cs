@@ -22,6 +22,8 @@
     {
         public string returnword { get; set; }
         public int coin { get; set; }
+
+        public int done { get; set; }
     }
 
 }

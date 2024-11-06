@@ -80,6 +80,7 @@ public class ItemController : ControllerBase
         try
         {
             var character = await _context.Characters
+                .Where(w => w.LivingStatus == "居住")
                 .FirstOrDefaultAsync(c => c.Account == account);
 
             if (character == null)
@@ -134,6 +135,7 @@ public class ItemController : ControllerBase
         {
             // 1. 獲取角色 ID
             var character = await _context.Characters
+                .Where(w => w.LivingStatus == "居住")
                 .FirstOrDefaultAsync(c => c.Account == dto.Account);
 
             if (character == null)
