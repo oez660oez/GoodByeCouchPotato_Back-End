@@ -90,7 +90,14 @@ public class CreateCharacterController : ControllerBase
         };
             //新增CharacterAccessorie
         _context.CharacterAccessories.Add(characterAccessorie);
-        await _context.SaveChangesAsync();
+            var weightRecord = new WeightRecord
+            {
+                CId = character.CId,
+                Weight = dto.Weight,
+                WRecordDate = DateOnly.FromDateTime(DateTime.Now)
+            };
+            _context.WeightRecords.Add(weightRecord);
+            await _context.SaveChangesAsync();
 
             //交易提交(確保一致性)
             await transaction.CommitAsync();
@@ -98,6 +105,7 @@ public class CreateCharacterController : ControllerBase
         {
             Character = character,
             CharacterAccessorie = characterAccessorie,
+                WeightRecord = weightRecord
 
             });
         }catch (Exception ex)
