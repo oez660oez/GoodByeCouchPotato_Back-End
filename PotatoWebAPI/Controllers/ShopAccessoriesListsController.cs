@@ -77,7 +77,7 @@ namespace PotatoWebAPI.Controllers
                 var playercharacte = _context.Characters.Where(s => s.Account == purchase.Account && s.LivingStatus=="居住").FirstOrDefault();
                 if (playercharacte.Coins.Equals((int)purchase.Coins))  //確認抓到的金額是正確的
                 {
-                    if (purchase.PPrice < purchase.Coins)
+                    if (purchase.PPrice <= purchase.Coins)
                     {
                         if (player != null && playercharacte != null)
                         {
@@ -101,11 +101,14 @@ namespace PotatoWebAPI.Controllers
                 return Ok(new { Message = "查無此帳號，或此角色已搬離" });
         }
         [HttpPost("GetNowBody")]
-        public async Task<ActionResult> GetbodyaccessoryDTO([FromBody] bodyaccessoryDTO bodyaccessoryDTO)
+        public async Task<ActionResult> Getbodyaccessory([FromBody] bodyaccessoryDTO bodyaccessoryDTO)
         {
-            int head = string.IsNullOrEmpty(bodyaccessoryDTO.head) ? 0 : int.Parse(bodyaccessoryDTO.head);
-            int body = string.IsNullOrEmpty(bodyaccessoryDTO.body) ? 0 : int.Parse(bodyaccessoryDTO.body);
-            int accessory = string.IsNullOrEmpty(bodyaccessoryDTO.accessory) ? 0 : int.Parse(bodyaccessoryDTO.accessory);
+            //int head = string.IsNullOrEmpty(bodyaccessoryDTO.head) ? 0 : int.Parse(bodyaccessoryDTO.head);
+            //int body = string.IsNullOrEmpty(bodyaccessoryDTO.body) ? 0 : int.Parse(bodyaccessoryDTO.body);
+            //int accessory = string.IsNullOrEmpty(bodyaccessoryDTO.accessory) ? 0 : int.Parse(bodyaccessoryDTO.accessory);
+            int head = (int)bodyaccessoryDTO.head < 0 ? 0 : (int)bodyaccessoryDTO.head;
+            int body = (int)bodyaccessoryDTO.body < 0 ? 0 : (int)bodyaccessoryDTO.body;
+            int accessory = (int)bodyaccessoryDTO.accessory < 0 ? 0 : (int)bodyaccessoryDTO.accessory;
 
             string headImage = "";
             string bodyImage = "";
@@ -114,21 +117,21 @@ namespace PotatoWebAPI.Controllers
             if (head > 0)
             {
                 headImage = _context.AccessoriesLists
-                                    .Where(s => s.PCode == head)
+                                    .Where(s => s.PCode.Equals(head))
                                     .Select(s => s.PImageAll)
                                     .FirstOrDefault() ?? "";  //沒有內容則回傳空
             }
             if (body > 0)
             {
                 bodyImage = _context.AccessoriesLists
-                                    .Where(s => s.PCode == body)
+                                    .Where(s => s.PCode.Equals(body))
                                     .Select(s => s.PImageAll)
                                     .FirstOrDefault() ?? "";
             }
             if (accessory > 0)
             {
                 accessoryImage = _context.AccessoriesLists
-                                         .Where(s => s.PCode == accessory)
+                                         .Where(s => s.PCode.Equals(accessory))
                                          .Select(s => s.PImageAll)
                                          .FirstOrDefault() ?? "";
             }

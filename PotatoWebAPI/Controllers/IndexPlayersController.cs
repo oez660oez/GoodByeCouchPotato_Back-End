@@ -125,7 +125,7 @@ namespace PotatoWebAPI.Controllers
                         {
 
                 await _senewEmail.SendEmailAsync(player.Email, subject, message);
-                            return Ok(new { Message = "註冊成功，請至信箱收取驗證信" });
+                            return Ok(new { Message = "註冊成功" });
                         }
                         else
                         {
@@ -168,7 +168,7 @@ namespace PotatoWebAPI.Controllers
                                         }
                                     
                             }
-                                        return Ok(new { Message = "無居住中的角色",respond = "newcharacter"});
+                                        return Ok(new { Message = "目前無居住中的角色，需創建角色",respond = "newcharacter",Player=loginPlayDTO.Account});
                             }
                             else
                             {
