@@ -57,13 +57,14 @@ public class WeightRecordController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateWeightRecord([FromBody] WeightRecordDTO dto)
     {
+        using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
             var character = await _context.Characters
-                            .FirstOrDefaultAsync(c => c.Account == dto.Account);
+                            .FirstOrDefaultAsync(c => c.Account == dto.Account && c.LivingStatus == "居住");
             if (character == null)
             {
-                return NotFound("找不到該帳號的角色資料");
+                return NotFound("找不到該帳號的居住狀態角色資料");
             }
 
             var today = DateOnly.FromDateTime(DateTime.Now);
@@ -89,13 +90,59 @@ public class WeightRecordController : ControllerBase
                 };
                 _context.WeightRecords.Add(newRecord);
             }
+            character.TargetWater = (int)(Math.Round(dto.Weight * 30 / 100m, 0) * 100);
+            character.StandardWater = CalculateStandardWater(dto.Weight * 30);
 
             await _context.SaveChangesAsync();
-            return Ok(new { message = "體重記錄已更新" });
+            await transaction.CommitAsync();
+
+            return Ok(new
+            {
+                message = "體重記錄已更新",
+                targetWater = character.TargetWater,
+                standardWater = character.StandardWater
+            });
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
             return StatusCode(500, new { message = "發生錯誤：" + ex.Message });
         }
+    }
+    private int CalculateStandardWater(decimal waterAmount)
+    {
+        var ranges = new List<(decimal Lower, decimal Upper, int Standard)>
+    {
+        (0, 500, 500),
+        (500, 1000, 500),
+        (1000, 1500, 700),
+        (1500, 2000, 1200),
+        (2000, 2500, 1700),
+        (2500, 3000, 2200),
+        (3000, 3500, 2700),
+        (3500, 4000, 3200),
+        (4000, 4500, 3700),
+        (4500, 5000, 4200),
+        (5000, 5500, 4700),
+        (5500, 6000, 5200),
+        (6000, 6500, 5700),
+        (6500, 7000, 6200),
+        (7000, 7500, 6700),
+        (7500, 8000, 7200),
+        (8000, 8500, 7700),
+        (8500, 9000, 8200),
+        (9000, 9500, 8700),
+        (9500, 10000, 9200)
+    };
+
+        foreach (var range in ranges)
+        {
+            if (waterAmount > range.Lower && waterAmount <= range.Upper)
+            {
+                return range.Standard;
+            }
+        }
+
+        return waterAmount > 10000 ? 10000 : 500;
     }
 }
