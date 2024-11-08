@@ -23,7 +23,7 @@ public class WeightRecordController : ControllerBase
         try
         {
             var character = await _context.Characters
-                            .FirstOrDefaultAsync(c => c.Account == account);
+                            .FirstOrDefaultAsync(c => c.Account == account && c.LivingStatus == "居住");
             if (character == null)
             {
                 return NotFound("找不到該帳號的角色資料");
