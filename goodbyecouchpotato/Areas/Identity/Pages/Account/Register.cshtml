@@ -1,17 +1,17 @@
 ﻿@page
 @model RegisterModel
-@{
+@* @{
     ViewData["Title"] = "註冊管理員";
-}
+} *@
 
-<h1>@ViewData["Title"]</h1>
+<h1>註冊管理員</h1>
 
 <div class="row">
     <div class="col-md-4 formcenter">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>新增管理員帳號</h2>
             <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
                 <input id="emailInput" asp-for="Input.Email" class="form-control" autocomplete="off" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">@Html.DisplayNameFor(m => m.Input.Email)</label>
@@ -20,9 +20,10 @@
             </div>
 
             <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="off" aria-required="true" placeholder="password" />
+                <input asp-for="Input.Password" id="inputpassword" class="form-control" autocomplete="off" aria-required="true" placeholder="password" />
                 <label asp-for="Input.Password">@Html.DisplayNameFor(m => m.Input.Password)</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <span id="newpassword" class="text-danger"></span>
+                <span asp-validation-for="Input.Password" class="text-danger" id="oldpassword"></span>
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="off" aria-required="true" placeholder="password" />
@@ -80,5 +81,21 @@
                 sweetalert(messagetype);
             };
         });
-    </script>
+
+        $("#inputpassword").on('keyup', function () {
+            var value = $(this).val();
+            if (/^\d+$/.test(value)) {
+                $("#newpassword").html("密碼須包含特殊字元\n");
+                $("#oldpassword").hide();
+            }
+            else if(!/[A-Z]/.test(value)||!/[a-z]/.test(value)){
+                $("#newpassword").html("密碼須包含大寫及小寫字母\n");
+                $("#oldpassword").hide();
+            }
+            else{
+                $("#newpassword").html("");
+                $("#oldpassword").show();
+            }
+            })
+            </script>
 }

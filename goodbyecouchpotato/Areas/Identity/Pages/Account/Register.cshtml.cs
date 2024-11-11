@@ -95,7 +95,7 @@ namespace goodbyecouchpotato.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage ="密碼必須填寫")]
-            [StringLength(100, ErrorMessage = "{0}要至少為{2}到{1}個字", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "{0}要至少為{2}到{1}個字", MinimumLength = 8)]
             [DataType(DataType.Password)]
             [Display(Name = "密碼")]
             public string Password { get; set; }

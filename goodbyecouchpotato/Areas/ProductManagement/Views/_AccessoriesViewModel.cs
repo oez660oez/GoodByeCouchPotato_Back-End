@@ -12,10 +12,11 @@ namespace goodbyecouchpotato.Areas.ProductManagement.Views
         [Required(ErrorMessage ="商品名稱必填")]
         public string PName { get; set; } = null!;
         [Display(Name = "商品價格")]
-        [Required(ErrorMessage = "必須填寫商品價格")]
-        [Range(310,int.MaxValue, ErrorMessage = "只能輸入5的倍數，並且不得小於310元")]
+        [Required(ErrorMessage = "商品價格必填")]
+        [Range(280, 10000, ErrorMessage = "必須以5的倍數，輸入大於280或小於10000的數字")]
         public int? PPrice { get; set; }
         [Display(Name = "商品等級")]
+        [Required(ErrorMessage = "商品等級必填")]
         public int? PLevel { get; set; }
         [Display(Name = "商店圖片")]
         public string? PImageShop { get; set; }

@@ -1,8 +1,8 @@
 ﻿@model _AccessoriesViewModel
 
-@{
-    ViewData["Title"] = "Create";
-}
+ @* @{
+     ViewData["Title"] = "Create";
+ } *@
 
 <h1>新增商品</h1>
 
@@ -30,17 +30,19 @@
             <div class="form-group">
                 <label asp-for="PName" class="control-label">@Html.DisplayNameFor(m => m.PName)</label>
                 <input asp-for="PName" class="form-control" />
-                <span asp-validation-for="PName" class="text-danger"></span>
+                <span asp-validation-for="PName" class="text-danger" id="name"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PPrice" class="control-label">@Html.DisplayNameFor(m => m.PPrice)</label>
-                <input asp-for="PPrice" type="text" class="form-control" autocomplete="off" min="310" step="5" />
-                <span asp-validation-for="PPrice" class="text-danger"></span>
+                <input asp-for="PPrice" type="text" class="form-control" autocomplete="off" min="280" step="5" id="inputprice" />
+                <span id="pricenotify" class="text-danger"></span>
+                 <span asp-validation-for="PPrice" class="text-danger" id="oldpriceontify"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PLevel" class="control-label">@Html.DisplayNameFor(m => m.PLevel)</label>
-                <input asp-for="PLevel" type="text" class="form-control" autocomplete="off" min="0" />
-                <span asp-validation-for="PLevel" class="text-danger"></span>
+                <input asp-for="PLevel" type="text" class="form-control" autocomplete="off" min="0" id="inputlevel" />
+                <span id="levelnotify" class="text-danger"></span>
+                <span asp-validation-for="PLevel" class="text-danger" id="oldlevelnotify"></span>
             </div>
             <div class="form-group">
                 <div>
@@ -94,7 +96,8 @@
     }
     <script>
 
-                function viewImage(imageElement) {
+
+               function viewImage(imageElement) {
             var imageSrc = $(imageElement).attr('src');
             $('#modalImage').attr('src', imageSrc);
             $('#imageModal').modal('show');
@@ -108,6 +111,45 @@
         // 圖片預覽
         $("#PImageAll").on("change", function () {
             previewImage(this, $("#imgpreview2"));
+        });
+
+
+        $('#inputprice').on('keyup', function () {
+            var value = $(this).val();
+            if (/^\d+$/.test(value)) { // 正則表達查是否為純數字
+
+                if (value >= 280 && value % 5 === 0) {
+                    $('#pricenotify').html(""); 
+                    $('#oldpriceontify').show();
+                } else {
+                    $('#pricenotify').html("必須以5的倍數，輸入大於280或小於10000的數字");
+                    $('#oldpriceontify').hide();
+                }
+            } else {
+                if (value === ""){
+                    $('#pricenotify').html("");
+                    $('#oldpriceontify').show();
+                }else{
+                $('#pricenotify').html("只能輸入數字");
+                $('#oldpriceontify').hide();
+                }
+            }
+        });
+
+        $('#inputlevel').on('keyup', function () {
+            var value = $(this).val();
+            if (/^\d+$/.test(value)) { 
+                $('#levelnotify').html("");
+                $('#oldlevelnotify').show();
+            } else {
+                if (value === "") {
+                    $('#levelnotify').html(""); 
+                    $('#oldlevelnotify').show();
+                } else {
+                    $('#levelnotify').html("只能輸入數字");
+                    $('#oldlevelnotify').hide();
+                }
+            }
         });
     </script>
 }
