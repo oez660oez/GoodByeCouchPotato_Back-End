@@ -23,7 +23,7 @@ public class WeightRecordController : ControllerBase
         try
         {
             var character = await _context.Characters
-                            .FirstOrDefaultAsync(c => c.Account == account);
+                            .FirstOrDefaultAsync(c => c.Account == account && c.LivingStatus == "居住");
             if (character == null)
             {
                 return NotFound("找不到該帳號的角色資料");
@@ -71,12 +71,11 @@ public class WeightRecordController : ControllerBase
             var firstDayOfMonth = new DateOnly(today.Year, today.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
-            var existingRecord = await _context.WeightRecords.FirstOrDefaultAsync(w =>
-                                            w.CId == character.CId &&
-                                            w.WRecordDate >= firstDayOfMonth &&
-                                            w.WRecordDate <= lastDayOfMonth);
+			var existingRecord = await _context.WeightRecords.FirstOrDefaultAsync(w =>
+											w.CId == character.CId &&
+											w.WRecordDate == today);
 
-            if (existingRecord != null)
+			if (existingRecord != null)
             {
                 existingRecord.Weight = dto.Weight;
             }
