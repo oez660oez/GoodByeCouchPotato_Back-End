@@ -141,11 +141,11 @@ namespace PotatoWebAPI.Controllers
             string returnward = "";
             if (plus > 0)
             {
-                returnward = $"已完成{plus}項任務 共獲得{returnreward}金幣 \n繼續一起邁向更健康的生活吧!";
+                returnward = $"已完成{plus}項任務 共獲得{returnreward}金幣 \n繼續邁向更健康的生活吧!";
             }
             else
             {
-                returnward = $"未完成任務 繼續加油~~~";
+                returnward = $"未完成任務 繼續加油(๑•ㅂ•́)و✧";
             }
             //存資料
             find.T1completed = DailytaskDTO.T1completed;

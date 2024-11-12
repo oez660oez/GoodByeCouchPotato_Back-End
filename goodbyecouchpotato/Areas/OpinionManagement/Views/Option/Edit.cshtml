@@ -38,7 +38,7 @@
 
             <div class="form-group">
                 <label asp-for="Pro_Content" class="control-label"></label>
-                <textarea asp-for="Pro_Content" rows="6" cols="20" class="form-control" style="resize:none;"></textarea>
+                <textarea asp-for="Pro_Content" id="proContent" rows="6" cols="20" class="form-control" style="resize:none;"></textarea>
                 <span asp-validation-for="Pro_Content" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="FeedbackNo" />
@@ -56,3 +56,29 @@
     </div>
 </div>
 
+
+
+@section Scripts {
+    <script src="~/js/sweetalert.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                const proContent = $('#proContent').val().trim();
+                if (proContent === '') {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '提醒',
+                        text: '請填寫回覆內容',
+                        confirmButtonText: '確定',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return false;
+                }
+            });
+        });
+    </script>
+}
