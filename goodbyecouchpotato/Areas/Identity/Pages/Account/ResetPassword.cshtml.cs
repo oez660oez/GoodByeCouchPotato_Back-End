@@ -27,11 +27,12 @@ public class ResetPasswordModel : PageModel
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "此欄位必須填寫。")]
         [StringLength(100, ErrorMessage = "密碼長度必須至少為 {2} 個字符，最多為 {1} 個字符。", MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Required(ErrorMessage = "此欄位必須填寫。")]
         [DataType(DataType.Password)]
         [Display(Name = "確認密碼")]
         [Compare("Password", ErrorMessage = "密碼和確認密碼不匹配。")]
