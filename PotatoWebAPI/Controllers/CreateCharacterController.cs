@@ -11,10 +11,12 @@ namespace PotatoWebAPI.Controllers;
 public class CreateCharacterController : ControllerBase
 {
     private readonly GoodbyepotatoContext _context;
+    private readonly ILogger<CreateCharacterController> _logger;
 
-    public CreateCharacterController(GoodbyepotatoContext context)
+    public CreateCharacterController(GoodbyepotatoContext context, ILogger<CreateCharacterController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     [HttpGet("Status/{account}")]
@@ -38,7 +40,25 @@ public class CreateCharacterController : ControllerBase
     {
         //使用交易，若前面新建失敗後面會回滾，防止建一半的狀況。
         using var transaction = await _context.Database.BeginTransactionAsync();
-        try {
+        try
+        {
+            var existingCharacter = await _context.Characters
+                    .FirstOrDefaultAsync(c => c.Name == dto.Name);
+
+            if (existingCharacter != null)
+            {
+                return BadRequest(new { message = "角色名稱已存在" });
+            }
+
+            // 檢查該帳號是否已有活躍角色
+            var activeCharacter = await _context.Characters
+                .FirstOrDefaultAsync(c => c.Account == dto.Account && c.LivingStatus == "居住");
+
+            if (activeCharacter != null)
+            {
+                return BadRequest(new { message = "該帳號已有活躍角色" });
+            }
+
             var character = new Character
             {
                 Name = dto.Name,
@@ -68,51 +88,66 @@ public class CreateCharacterController : ControllerBase
                 // 計算標準飲水量
                 StandardWater = CalculateStandardWater(dto.Weight * 30),
                 // 預設值
-                Environment=80,
+                Environment = 80,
                 LivingStatus = "居住",
                 Coins = 0,
                 GetEnvironment = 0,
                 GetExperience = 0,
                 GetCoins = 0
             };
-
-            //新增Character
-        _context.Characters.Add(character);
-        await _context.SaveChangesAsync();
-
-        // 使用剛創建的 Character 的 CId 來建立 CharacterAccessorie
-        var characterAccessorie = new CharacterAccessorie
-        {
-            CId = character.CId,
-            Head = 0,
-            Upper = 0,
-            Lower = 0
-        };
-            //新增CharacterAccessorie
-        _context.CharacterAccessories.Add(characterAccessorie);
-            var weightRecord = new WeightRecord
+            // 使用 ExecuteAsync 確保資料庫操作的原子性
+            await using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
-                CId = character.CId,
-                Weight = dto.Weight,
-                WRecordDate = DateOnly.FromDateTime(DateTime.Now)
-            };
-            _context.WeightRecords.Add(weightRecord);
-            await _context.SaveChangesAsync();
+                if (command.Connection.State != System.Data.ConnectionState.Open)
+                    await command.Connection.OpenAsync();
 
-            //交易提交(確保一致性)
-            await transaction.CommitAsync();
-            return Ok(new
-        {
-            Character = character,
-            CharacterAccessorie = characterAccessorie,
-                WeightRecord = weightRecord
+                try
+                {
+                    _context.Characters.Add(character);
+                    await _context.SaveChangesAsync();
 
-            });
-        }catch (Exception ex)
+                    var characterAccessorie = new CharacterAccessorie
+                    {
+                        CId = character.CId,
+                        Head = 0,
+                        Upper = 0,
+                        Lower = 0
+                    };
+
+                    _context.CharacterAccessories.Add(characterAccessorie);
+
+                    var weightRecord = new WeightRecord
+                    {
+                        CId = character.CId,
+                        Weight = dto.Weight,
+                        WRecordDate = DateOnly.FromDateTime(DateTime.Now)
+                    };
+
+                    _context.WeightRecords.Add(weightRecord);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                    return Ok(new
+                    {
+                        Character = character,
+                        CharacterAccessorie = characterAccessorie,
+                        WeightRecord = weightRecord
+                    });
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError(ex, "資料庫更新錯誤: {Message}", ex.InnerException?.Message ?? ex.Message);
+                    await transaction.RollbackAsync();
+                    return BadRequest(new { message = "資料庫更新錯誤，請稍後再試" });
+                }
+            }
+        }
+        catch (Exception ex)
         {
-            // 如果發生錯誤，回滾事務
+            _logger.LogError(ex, "創建角色時發生未預期的錯誤: {Message}", ex.Message);
             await transaction.RollbackAsync();
-            return BadRequest(new { message = ex.Message });
+            return BadRequest(new { message = "發生未預期的錯誤，請稍後再試" });
         }
     }
 
