@@ -120,7 +120,12 @@ namespace PotatoWebAPI.Controllers
                     string baseUrl = _configuration["AppSettings:BaseUrl"];
                 string verificationlink = $"{baseUrl}/api/IndexPlayers/verify?account={player.Account}&token={player.Token}";
                 string subject = "Potato帳號驗證信";
-                string message = $"親愛的用戶您好，感謝您註冊再見！沙發potato的遊戲帳號，請您點擊以下連結，進行帳號開通{verificationlink}";
+                    string message = $@"
+    <p>親愛的用戶您好，</p>
+    <p >感謝您註冊「再見！沙發potato」的遊戲帳號。</p>
+    <p>請您點擊以下連結，進行帳號開通：</p>
+<p>返回首頁即開通成功，可立即使用註冊帳號進行登入</p>
+    <p><a href='{verificationlink}'>點擊此處開通您的帳號</a></p>";
                         if (result > 0)
                         {
 
@@ -145,7 +150,11 @@ namespace PotatoWebAPI.Controllers
             var member = _context.Players.Where(s => s.Account == loginPlayDTO.Account).FirstOrDefault();
             if (member != null)
             {
+                try
+                {
+
                     bool passwordIsCorrect = BCrypt.Net.BCrypt.Verify(loginPlayDTO.password, member.Password); //比對兩者，如果資料庫裡面的資料不是加密規格就會bug
+
                 if (passwordIsCorrect)
                 { 
                             if (member.Playerstatus)
@@ -176,6 +185,11 @@ namespace PotatoWebAPI.Controllers
                             }
                 }
                                 return Ok(new { Message = "帳號或密碼錯誤",respond = "Nopermission"  });
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return Ok(new { Message = "此帳號尚未註冊",
                 respond
@@ -230,12 +244,16 @@ namespace PotatoWebAPI.Controllers
         {
             if (CheckVerificationnumber(forgetNEWPassword))
             {
-                var player = await _context.Players.SingleOrDefaultAsync(s => s.Account == forgetNEWPassword.account);
+                var player = await _context.Players.FirstOrDefaultAsync(s => s.Account == forgetNEWPassword.account);
+                if (player != null)
+                {
 
                 string PasswordBCrypt = BCrypt.Net.BCrypt.HashPassword(forgetNEWPassword.password);  //將密碼加密
                 player.Password = PasswordBCrypt;
                 await _context.SaveChangesAsync();
                 return Ok(new { Message = "更新成功" });
+                }
+                return Ok(new { Message = "查無此帳號" });
 
                 ////用來確認快取有成功存取，並且有抓到
                 //if (cachedValue != null)
