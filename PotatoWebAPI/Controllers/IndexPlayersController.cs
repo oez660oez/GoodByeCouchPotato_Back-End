@@ -171,7 +171,7 @@ namespace PotatoWebAPI.Controllers
                                         else
                                         {
                                             Character.LivingStatus = "搬離";
-                                Character.MoveOutDate = DateTime.Now;
+                                            Character.MoveOutDate = DateTime.Now;
                                              _context.SaveChangesAsync();
                                            return Ok(new { Message = "因環境值歸0，角色已搬離，請重新創建角色", respond = "gameover", PlayerCharacter = Character, CharacterAccessorie = characterbody });
                                         }
